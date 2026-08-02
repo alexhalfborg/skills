@@ -11,6 +11,11 @@ honestly, scaffold what is missing, offer to fix what is worth fixing, and hand 
 normal and expected — it is how the user confirms a key after a restart, and how the brand list in
 the project-instructions block gets refreshed — so **every step must be safe to repeat**.
 
+This is very often the first thing a user ever runs, and they are a marketer, not a developer.
+Everything you say follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in
+the files, not in the conversation. Name a tool only when its absence changes what they can do, and
+then say what it changes rather than what it is.
+
 ## 1. Explore, then lead with the promise
 
 Look before you write. Read the current state of the working directory: is there an `engine.yaml`? a
@@ -29,8 +34,9 @@ Neither blocks.
 
 - `node --version` — needs v18 or newer. Without it the campaign page (`site/index.html`) is not
   rebuilt after each artifact. Every phase still runs; the artifacts are all still written to disk.
-- `ffprobe -version` — optional. Used only to verify a rendered video after the fact. Without it a
-  clip is reported **unverified**, which is a note, not a failure.
+- `ffprobe -version` — optional. Used only to check a rendered video after the fact. Without it you
+  still get the clip; you just cannot open it to confirm its length and size afterwards. Say it that
+  way, not as "unverified".
 
 If a binary is missing, name it and say what it unlocks. Do not print install commands for a
 specific package manager unless the user asks — this workspace runs on any OS.
@@ -101,8 +107,9 @@ this plugin, stored in secure storage, and the harness substitutes it into the p
 So there is no file to inspect and no state to detect here. If step 7 shows the tools are not live,
 tell the user in plain language how to set it:
 
-> Run `/plugin`, open **campaign-engine**, choose configure, and paste a key from
-> <https://fal.ai/dashboard/keys>. Then `/reload-plugins`, or restart.
+> Open `/plugin`, go to the **Installed** tab and select **halfborg-skills**. Claude Code asks for
+> the fal.ai key there, the same as it does the first time the plugin is switched on. Paste one from
+> <https://fal.ai/dashboard/keys>, then run `/reload-plugins`, or restart.
 
 If they would rather not, that is a finished setup, not an abandoned one. Say so and carry on.
 

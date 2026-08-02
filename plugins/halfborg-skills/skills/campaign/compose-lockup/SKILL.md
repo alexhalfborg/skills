@@ -25,9 +25,10 @@ Campaign paths and filenames follow `${CLAUDE_PLUGIN_ROOT}/schema/campaign-struc
 
 ## 1. Read the inputs
 
-The campaign workspace and the active brand should have been provided to you — run
-`/halfborg-skills:setup-engine` if not. Resolve the campaign, brand and message per
-`${CLAUDE_PLUGIN_ROOT}/schema/preflight.md` before reading anything below.
+Resolve the campaign, brand and message per `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md` before
+reading anything below. Everything you say out loud follows
+`${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the
+conversation.
 
 1. **`campaigns/<slug>/docs/message.md`** — the required input. Pull:
    - the chosen **tagline** (the default headline text, unless the deliverable overrides it),
@@ -188,14 +189,22 @@ event is the only contract-legal home for the critique, since the log has no ana
 Then rebuild the site (`node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs"
 "campaigns/<slug>"`).
 
-Then report:
+Then report per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 5:
 
-- the PNG path written and its ratio,
-- the key visual used, the headline text set, the **archetype chosen**, the model
-  (`fal-ai/nano-banana-pro/edit`) and resolution, and the cost,
-- any residual **soft** flags from Layer 3 for QA to weigh,
-- plainly: this is a generated asset, not a cleared one — brand and claim review still apply
-  (`pack.mandatories`, `pack.nogos`) and `campaign-qa` before it ships.
+- **what you made**, named as the thing it is, and what shape it is,
+- **one path** — the finished PNG, in full, so they can open it,
+- **the headline you set, word for word**, and where it sits on the picture, described the way a
+  person looking at it would describe it. Never say "archetype",
+- **what it cost**,
+- **anything still worth a second look** — the residual soft flags, said as what they are ("the
+  headline sits a little close to the bottle at this size") rather than as a flag count,
+- plainly: nobody has checked it yet against their must-includes, the things they never say, or the
+  final campaign check.
+
+The model, the resolution and the layout you chose all went into the log. Do not recite them.
+
+**End on a next action** per section 6 — usually whether this is the finished static, or whether they
+want another go with a change.
 
 ## House rules
 
@@ -221,5 +230,6 @@ Then report:
   the generation log, not by moving files. Never overwrite a version or scatter files at the repo root.
 - **Fail loud.** Missing `message.md`/`locked_still`, a titled anchor, or the fal MCP down → say so and
   stop or hand back; never fabricate a path, a URL, or an image.
+- **Speak plainly.** Everything you say out loud follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the conversation. "Archetype", "Layer 3" and "hard/soft flags" are yours, not the user's.
 - British spelling, no em dashes in any copy this skill authors (the headline text comes from
   `message.md` verbatim; do not alter its wording or punctuation).

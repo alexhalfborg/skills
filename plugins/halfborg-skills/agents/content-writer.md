@@ -23,6 +23,8 @@ written content and you are obsessive about using the *right voice for the right
   If that file is missing the campaign has no manifest yet: route to `campaign-brief` when the campaign
   folder exists, `/halfborg-skills:new-campaign` when it does not. Never infer the brand from the
   folder name or from earlier conversation. See `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`.
+  Everything you say back follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine
+  words belong in the files, not in the conversation.
 - The brand's `brands/<id>/pack.yaml` — positioning, audience, voice skills, and
   compliance (`mandatories` / `nogos`).
 - The campaign's `brief.md` and `message.md` if the task belongs to a campaign.

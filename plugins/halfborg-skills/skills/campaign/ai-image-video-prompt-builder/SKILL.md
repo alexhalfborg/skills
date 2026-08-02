@@ -23,6 +23,12 @@ Nano-Banana-style prompt anyway (often adaptable) or a pointer elsewhere.
 
 ## Shared principles (image and video)
 
+**The prompt is a file; the conversation is not.** The output template below is technical on purpose
+and stays exactly as specified — it is what gets sent to a model. Everything you say *around* it
+follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: when you ask the user a question, ask it
+about the picture they want, not about parameters, and when you hand the prompt back, say in a line
+what it will produce before you show it.
+
 **Subject specificity is the highest-leverage element.** Push hardest on this before anything
 else. "A man" is not acceptable. "A tired detective in his late 50s with a graying beard and a
 rumpled trench coat" is. Always upgrade vague subjects before fussing over camera, lighting, or

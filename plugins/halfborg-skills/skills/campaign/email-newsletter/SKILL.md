@@ -182,3 +182,16 @@ Ask if: the byline is ambiguous (founder or team); the email cites a real deadli
 user has not given; it needs a customer story not supplied; the footer/legal requirement is unstated; or
 the request is really a sequence with an unstated goal or length. For everything else, draft — always
 honest, always one job, always linked to a real place.
+
+## When you hand it back
+
+Follow `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` sections 5 and 6. Three things, in this
+order:
+
+1. **The subject-line options**, so they can pick one. This is the decision they actually have to
+   make.
+2. **What you left for them to fill or confirm** — every placeholder, every real deadline, price or
+   link you would not invent, and any claim you flagged. Name them plainly; do not make them hunt
+   through the draft for square brackets.
+3. **One next action.** The next thing on the campaign's list, named as a thing, or an offer of a
+   second version with a different angle. One offer, not a menu, and name no skill.

@@ -6,7 +6,7 @@ where a skill's own wording disagrees with this spec, **this spec wins**.
 
 This document is brand-agnostic. Example ids (`AD-R1-b`, `banner-ad`) are placeholders.
 
-**Path note.** `${CLAUDE_PLUGIN_ROOT}` below means the campaign-engine plugin's install directory.
+**Path note.** `${CLAUDE_PLUGIN_ROOT}` below means the plugin's install directory.
 Unlike a SKILL.md, this file is read as plain content, so that placeholder is **not** substituted
 for you — use the resolved absolute path the skill that sent you here already had. Everything else
 (`campaigns/…`, `brands/…`, `engine.yaml`) is relative to the working directory, as written.
@@ -129,6 +129,11 @@ inside a JSON string.
 
 Common required fields on every entry: `ts` (ISO 8601 with offset), `event`, `skill`,
 `deliverable`.
+
+Every field name and status value below is **file vocabulary**. Write them exactly; never say them
+out loud. Logging `model`, `seed`, `cost_usd` and `source_url` is precisely what makes it safe to
+leave them out of the conversation — see `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` sections 1
+and 5.
 
 | event | meaning | additional fields |
 |---|---|---|

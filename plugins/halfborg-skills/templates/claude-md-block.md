@@ -21,16 +21,18 @@ This repo is a campaign workspace. Brand facts live in `brands/<id>/pack.yaml` (
 `design.md` for design tokens and `voice-profiles.md` for the writing corpus). Campaign work lives in
 `campaigns/<brand>-<YYYY-MM-DD>-<slug>/`, with gate artifacts in `docs/`, text deliverables in
 `content/`, generated media in `media/<deliverable-id>/`, and machine state in `system/`. Engine
-defaults are in `engine.yaml`. The engine itself is the `campaign-engine` plugin and is read-only —
+defaults are in `engine.yaml`. The engine itself is the `halfborg-skills` plugin and is read-only —
 never edit a brand fact into a skill, and never hand-edit anything under `system/` or `site/`.
 
 ### Pipeline
 
 Brief → Message → Expansion → QA. The first two are **human-gated**: interview, draft, get explicit
 sign-off, *then* write the artifact. Do not automate past a gate or collapse two into one. State
-lives in files, not the conversation, so each phase reads the previous phase's artifact rather than
-relying on chat history. Rendering an image or video always stops for approval first, with the
-verbatim prompt and a cost estimate.
+lives in files, not the conversation, so each phase reads the previous phase's output rather than
+relying on chat history. Rendering an image or video always stops for approval first: a plain
+sentence with the cost, then the verbatim prompt and settings.
+
+The engine's own vocabulary stays in its files. Talk to the user in plain English.
 
 ### Commands
 

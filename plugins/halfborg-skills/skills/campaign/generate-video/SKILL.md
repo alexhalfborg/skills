@@ -59,11 +59,12 @@ which wins over any path shorthand here.
 and `ffmpeg` (a still frame to eyeball), so a working ffmpeg is what lets you check the output.
 Confirm with `ffprobe -version` rather than assuming — it is an optional dependency and may not be
 installed. ffmpeg is required only for verification, never for rendering: if it cannot be found,
-still deliver the clip but say clearly that you could **not** verify it, rather than skipping
-silently or claiming a check you did not run. `/halfborg-skills:setup-engine` reports whether it is present.
+still deliver the clip but say clearly that you could **not** check it — in those words, not as
+"unverified" — rather than skipping silently or claiming a check you did not run.
+`/halfborg-skills:setup-engine` reports whether it is present.
 
-**The fal MCP.** The fal MCP is a plugin-scoped streamable-HTTP server declared in the campaign-engine
-plugin's `.mcp.json` (`fal-ai` → `https://mcp.fal.ai/mcp`), authenticated with the plugin's `fal_key`
+**The fal MCP.** The fal MCP is a plugin-scoped streamable-HTTP server declared in the
+`halfborg-skills` plugin's `.mcp.json` (`fal-ai` → `https://mcp.fal.ai/mcp`), authenticated with the plugin's `fal_key`
 setting. Video uses the **async job** tools, not a
 single `run_model` call. When connected the server exposes:
 
@@ -79,18 +80,26 @@ single `run_model` call. When connected the server exposes:
 Before doing anything, confirm those `mcp__fal-ai__*` tools are actually available.
 
 **If they are not, stop rendering — but do not stop.** No key is a supported way to run this
-workspace, not a failure. You were *given* a prompt and stills, so you already hold everything the
-user needs to render it themselves. Resolve the model and settings exactly as you would have
-(steps 2-3, minus the `get_model_schema` call you cannot make), then hand back a paste-ready block:
+workspace, not a failure. Say that plainly: video generation is not connected here, so you will hand
+them everything needed to make the clip at fal.ai instead. Never call it an error and never
+apologise for it.
 
-- the **prompt**, verbatim and unedited;
-- the **model id** you would have used;
-- the **settings** you resolved — duration, resolution, aspect ratio, audio;
-- the **reference stills** as local paths, noting they must be uploaded at fal.ai by hand and
-  addressed in the prompt as `@Image1`, `@Image2`, and so on, in the order listed;
+You were *given* a prompt and stills, so you already hold everything the user needs to render it
+themselves. Resolve the model and settings exactly as you would have (steps 2-3, minus the
+`get_model_schema` call you cannot make), then hand back a paste-ready block — the same shape as the
+receipt in step 5:
+
+- the **prompt**, verbatim and unedited, in a fenced code block;
+- the **model id** you would have used, exactly;
+- the **settings** you resolved, as plain labels and real values — length, size, shape, sound on or
+  off;
+- the **reference stills** as local paths, each with the `@ImageN` handle it maps to. Say in one
+  sentence that they get uploaded at fal.ai and that the prompt refers to them by those handles, in
+  the order listed;
 - where to run it: <https://fal.ai/models>.
 
-Then, once and briefly: `/halfborg-skills:setup-engine` sets a key up if they want renders in place next time.
+Then, once and in a clause: `/halfborg-skills:setup-engine` sets a key up if they would rather these
+came out here next time.
 
 What does *not* change: **write no file, append no log line, and invent no URL, path, duration, or
 cost.** An unavailable MCP still means no video (the engine rule: never fabricate metrics or
@@ -210,25 +219,55 @@ by-hand route is more often the sensible pick.
    current number via `search_docs` "seedance 2.0 pricing" when in doubt). Estimate = rate ×
    duration; e.g. a 6 s 720p clip ≈ ~$1.80. Always state it is an **estimate**; the exact charge is
    only known once the job returns. Do not present a fabricated precise figure.
-2. Present the run in one short block: the **prompt, verbatim in a fenced code block** — unedited,
-   exactly what will be sent — plus **model, resolution, duration, aspect ratio, the reference
-   images and the `@ImageN` handle each maps to, audio on/off, and the estimated cost** (with the
-   "estimate, confirmed after render" caveat). Cost scales with duration, so a 15 s generation costs
-   roughly two and a half times a 6 s one; quote the real number, not the familiar one. Never gate on
-   a summary of the prompt: the user approves the text that gets sent, so show it.
-3. **If the prompt did not state whether audio is generated, ask here.** Do not resolve it yourself.
-   Say plainly that audio-on synthesises speech and sound, and that the choice is the brand's.
-4. **Stop and ask which route they want**, offering both plainly:
-   - **You render it** — proceed to step 6 on an explicit go.
-   - **They render it by hand** — hand back the same paste-ready block as the offline path in step 1
-     (prompt, model, settings, the reference stills in `@ImageN` order, and <https://fal.ai/models>),
-     then **stop**: write no file, append no log line, invent no URL or cost. If they later hand back
-     a rendered clip, save, verify and log it per steps 7-8, recording only what actually happened.
-   - **Adjust first** — change the settings and re-present this gate. An adjustment is not approval.
+2. Present it in two parts, in this order, per
+   `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 4. They do different jobs and neither
+   substitutes for the other.
+
+   **Part one, the sentence.** One or two lines of plain English: what the clip is, how long, and
+   what it will cost. Cost is the whole reason this gate exists here, so it goes in the first
+   sentence.
+
+   > A 6-second vertical clip of the bottle on wet stone, with sound. Around $1.80 — video is
+   > priced by the second, so a 15-second version would be closer to $4.50.
+
+   Say the length as seconds, the shape as a shape ("vertical, for reels"), the money as money.
+   Name no setting here.
+
+   **Part two, the receipt.** Under a short heading — **Exactly what gets sent** — complete and
+   unabbreviated:
+
+   - the **prompt, verbatim, in a fenced code block**. Unedited, character for character what goes
+     to the model. Never a summary: the user approves the text that gets sent, so show it;
+   - the **model id** exactly as it will be sent, on its own line, glossable but never replaced by
+     the gloss;
+   - the **settings**, as plain labels and real values — `Length: 6 seconds`, `Size: 720p`,
+     `Shape: vertical (9:16)`, `Sound: on`;
+   - the **reference pictures**, each as a filename **and** the `@ImageN` handle it maps to, in
+     order. Keep the handles exactly as written: they are what the prompt cites, and they are what
+     the user needs if they take the by-hand route;
+   - the **estimated cost with its arithmetic** — `$0.30/second × 6 seconds = about $1.80` — the
+     word "estimate", and the note that the exact charge is only known once the job returns.
+
+   The receipt does not shrink to be friendly. Summarising the prompt, hiding the model id behind
+   the friendly name, dropping a setting because it looks technical, or rounding the cost away all
+   break the same rule. **Plain language is the job of part one. Part two is a receipt, and receipts
+   are literal.**
+3. **If the prompt did not state whether audio is generated, ask here**, in part one, as a plain
+   sentence. Do not resolve it yourself: say that sound-on means the model invents speech and
+   effects, that this is a brand call rather than yours, and that you would rather check before
+   spending.
+4. **Stop and ask which route they want**, three plain choices of equal weight:
+   - **You make it** — proceed to step 6 on an explicit go.
+   - **They run it themselves** — hand back the same paste-ready block as the offline path in step 1
+     (prompt, model id, settings, the reference stills in `@ImageN` order, and
+     <https://fal.ai/models>), then **stop**: write no file, append no log line, invent no URL or
+     cost. If they later hand back a rendered clip, save, verify and log it per steps 7-8, recording
+     only what actually happened.
+   - **Change something first** — adjust and show this gate again. An adjustment is not a yes.
 
    Do not `submit_job` until the user says go, and treat silence as a no. If they decline outright,
-   do nothing and offer to cut cost (e.g. drop to `480p` or a shorter duration). One approval covers
-   the run as presented: any change to the prompt, model, duration or resolution means a fresh gate.
+   do nothing and offer a cheaper cut — shorter, or smaller. One yes covers the run as shown: any
+   change to the prompt, model, length or size means a fresh gate.
 
 ## 6. Submit, poll, and fetch the result
 
@@ -267,10 +306,14 @@ deliverable on its own.
 
 **Check the deliverable id before you create its folder.** Confirm it appears in
 `campaigns/<slug>/system/manifest.yaml` or was registered in `system/generation-log.jsonl`. An
-unregistered id is usually a typo, and creating the folder anyway mints a ghost that only QA catches,
-much later. This is **warn and confirm, not block**: name the id, say it is not registered, offer the
-closest registered match, and proceed once the user confirms. See
-`${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`.
+unregistered id is usually a typo, and creating the folder anyway leaves an orphan that only QA
+catches, much later. Warn and confirm, do not block — and ask it as a question about their campaign,
+not about the register:
+
+> I have nothing called `launch-teaser` on this campaign. Did you mean the launch reel, or is this
+> something new you want adding?
+
+See `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`.
 
 **Download** the URL, keeping the real file extension from the URL (usually `.mp4`). Create the
 destination folder first if it does not exist.
@@ -343,18 +386,31 @@ actual file on disk** with the local ffmpeg tools (see the precondition in step 
 
 ## 9. Report back, and keep the claim posture
 
-Report only **real returned values** — never a placeholder or an imagined link:
-- the local path of the downloaded video,
-- the source fal URL,
-- the model used (note any substitution from step 3),
-- the resolution / duration / seed actually used, and the cost (the estimate, plus the confirmed
-  charge if the result or your fal dashboard exposes it), and
-- the verification result from step 8 — the ffprobe-confirmed duration/resolution/codec and that a
-  frame looked right — or, if ffmpeg was unavailable, that the clip is **unverified**.
+Follow `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 5, and report only **real returned
+values** — never a placeholder or an imagined link:
+
+- **what you made**, named as the thing it is ("the vertical clip for the launch ad");
+- **one path** — the clip they would open, written out in full;
+- **what it cost**: the estimate, plus the confirmed charge if the result or their fal dashboard
+  exposes it. This is spoken, always;
+- **what you checked, in plain terms.** Not the tool names and not the field names: "I opened the
+  file and checked it — 6 seconds, 720 by 1280, sound on it, and the frames I sampled look right."
+  If the local video tools were missing, say what that costs them: "I could not open the file to
+  check it afterwards, so the length and size are what the model reported rather than what I
+  measured — worth playing it once before you use it";
+- **anything that did not go to plan**: a model you substituted, fewer shots than the script asked
+  for, a length that came back short.
+
+The model, the seed and the source URL went into the generation log in step 7. That is what makes it
+safe to leave them out of the conversation — do not recite them.
 
 The video is a generated asset, not a cleared one: brand and claim review still apply before it ships
-(the brand's `pack.mandatories` and `pack.nogos`). The generation-log entry and
-site rebuild from step 7 are part of the render, not an optional extra.
+(the brand's `pack.mandatories` and `pack.nogos`). Say that in the user's terms — it has not been
+checked against their must-includes or the things they never say — rather than by field name. The
+generation-log entry and site rebuild from step 7 are part of the render, not an optional extra.
+
+**End on a next action**, per section 6 of the same spec: one offer, phrased as work. Usually that is
+whether they want to watch it before you carry on, or the next clip in the set.
 
 ## House rules
 
@@ -367,8 +423,9 @@ site rebuild from step 7 are part of the render, not an optional extra.
 - **Audio is the brand's call, not this skill's.** Obey the prompt's `AUDIO:` block. If it is silent
   on the question, ask at the cost gate. Audio-on synthesises speech, so guessing here can put words
   in a real person's mouth.
-- **Always gate, and always show the prompt.** Present the verbatim prompt, the settings and the
-  estimate, offer the by-hand route alongside rendering it here, and wait for an explicit go before
+- **Always gate, and always show the prompt.** A plain sentence with the cost in it, then a literal
+  receipt — the verbatim prompt, the exact model id, the real settings, the estimate and its
+  arithmetic. Offer the by-hand route at equal weight, and wait for an explicit go before
   `submit_job`. Video is expensive; never spend on a hunch, and never gate on a paraphrase of the
   prompt the user is approving.
 - **Never fabricate URLs or paths.** Report only what the job actually returned and what you actually
@@ -383,4 +440,8 @@ site rebuild from step 7 are part of the render, not an optional extra.
 - **One home, versioned names.** Every campaign clip → `campaigns/<slug>/media/<deliverable-id>/`
   with a grammar-compliant `-v<NN>` filename; never overwrite an existing version and never scatter
   files at the repo root. Log every render (one `generate` line) and rebuild the site.
+- **Speak plainly.** Everything you say out loud follows
+  `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the
+  conversation. The one place that never softens is the gate receipt — the prompt, the model id and
+  the money stay exact.
 - UK English, no em dashes in anything you author.

@@ -1,94 +1,120 @@
 # halfborg-skills — the campaign engine
 
-A brand-agnostic marketing campaign engine for Claude Code. It turns a fuzzy goal into a full set
-of campaign deliverables through a fixed, human-gated pipeline, reading everything brand-specific
-from a per-brand pack. Swap the pack, get a different brand, same pipeline.
+A marketing campaign engine for Claude Code. It turns a rough goal into a full set of campaign
+deliverables through a fixed pipeline that stops for your sign-off at every point that matters. It
+knows nothing about any particular brand: everything brand-specific is read from a file describing
+yours. Swap that file, get a different brand, same pipeline.
 
-Part of the [halfborg](../../README.md) marketplace.
+## Before you start
+
+You need three things, and the first is the only one that is not optional.
+
+**Claude Code.** This is a plugin for it. Get it at
+[claude.com/claude-code](https://claude.com/claude-code) — the desktop app is the easiest way in, and
+there is a terminal version too. A Claude subscription comes into it.
+
+**A folder for your marketing.** Anywhere on your machine, and empty is fine — the engine builds out
+what it needs. Something like `Documents/marketing` is perfect. In the desktop app you open that
+folder; in the terminal you `cd` into it and run `claude`.
+
+**Half an hour, once.** Setting your brand up is a conversation, and it is the thing that makes
+everything afterwards good rather than generic.
+
+## Install
 
 ```
 /plugin marketplace add alexhalfborg/skills
 /plugin install halfborg-skills@halfborg
 ```
 
-Works in the Claude Code CLI and in the Claude desktop app's code tab (use its plugin browser if
-`/plugin` is unavailable in your environment).
+The first line adds the catalogue so Claude Code knows where to look; it installs nothing by itself.
+The second installs the engine. If `/plugin` is not available in your environment, the desktop app's
+plugin browser does the same job.
 
-Plugin components are namespaced, so the commands are `/halfborg-skills:setup-engine`,
-`/halfborg-skills:setup-brand` and `/halfborg-skills:new-campaign`.
+Commands are prefixed with the plugin name, so they read as `/halfborg-skills:setup-engine`,
+`/halfborg-skills:setup-brand` and `/halfborg-skills:new-campaign`. Type `/halfborg` and let it
+complete.
 
-## Quickstart
+## Your first campaign
 
 ```
-cd ~/my-marketing            # any folder, empty is fine
-claude
-/halfborg-skills:setup-engine        # scaffolds the workspace, writes engine.yaml + the CLAUDE.md block
-/halfborg-skills:setup-brand acme.com   # captures a brand by conversation (or reads its website)
+/halfborg-skills:setup-engine            sets your folder up
+/halfborg-skills:setup-brand acme.com    tells it about your brand
 /halfborg-skills:new-campaign acme spring-launch
 ```
 
-From there the pipeline runs itself, one phase at a time:
+`setup-engine` reports what it found and what that means for you, then gets out of the way.
+`setup-brand` interviews you in plain questions, and if you give it a website it will read the site
+and fill in the detail itself. You never write or read a config file.
 
-| Phase | Skill | Writes | Gated |
-|---|---|---|---|
-| 1. Brief | `campaign-brief` | `docs/brief.md`, `system/manifest.yaml` | Human |
-| 2. Message | `campaign-message` | `docs/message.md` + a locked, text-free key visual | Human |
-| 3. Expansion | ads pipeline, `landing-page`, `compose-lockup`, the voice skills… | `content/`, `media/<id>/` | — |
-| 4. QA | `campaign-qa` | `docs/qa-report.md` | — |
+From there the pipeline runs itself, one stage at a time.
 
-The first two phases stop for sign-off before they write. Every render — image or video — stops and
-shows you the verbatim prompt, the model, the settings and a cost estimate before it spends. Neither
-gate can be relaxed by a setting.
-
-After every artifact, a deterministic Node script rebuilds `site/index.html`: the whole campaign as
-one navigable page, at no token cost.
-
-## What it creates in your workspace
-
-Nothing exists up front; each command creates what it needs.
-
-```
-CLAUDE.md                 the `## Campaign engine` block (written by setup-engine)
-engine.yaml               model ids and cost defaults. No secrets, ever.
-brands/<id>/
-  pack.yaml               all brand facts, schema-validated
-  design.md               typeface + colour hexes          (optional)
-  voice-profiles.md       the founder/team writing corpus   (optional)
-campaigns/<brand>-<YYYY-MM-DD>-<slug>/
-  docs/ content/ media/ system/ site/
-```
-
-`brands/` and `campaigns/` are yours. The engine is read-only and never writes into itself.
-
-## Prerequisites
-
-There is no build step, no `package.json`, nothing to install. Everything below is optional and
-none of it blocks a phase.
-
-| | For | Without it |
+| Stage | You get | Your say |
 |---|---|---|
-| **Node** v18+ | rebuilding the campaign page | Every artifact is still written; you just do not get `site/index.html`. |
-| **ffmpeg** | verifying a rendered video | You still get the clip; it is reported *unverified*. |
-| **fal.ai key** | rendering images and video | `generate-image` / `generate-video` hand back the prompt, model and settings to run by hand at fal.ai, and write nothing. |
+| **1. The plan** | the written brief, plus the list of everything the campaign will produce | you sign it off before anything is written |
+| **2. The message** | the one idea, the line, and the picture the whole campaign hangs on | you pick the line and the picture |
+| **3. Making things** | ads, landing pages, emails, posts, customer stories, video scripts and clips | every render stops and shows you the cost |
+| **4. The check** | a report on everything against your own brand rules | it proposes fixes; it never applies them |
 
-### Setting the fal.ai key
+The first two stages stop for sign-off before they write a thing. Every render — image or video —
+stops and shows you what it is about to make, what it costs, and the exact text being sent, then lets
+you choose between it making the thing and you making it yourself. **No setting relaxes either
+gate.**
 
-Run `/plugin`, open **campaign-engine**, choose configure, and paste a key from
-[fal.ai/dashboard/keys](https://fal.ai/dashboard/keys). Then `/reload-plugins`.
+After every artifact, a small script rebuilds `site/index.html`: the whole campaign as one navigable
+page, with running costs, at no cost in tokens.
 
-The key is stored in secure storage and substituted into the plugin's `.mcp.json` by the harness. No
-skill ever reads it, and you should never paste it into a conversation.
+## What it creates in your folder
 
-**Running without a key is a supported way to use this engine, not a degraded one.** The offline
-hand-back is the same block you get when you choose "I'll render it myself" online.
+Nothing exists up front. Each command creates what it needs.
 
-### External skills
+```
+CLAUDE.md                 a short note so Claude remembers this folder is a campaign workspace
+engine.yaml               defaults you can ignore. No secrets, ever.
+brands/<id>/
+  pack.yaml               everything it knows about your brand
+  design.md               your typeface and colours              (optional)
+  voice-profiles.md       samples of how you actually write      (optional)
+campaigns/<brand>-<YYYY-MM-DD>-<name>/
+  docs/                   the plan, the message, the final check
+  content/                the written pieces
+  media/                  every picture and clip, every version kept
+  site/index.html         the whole campaign on one page
+```
 
-The `marketing:*` skills and `xlsx` resolve only where your environment provides them (generally
-claude.ai with a subscription). Every one is referenced from a subagent, never from a bundled skill,
-so the pipeline never depends on them — when one is absent the agent does that slice of work
-directly. Analytics MCPs are not wired: the `analyst` agent works from CSV/XLSX you supply and will
-say what is missing rather than fabricate a metric.
+`brands/` and `campaigns/` are yours. The engine is read-only and never writes into itself. Nothing
+is ever overwritten: a second attempt at a picture is saved beside the first, and the record of which
+one you settled on lives with the campaign.
+
+## What you need, and what happens without it
+
+There is no build step and nothing to install. Everything below is optional and none of it stops you
+finishing a campaign.
+
+| | Gives you | Without it |
+|---|---|---|
+| **Node** v18 or newer | the one-page campaign view | Everything is still written to your folder; you just do not get `site/index.html`. |
+| **ffmpeg** | checking a video after it is made | You still get the clip. It just says it could not open the file to check it. |
+| **a fal.ai key** | images and video made here | It hands you the finished prompt and settings to run yourself at fal.ai, and writes nothing. |
+
+### Turning on image and video
+
+Open `/plugin`, go to the **Installed** tab and select **halfborg-skills**. Claude Code will ask you
+for a fal.ai key — get one at [fal.ai/dashboard/keys](https://fal.ai/dashboard/keys). Then run
+`/reload-plugins`, or restart.
+
+The key goes into secure storage and is wired up for you. No part of the engine ever reads it, and
+you should never paste a key into a conversation with anyone, including this one.
+
+**Running without a key is a supported way to use this engine, not a lesser one.** What you get back
+offline is the same block you get when you choose "I'll make it myself" with a key set.
+
+### A note on extras
+
+A few optional helpers only work in some environments, generally claude.ai with a subscription.
+Nothing here depends on them: when one is missing, the engine does that piece of work itself. There
+are no analytics integrations — if you want performance analysis, hand it a CSV or spreadsheet, and
+it will tell you what is missing rather than invent a number.
 
 ## What's inside
 
@@ -102,27 +128,29 @@ say what is missing rather than fabricate a metric.
 
 **Agents** — `strategist`, `researcher`, `content-writer`, `paid-creative`, `analyst`.
 
-**Schemas** — the brand pack, the manifest, the engine config, the campaign structure contract, and
-`preflight.md`, the shared readiness-and-routing contract every skill defers to.
+## How it stays consistent
 
-## Design notes
+**The engine never names a brand.** If it needs a brand fact, it reads your brand file. That
+boundary is what lets the same pipeline work for anyone.
 
-**Engine vs brand pack.** The pipeline never names a brand. If a skill needs a brand fact, it reads
-the pack. This is the boundary that makes the engine reusable.
+**It remembers in files, not in the conversation.** Each stage writes something the next one reads,
+so you can close the session, come back next week, and carry on where you left off.
 
-**State lives in files, not the conversation.** Each phase writes a durable artifact the next reads,
-so a campaign can be picked up cold in a fresh session.
+**Nothing is overwritten.** Every version of every picture is kept. Which one is the rough option,
+which is the one you locked, and which shipped is recorded alongside them.
 
-**One home per deliverable, status in the log.** Every generated file lives in `media/<id>/` under a
-versioned name and is never overwritten. Whether something is a candidate, an iteration, the locked
-anchor or the shipped final is a status in the append-only generation log, not a folder.
+**Out of order is a signpost, not an error.** Ask for an ad in an empty folder and it tells you what
+is missing and what to run first. It will not invent a brand fact, a campaign or a deliverable to get
+itself unstuck.
 
-**Out of sequence is a routing problem, not an error.** Run a phase-3 skill in an empty folder and it
-names what is missing and points at the phase that produces it. It will not invent a brand fact, a
-campaign, or a deliverable id to get unblocked.
+**It never claims something it did not do.** No made-up link to an image, no made-up cost, no check
+reported that was not run. If it could not do something, it says so first, not last.
 
 Full architecture, contracts and invariants: run the `campaign-engine` skill, or read
-[skills/campaign-engine/SKILL.md](skills/campaign-engine/SKILL.md).
+[skills/campaign/campaign-engine/SKILL.md](skills/campaign/campaign-engine/SKILL.md).
+
+Part of the [halfborg](../../README.md) marketplace. Working on the engine itself:
+[CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ## Licence
 

@@ -43,7 +43,7 @@ artifact. Whether it is "working" or "final" is a status in the generation log, 
 
 ## 1. Preconditions — is the MCP live?
 
-The fal MCP is a plugin-scoped streamable-HTTP server declared in the campaign-engine plugin's
+The fal MCP is a plugin-scoped streamable-HTTP server declared in the `halfborg-skills` plugin's
 `.mcp.json` (`fal-ai` → `https://mcp.fal.ai/mcp`), authenticated with the plugin's `fal_key`
 setting. When connected it exposes:
 
@@ -55,16 +55,21 @@ setting. When connected it exposes:
 Before doing anything, confirm those `mcp__fal-ai__*` tools are actually available.
 
 **If they are not, stop rendering — but do not stop.** No key is a supported way to run this
-workspace, not a failure. You were *given* a prompt, so you already hold everything the user needs to
-render it themselves. Resolve the model and settings exactly as you would have (steps 2-3, minus the
-`get_model_schema` call you cannot make), then hand back a paste-ready block:
+workspace, not a failure. Say that plainly: image generation is not connected here, so you will hand
+them the picture to make at fal.ai instead. Never call it an error and never apologise for it.
 
-- the **prompt**, verbatim and unedited;
-- the **model id** you would have used;
-- the **settings** you resolved — aspect ratio, number of images, seed, reference images;
+You were *given* a prompt, so you already hold everything the user needs to render it themselves.
+Resolve the model and settings exactly as you would have (steps 2-3, minus the `get_model_schema`
+call you cannot make), then hand back a paste-ready block — the same shape as the receipt in step 4:
+
+- the **prompt**, verbatim and unedited, in a fenced code block;
+- the **model id** you would have used, exactly;
+- the **settings** you resolved, as plain labels and real values — size, how many pictures, seed if
+  any, reference pictures;
 - where to run it: <https://fal.ai/models>.
 
-Then, once and briefly: `/halfborg-skills:setup-engine` sets a key up if they want renders in place next time.
+Then, once and in a clause: `/halfborg-skills:setup-engine` sets a key up if they would rather these
+came out here next time.
 
 What does *not* change: **write no file, append no log line, and invent no URL, path, or cost.** An
 unavailable MCP still means no image (the engine rule: never fabricate metrics or generated-media
@@ -99,39 +104,66 @@ names it expects (they differ between models — `prompt`, `image_size` vs `aspe
   substituted** and why.
 - Optionally call `get_pricing` so you can report an estimated cost before spending.
 
-## 4. GATE — show the prompt, let the user choose who renders
+## 4. GATE — say what it costs, show what gets sent, let them choose
 
 **Never call `run_model` before the user has seen the prompt and said go.** This gate is
 unconditional: it applies to every render, every model, every caller, however cheap the image and
 however clearly the user asked for one earlier in the conversation. Rendering spends the user's money
 against their key, so the decision to spend is theirs each time.
 
-Present the run as one compact block:
+Present it in two parts, in this order, per
+`${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 4. They do different jobs and neither
+substitutes for the other.
 
-- the **prompt, verbatim** in a fenced code block — unedited, exactly what will be sent;
-- the **model id** resolved in step 3;
-- the **settings** — aspect ratio, resolution/quality, `num_images`, seed, output format;
-- the **reference image(s)**, if any, as local paths or URLs, in the order the model receives them;
-- the **estimated cost** (`get_pricing` × `num_images`), flagged as an estimate.
+**Part one, the sentence.** One or two lines of plain English: what you are about to make, how many,
+what shape, and what it will cost. This is what they decide on, and for most runs it is all they
+will read.
 
-Then ask which they want, offering both routes plainly:
+> I will make one square picture of the serum bottle on wet stone. About $0.04.
 
-1. **You render it** — proceed to step 5.
-2. **They render it by hand** — hand back the same paste-ready block as the offline path in step 1
-   (prompt, model, settings, reference paths, and <https://fal.ai/models>), then **stop**: write no
+Say the count as a count ("one picture", "three pictures"), the shape as a shape ("square",
+"portrait", "vertical, for reels") and the money as money. Name no setting here.
+
+**Part two, the receipt.** Under a short heading — **Exactly what gets sent** — complete and
+unabbreviated:
+
+- the **prompt, verbatim, in a fenced code block**. Unedited, character for character what goes to
+  the model. Never a summary, never a tidied version, never a description of it. This is the text
+  they are approving;
+- the **model id** exactly as it will be sent, on its own line. Gloss it in plain words beside it if
+  you like ("Nano Banana 2"); never replace it with the gloss, because the id is what gets billed;
+- the **settings**, as plain labels and real values — `Size: square (1:1)`, `Pictures: 1`,
+  `Starting point: 51823` (omit the line entirely when you are not setting a seed). Show every value
+  that will actually be sent. Plain labels, never the raw parameter names;
+- the **reference picture(s)**, if any, as filenames in the order the model receives them;
+- the **estimated cost**: the figure, the word "estimate", and how you got there
+  (`get_pricing` × number of pictures). If pricing failed, say so and invent no number.
+
+The receipt is not decoration and it does not shrink. It exists because the user is agreeing to one
+specific piece of text being sent and one specific amount being spent, and neither is knowable from a
+paraphrase. Summarising the prompt, hiding the model id behind the friendly name, dropping a setting
+because it looks technical, or rounding the cost away all break the same rule. **Plain language is
+the job of part one. Part two is a receipt, and receipts are literal.**
+
+Then ask, as three plain choices of equal weight:
+
+1. **You make it** — proceed to step 5.
+2. **They run it themselves** — hand back the same paste-ready block as the offline path in step 1
+   (prompt, model id, settings, reference files, and <https://fal.ai/models>), then **stop**: write no
    file, append no log line, invent no URL or cost. If they later hand back a rendered file or URL,
    save and log it per steps 6-7, recording what actually happened — the model they used, and no
    cost figure you did not receive.
-3. **Adjust first** — change the settings (or send the prompt back to `ai-image-video-prompt-builder`
-   for a creative change), then re-present this gate. Do not treat an adjustment as approval.
+3. **Change something first** — adjust the settings (or send the prompt back to
+   `ai-image-video-prompt-builder` for a creative change), then show this gate again. An adjustment
+   is not a yes.
 
-**What approval covers.** One approval covers the run as presented. Changing the prompt, the model,
-or `num_images` means a fresh gate. A caller running a bounded reroll loop (`compose-lockup`,
-`reference-kit`) may ask once for the whole loop, but only by stating the **reroll cap and the
-worst-case total spend** up front; a reroll that stays inside that approved envelope does not re-gate,
-and anything beyond it does.
+**What a yes covers.** One yes covers the run as shown. A different prompt, a different model, or a
+different number of pictures means a fresh gate. A caller running a bounded reroll loop
+(`compose-lockup`, `reference-kit`) may ask once for the whole loop, but only by saying up front how
+many tries it will make and the worst-case total; a reroll inside that envelope does not re-gate,
+anything past it does.
 
-**Silence is not approval.** If you cannot get an answer, do not render.
+**Silence is not a yes.** If you cannot get an answer, do not render.
 
 ## 5. Generate
 
@@ -157,10 +189,14 @@ deliverable on its own.
 
 **Check the deliverable id before you create its folder.** Confirm it appears in
 `campaigns/<slug>/system/manifest.yaml` or was registered in `system/generation-log.jsonl`. An
-unregistered id is usually a typo, and creating the folder anyway mints a ghost that only QA catches,
-much later. This is **warn and confirm, not block**: name the id, say it is not registered, offer the
-closest registered match, and proceed once the user confirms. See
-`${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`.
+unregistered id is usually a typo, and creating the folder anyway leaves an orphan that only QA
+catches, much later. Warn and confirm, do not block — and ask it as a question about their campaign,
+not about the register:
+
+> I have nothing called `launch-blog` on this campaign. Did you mean the launch email, or is this
+> something new you want adding?
+
+See `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`.
 
 **Download** each URL with whatever shell you have, keeping the real file extension from the URL.
 Create the destination folder first if it does not exist.
@@ -187,20 +223,35 @@ node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-
 
 ## 7. Report back, and keep the claim posture
 
-Report only **real returned values** — never a placeholder or an imagined link:
-- the local path(s) of the downloaded image(s),
-- the source fal URL(s),
-- the model used (note any substitution from step 3),
-- the estimated cost if you fetched pricing.
+Follow `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 5, and report only **real returned
+values** — never a placeholder or an imagined link:
+
+- **what you made**, named as the thing it is ("the square version of the launch static"), and how
+  many;
+- **one path** — the file they would open, written out in full. If you saved several, that is a
+  count, not a list;
+- **what it cost**, if you spent anything. This is spoken, always;
+- **anything that did not go to plan**: a model you substituted for the one approved, a setting the
+  schema would not take, a download that failed.
+
+The model, the seed and the source URL went into the generation log in step 6. That is what makes it
+safe to leave them out of the conversation — do not recite them.
 
 The image is a generated asset, not a cleared one: brand and claim review still apply before it
-ships (the brand's `pack.mandatories` and `pack.nogos`). The generation-log
-entry and site rebuild from step 6 are part of the render, not an optional extra.
+ships (the brand's `pack.mandatories` and `pack.nogos`). Say that in the user's terms — it has not
+been checked against their must-includes or the things they never say — rather than by field name.
+The generation-log entry and site rebuild from step 6 are part of the render, not an optional extra.
+
+**End on a next action**, per section 6 of the same spec. What that is depends on why the picture
+exists: inside `campaign-message` it is "pick one and I will lock it in"; on a deliverable it is
+"want the headline laid onto it?"; standalone it is "want another go with a change?" One offer, not
+a menu.
 
 ## House rules
 
-- **Never spend without a yes.** Step 4 gates every render. Show the prompt, the model, the settings
-  and the estimated cost, and offer the by-hand route alongside rendering it here. No approval, no
+- **Never spend without a yes.** Step 4 gates every render: a plain sentence with the cost in it,
+  then a literal receipt — the verbatim prompt, the exact model id, the real settings, the estimate.
+  The by-hand route is offered alongside rendering it here, at equal weight. No approval, no
   `run_model` — and an earlier "make me some images" is not standing approval for this one.
 - **Render, never invent.** This skill executes an existing prompt; it does not write, embellish,
   or "fix" the creative. Prompt authoring is `ai-image-video-prompt-builder`.
@@ -214,4 +265,8 @@ entry and site rebuild from step 6 are part of the render, not an optional extra
   Never overwrite an existing version and never scatter files at the repo root.
 - **Log every render** (one `generate` line) and rebuild the site. An unlogged image shows up on
   the campaign page badged "unlogged" — that is a defect to fix, not a cosmetic.
+- **Speak plainly.** Everything you say out loud follows
+  `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the
+  conversation. The one place that never softens is the gate receipt — the prompt, the model id and
+  the money stay exact.
 - UK English, no em dashes in anything you author.

@@ -42,9 +42,10 @@ path shorthand here.
 
 ## 1. Read the inputs
 
-The campaign workspace and the active brand should have been provided to you — run
-`/halfborg-skills:setup-engine` if not. Resolve the campaign, brand and message per
-`${CLAUDE_PLUGIN_ROOT}/schema/preflight.md` before reading anything below.
+Resolve the campaign, brand and message per `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md` before
+reading anything below. Everything you say out loud follows
+`${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the
+conversation.
 
 1. **`campaigns/<slug>/docs/message.md`** — the required input. Pull from `master_visual`:
    `subjects[]` (each `id` + `definition`), `locked_still` (the text-free key visual path), `palette`,
@@ -190,15 +191,22 @@ to." Optionally append one `note` event capturing the Layer-3 verdict (residual 
 rebuild the site (`node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs"
 "campaigns/<slug>"`).
 
-Then report:
+Then report. Two audiences here, and they get different things.
 
-- **the exact locked path of every reference in the kit** — both the ones you generated and the REUSE
-  paths — in the pass order the video prompt should list them, so `video-ad-script`'s Step B can drop
-  them straight into `REFERENCES (in pass order)` and bind each to its `@ImageN`,
-- the model and cost of anything you rendered,
-- any residual **soft** flags from Layer 3 for QA to weigh,
-- plainly: these are generated assets, not cleared ones — `pack.mandatories`, `pack.nogos` and
-  `campaign-qa` still apply before anything ships.
+**For the next step in the pipeline** (kept precise, because `video-ad-script`'s Step B binds each
+one to its `@ImageN`): **the exact locked path of every reference in the kit**, both generated and
+REUSE, in the pass order the video prompt should list them. Keep this as a compact block, introduced
+in a line of plain English ("here is the set the video will be built from, in order") rather than
+presented as the whole report.
+
+**For the user**, per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 5: what the set
+covers, said as things ("the bottle, the founder, and the kitchen counter"), what you had to make
+versus what you reused, what any rendering cost, and anything still worth a second look. Then end on
+a next action per section 6 — usually that the video has everything it needs, and an offer to price
+it up.
+
+Say plainly that none of it has been checked yet against their must-includes, the things they never
+say, or the final campaign check.
 
 ## House rules
 
@@ -218,4 +226,5 @@ Then report:
   pointers name its exact versioned path. Never overwrite a version or scatter files at the repo root.
 - **Fail loud.** Missing `message.md`/`locked_still`, or the fal MCP down → say so and stop or hand
   back; never fabricate a path, a URL, or an image.
+- **Speak plainly.** Everything you say out loud follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the conversation. The exception is the ordered reference block the video step needs — that stays literal.
 - British spelling, no em dashes in any copy this skill authors.

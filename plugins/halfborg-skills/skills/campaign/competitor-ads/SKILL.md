@@ -138,8 +138,13 @@ Shape:
 - No competitor personal data retained.
 ```
 
-Then report the path written, how many ads were distilled, the headline priors, and that `compose-lockup`
-will pick them up automatically on its next run for this campaign.
+Then report per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 5: how many ads you went
+through, the two or three patterns worth acting on, and **one path** — the write-up, in full. Say in
+a clause that "winning" here means an ad that has run a long time with many variants, not one you
+have spend figures for.
+
+**End on a next action** per section 6: the headline patterns feed straight into the campaign's
+statics from here on, so offer to put one to work.
 
 ## House rules
 
@@ -155,4 +160,5 @@ will pick them up automatically on its next run for this campaign.
 - **Priors in the shared vocabulary.** Name archetypes as `compose-lockup`'s `references/art-direction.md`
   §B names them, so the read-hook consumes them without translation.
 - **Brand facts are read, not asked.** Competitors and audience come from the pack or the invocation.
+- **Speak plainly.** Everything you say out loud follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the conversation. "Headline priors" and "archetype vocabulary" are art-direction shorthand — say what the patterns are instead.
 - British spelling, no em dashes in the artifact copy.

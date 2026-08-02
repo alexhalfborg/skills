@@ -51,10 +51,11 @@ path shorthand here. The concrete rule-by-rule matrix, severity rubric and repor
 
 ## Preconditions
 
-The campaign workspace and the active brand should have been provided to you — run
-`/halfborg-skills:setup-engine` if not. Then resolve the campaign, the manifest and the pack per
-`${CLAUDE_PLUGIN_ROOT}/schema/preflight.md` **before** reading anything below. QA reads the whole
-artifact chain, so it is the skill most exposed to a chain that was never built:
+Resolve the campaign, the manifest and the pack per `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`
+**before** reading anything below. Everything you say out loud follows
+`${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the
+conversation — and this skill has more of them than any other, so it needs the rule most. QA reads
+the whole artifact chain, so it is the skill most exposed to a chain that was never built:
 
 - **No `system/manifest.yaml`** — there is no deliverable list to check against and no
   `campaign.brand` to resolve. Stop and route: to `campaign-brief` if the campaign folder exists, to
@@ -157,8 +158,22 @@ Then rebuild:
 node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs" "campaigns/<slug>"
 ```
 
-Then report to the user: the gate verdict, the FAIL/WARN counts, the headline findings with their
-proposed fixes, and the path to the written report.
+Then report to the user, per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` sections 5 and 6. The
+report file keeps `PASS` / `WARN` / `FAIL` and the verdict words exactly; **the conversation does
+not.** Say:
+
+- **where the campaign stands**, in their words — clean; worth a look; or needs fixing before it goes
+  out;
+- **how many of each**, as a count of things to fix and things to look at;
+- **the two or three findings that actually matter**, each in a sentence: what is wrong, in which
+  piece, and the fix you propose;
+- **one path** — the report, in full, for the rest of the list;
+- **that you have changed nothing.** Say it plainly and say why: you check, you do not edit.
+
+**Then end on a next action.** You are routing, not repairing: offer to hand the top finding back to
+be redone — named as the work ("want me to get that email rewritten first?"), not as a skill — and to
+run this check again once fixes have landed. Naming who fixes it and offering to start them off is
+still QA proposing. Do not edit an artifact here, and do not re-run until a fix has actually landed.
 
 ## Degradation
 
@@ -167,9 +182,9 @@ proposed fixes, and the path to the written report.
 | `message.md` | Check against `brief.md` alone; note that drift checks are limited. Never skip silently. |
 | `design.md` | Skip the typeface/hex traces with a note; still run `master_visual.constants` visual checks. |
 | `mandatories` | Unconfirmed, not none. WARN and ask, rather than passing the campaign as clean. |
-| `ffprobe` / `ffmpeg` | Mark each video "unverified" (WARN). Never claim a video check you did not run. |
-| no media yet | Run Families 1, 2 and 4; note that visual compliance had nothing to check. |
-| a legacy campaign (no `system/`) | The build script refuses it; say so and point at the migration recipe. Do not QA a layout the log contract does not cover. |
+| `ffprobe` / `ffmpeg` | Mark each video "unverified" (WARN) in the report. Out loud: you could not open the clips to check them. Never claim a video check you did not run. |
+| no media yet | Run Families 1, 2 and 4; note that there were no pictures or clips to look at yet. |
+| a legacy campaign (no `system/`) | The build script cannot read this campaign's layout. Say that plainly, offer to bring it up to date (the migration recipe in `campaign-structure.md` section 7), and do not QA a layout the log contract does not cover. |
 
 ## House rules
 
@@ -184,4 +199,8 @@ proposed fixes, and the path to the written report.
   expanders left is either cleared with its allowance or escalated; carry the open ones through verbatim.
 - **Never fabricate.** Only real paths, real sampled values, real costs. No invented hex, allowance, or PASS.
 - **Absent `mandatories` is unconfirmed, not none.** Confirm rather than assume.
+- **The report is a file; the summary is a conversation.** `PASS` / `WARN` / `FAIL`, the verdict
+  words and the rule citations stay exact inside `qa-report.md`, because the site builder and the
+  next QA pass read them. Out loud, follow `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: what is
+  wrong, in which piece, and what you would do about it.
 - British spelling, reduce em dashes, no phrasing that reads as AI-generated.

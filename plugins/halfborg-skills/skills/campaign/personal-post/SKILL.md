@@ -340,3 +340,16 @@ Ask before writing if any of these are true:
 - The request is ambiguous about post type (guide? personal story? news commentary? — ask).
 
 For everything else, go ahead and draft. Always honest, always linked, always grounded.
+
+## When you hand it back
+
+Follow `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` sections 5 and 6. Three things, in this
+order:
+
+1. **Every placeholder you left**, listed plainly — the founder's own anecdote, an unsourced figure,
+   a customer story you would not invent. Say what each one needs and who can supply it. Do not
+   leave them to find the square brackets themselves.
+2. **The one thing worth checking** in the draft: usually whether it actually sounds like the person
+   whose name is on it.
+3. **One next action** — the next thing on the campaign's list, named as a thing, or an offer of a
+   different angle on the same post. Name no skill.

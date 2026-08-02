@@ -25,8 +25,8 @@ so **no skill ever reads the key and no skill ever needs its value**.
 
 To test whether rendering is available, check for live `mcp__fal-ai__*` tools in the session. Never
 test by looking for a file, and never ask the user to paste a key into the conversation. If it is
-not configured, point them at `/plugin` → **campaign-engine** → configure, or at
-`/halfborg-skills:setup-engine`.
+not configured, point them at `/plugin` → **Installed** → **halfborg-skills**, where Claude Code asks
+for the key, or at `/halfborg-skills:setup-engine`.
 
 Once connected the server exposes generic tools — `search_models`, `get_model_schema`, `run_model`,
 `get_pricing`, and the async job tools for video (surfaced as `mcp__fal-ai__*`). `generate-image` and

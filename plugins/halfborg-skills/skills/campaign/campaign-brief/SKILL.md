@@ -12,9 +12,10 @@ This is the first of the two human-gated phases: interview, draft, get sign-off,
 
 ## Preconditions
 
-The campaign workspace and the active brand should have been provided to you — run
-`/halfborg-skills:setup-engine` if not. The full resolution and routing contract is
-`${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`; what follows is this phase's own reading of it.
+The full resolution and routing contract is `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`; what follows
+is this phase's own reading of it. Everything you say out loud follows
+`${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the
+conversation.
 
 The brand pack is a dial, not a gate. Read whatever is present and treat it as settled; the more it contains, the fewer questions you ask. The less it contains, the more you fall back to asking during the interview.
 
@@ -136,13 +137,24 @@ Do not invent deliverables the campaign does not imply. Validate the finished ma
 
 ## The human gate
 
-Before writing anything, present the brief and the proposed deliverable list to the user in plain
-terms and ask for explicit sign-off on the strategy and the scope. If they change direction,
-revise and re-present. Only once they approve:
+**What you present.** Before writing anything, put the brief and the proposed deliverable list in
+front of the user and ask for an explicit yes on both the strategy and the scope. Plain sentences
+only: no filenames, no field names, nothing that only makes sense to someone who can see `system/`.
+Per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 4, this is the sentence half of a gate —
+what the campaign is trying to do, who it is for, the one idea it has to land, and the list of things
+you will make, each named as a thing ("a launch email", "three static ads", "a landing page") rather
+than by id. If they change direction, revise and present it again.
+
+**Once they approve, write.** These are files, so they take file vocabulary, exactly:
 
 1. Write `docs/brief.md` in the campaign workspace (paths follow `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`).
 2. Write `system/manifest.yaml` in the campaign workspace, schema-valid.
-3. Offer to continue into `campaign-message` (key message, taglines, master visual). Do not force a break, and do not start the core message yourself here.
+3. Do not narrate either of those. "That is the plan written down" is enough; the user does not need
+   the paths, and the campaign page is where they go to look at it.
+
+**Then end on the next action**, per section 6 of the same spec: offer to move on to the message —
+the one thing this campaign says, the line it says it in, and the picture it all hangs on. Name no
+skill. Do not force a break, and do not start the core message yourself here.
 
 ## Output: brief.md
 

@@ -37,11 +37,13 @@ log (the "log step" in the structure spec).
 2. Run the script. It exits non-zero with a clear message on a legacy-layout campaign (no
    `system/` folder) — in that case offer the migration recipe in the structure spec rather
    than building anything by hand.
-3. Relay its output: the page path, tab count, log-event count, and **every warning verbatim**
-   (warnings are malformed generation-log lines; offer to fix the offending line, and only that
-   line).
-4. Tell the user how to view it (open `site/index.html` in a browser or VSCode's HTML preview)
-   and how many claim flags surfaced on the Overview tab.
+3. Read its output. The page path and **every warning verbatim** matter; the tab and event counts
+   are for you, not for the user. A warning means one line of the campaign's record is malformed —
+   say what it affects in plain terms, offer to fix that one line, and fix nothing else.
+4. Report it per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 5: the page is rebuilt,
+   **one path** in full, and how to open it (double-click it, or open it in any browser). If any
+   claim flags surfaced, say how many and that they are waiting on the first tab. Then end on a next
+   action — usually an offer to walk through what is there, or to make the next thing on the list.
 
 That is the whole job in the normal case. Do not re-render the markdown yourself, and do not
 edit `site/index.html` directly — a hand edit is destroyed by the next rebuild.
@@ -77,4 +79,5 @@ Only when the user asks to change how the page looks or what it shows:
   oddly, that is a content problem for the owning skill, not something to fix here.
 - **Carry claim flags through, never drop them.** They exist for human sign-off.
 - **One self-contained file, offline-first.** No CDNs, web fonts, or external requests, ever.
+- **Speak plainly.** Everything you say out loud follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the conversation. Tab counts and event counts are diagnostics for you; the user wants the page and how to open it.
 - UK English, no em dashes in any label or copy you author for the shell.

@@ -44,18 +44,19 @@ locked, never a new concept.
 
 ## 1. Read the inputs
 
-The campaign workspace and the active brand should have been provided to you — run
-`/halfborg-skills:setup-engine` if not. Resolve the campaign, brand and message per
-`${CLAUDE_PLUGIN_ROOT}/schema/preflight.md` before reading anything below.
+Resolve the campaign, brand and message per `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md` before
+reading anything below. Everything you say out loud follows
+`${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the
+conversation.
 
 1. **`campaigns/<slug>/docs/message.md`** — the preferred input (campaign paths follow
    `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`). Pull the chosen tagline and, from the
    `master_visual` block: `concept` (the one-paragraph direction), `subjects` (the locked subject ids
    and definitions, e.g. `HANDS-1`), `palette`, and `locked_still` (the exact versioned path to the
    rendered anchor image, if `campaign-message` locked one). **If `message.md` does not exist yet**, do not
-   silently proceed and do not stop dead: tell the user there is no locked master visual, and ask
-   whether to run anyway using the campaign's `docs/brief.md` as the visual guidance (its theme,
-   persona, and any look cues). Only run off the brief with that explicit go-ahead, and treat it as
+   silently proceed and do not stop dead: say plainly that the campaign has no main picture agreed
+   yet, so these will not match anything, and ask whether to go ahead using the brief as the steer.
+   Only run off the brief with that explicit go-ahead, and treat it as
    looser guidance than a locked concept — the output is even rougher and must be labelled as such.
 2. **`brands/<id>/design.md`** — resolve `<id>` from `campaign.brand` in
    `campaigns/<slug>/system/manifest.yaml` rather than asking which brand this is
@@ -168,16 +169,22 @@ campaigns/<slug>/media/<deliverable-id>/<deliverable-id>-idea-<NN>-v01.png
 
 e.g. `campaigns/<slug>/media/banner-ad/banner-ad-idea-03-v01.png`. Each variation is its own `idea`
 sequence number at `v01`; a reroll of the same idea takes `v02`. Log each one (status `candidate`)
-and rebuild the site per the log step in `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`. Then report:
+and rebuild the site per the log step in `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`. Then
+report per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 5:
 
-- Every PNG path written this run.
-- The model used (`fal-ai/nano-banana-2/edit` or `fal-ai/nano-banana-2`) and whether the run was edit or
-  text-to-image mode.
-- The seeds, and which base subject was reused (edit mode) or that none was used (text-to-image).
-- The deliverable type and ratio.
-- Plainly: **these are non-production visual ideas.** They are direction starters, not shippable
-  assets, and still need production work plus brand and claim review (`pack.mandatories`,
-  `pack.nogos`) and `campaign-qa` before anything goes live.
+- **How many variations you made, what they are for, and what shape they are** — a count, not a list
+  of paths.
+- **One path**: the campaign page, in full, as the place to flick through them all.
+- **What they are not.** Plainly: these are rough directions, not finished artwork. Any text in them
+  is approximate, they still need production work, and nothing has been checked against the brand's
+  must-includes or the things they never say.
+- **Which one you would take forward, and why**, in a clause.
+
+The model, the seeds and whether the run built on the campaign's main picture all went into the log.
+Do not recite them.
+
+**End on a next action** per section 6: offer to take the strongest one through to a finished
+version. Name no skill.
 
 ## Not built yet
 
@@ -201,4 +208,5 @@ and rebuild the site per the log step in `${CLAUDE_PLUGIN_ROOT}/schema/campaign-
   spelling or placement, and always label the output as non-production in the report.
 - **Fail loud on model or moderation errors.** If the model id does not resolve, or a generation is
   refused, say so — never silently swap models or drop images.
+- **Speak plainly.** Everything you say out loud follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the conversation. Never recite paths, models or seeds — they are in the log.
 - British spelling, no em dashes, in any copy this skill authors (labels, report-back).

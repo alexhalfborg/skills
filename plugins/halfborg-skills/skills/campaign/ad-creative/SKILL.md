@@ -42,9 +42,10 @@ generation prompt. A **static or carousel** concept goes to `visual-ideas` for r
 
 ## Before Starting
 
-The campaign workspace and the active brand should have been provided to you — run
-`/halfborg-skills:setup-engine` if not. For campaign modes, resolve the campaign, brand and message
-per `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md` first; the standalone copy modes need only a brand.
+For campaign modes, resolve the campaign, brand and message per
+`${CLAUDE_PLUGIN_ROOT}/schema/preflight.md` first; the standalone copy modes need only a brand.
+Everything you say out loud follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words
+belong in the files, not in the conversation.
 
 **Check for brand marketing context first:**
 Before asking questions, determine which campaign you are creating ads for. Read `campaigns/<slug>/docs/brief.md` and `campaigns/<slug>/docs/message.md` if they exist. Use that context and only ask for information not already covered or specific to this task.
@@ -109,7 +110,7 @@ The framework — the funnel, the four-function ad anatomy, variant permutation,
 
 ### Inputs, in order
 
-1. **The campaign brief (primary input).** `campaigns/<slug>/docs/brief.md` sets the theme, the lead persona and awareness-stage focus, the hero SKUs and the funnel role each plays, and the core message and tagline candidates every concept must thread to. Read it first and let it choose the product and the angle. If there is no brief, point the user at `new-campaign`, or for a quick one-off proceed from a named product plus the brand pack.
+1. **The campaign brief (primary input).** `campaigns/<slug>/docs/brief.md` sets the theme, the lead persona and awareness-stage focus, the hero SKUs and the funnel role each plays, and the core message and tagline candidates every concept must thread to. Read it first and let it choose the product and the angle. If there is no brief, say the campaign has not been planned out yet and point them at `/halfborg-skills:new-campaign` — or, for a quick one-off, proceed from a named product plus the brand pack.
 2. **The brand pack (how to execute).** Resolve `<id>` from `campaign.brand` in `campaigns/<slug>/system/manifest.yaml` rather than asking which brand this is (`${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` section 1.1); outside a campaign, the invocation names the brand. `brands/<id>/pack.yaml` is then the source of truth. Read it fully before planning; do not ask the user anything the pack answers. Everything an ad needs to know about the brand is in it:
 
    | What you need | Where it comes from |
@@ -125,7 +126,9 @@ The framework — the funnel, the four-function ad anatomy, variant permutation,
 
    **Voice, in three cases.** If `voice.skills` is absent, the brand has no first-person voice to ration: mark every concept `Voice: No` and write in the brand voice from `voice.summary`. If `voice.skills` is present and `ads.voice_rationing` is set, follow that rule. If `voice.skills` is present but `ads.voice_rationing` is absent, apply the engine default: first-person only for experiential claims, weighted top-of-funnel.
 
-   **A brand with no `ads` block is not ads-ready. That is a hard stop — route, don't guess.** Send the user to `/halfborg-skills:setup-brand` to add one. Do not invent a presenter, write the block yourself, guess an audience, or proceed on a product you have not confirmed. The schema requires `ads.presenter` whenever the block exists, so the block's presence is your proof that a human decided who may appear in an ad. Nothing else is.
+   **A brand with no `ads` block is not ads-ready. That is a hard stop — route, don't guess.** Do not invent a presenter, write the block yourself, guess an audience, or proceed on a product you have not confirmed. The schema requires `ads.presenter` whenever the block exists, so the block's presence is your proof that a human decided who may appear in an ad. Nothing else is.
+
+   Say it as the decision it is, never as a missing field: *"Before I write ads I need one thing from you — whether a person appears in them, and if so who. That is your call, not mine. Run `/halfborg-skills:setup-brand`, answer the couple of questions about ads, and come straight back."*
 
    **A thin pack is valid, and the rest of the table degrades.** Only the `ads` block is a gate. If `channels` is missing, take the channel from the brief or the manifest entry and pick formats from [references/platform-specs.md](references/platform-specs.md). If `products[].url`, `.price`, or `.claims_allowed` is missing, say so and leave the destination or figure unresolved: a Sell concept needs a real price and a real URL, so flag the gap rather than inventing one, and confirm against the live store at `brand.url` before anything runs. Never fill a pack gap with a plausible guess.
 
@@ -445,4 +448,4 @@ Analytics integrations (Google Ads, Meta, LinkedIn, TikTok, GA, Klaviyo) are **n
 - A CSV or XLSX export of ad performance the user drops into the campaign folder, or metrics pasted into chat. Ask which metric matters most (CTR, CVR, ROAS) before ranking winners and losers.
 - Never fabricate metrics. If the data is missing, say what is missing, name the export that would supply it, and say that analytics integrations are not wired in this build. Do not guess at numbers to fill the gap.
 
-For a full performance report rather than a creative-iteration pass, hand off to the **`analyst`** subagent. It owns KPI analysis, trends, and prioritised recommendations from the same CSV/XLSX inputs. If an n8n workflow that fetches ad data already exists, the n8n MCP can run it to produce a CSV this skill then reads; this skill does not build that workflow.
+For a full performance report rather than a creative-iteration pass, hand off to the **`analyst`** agent — silently; the user asked for a report, not a tour of who writes it. It owns KPI analysis, trends, and prioritised recommendations from the same CSV/XLSX inputs. If an n8n workflow that fetches ad data already exists, the n8n MCP can run it to produce a CSV this skill then reads; this skill does not build that workflow.

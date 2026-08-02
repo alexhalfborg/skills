@@ -22,9 +22,10 @@ Campaign paths and filenames follow `${CLAUDE_PLUGIN_ROOT}/schema/campaign-struc
 
 ## 1. Read the inputs
 
-The campaign workspace and the active brand should have been provided to you — run
-`/halfborg-skills:setup-engine` if not. Resolve the campaign, brand and message per
-`${CLAUDE_PLUGIN_ROOT}/schema/preflight.md` before reading anything below.
+Resolve the campaign, brand and message per `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md` before
+reading anything below. Everything you say out loud follows
+`${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the
+conversation.
 
 1. **`campaigns/<slug>/docs/brief.md`** — the **page objective** comes from here, along with the audience, the constraints, and what is out of scope. If the brief names a conversion goal, that is the page's one job.
 2. **`campaigns/<slug>/docs/message.md`** — the required creative input. Pull:
@@ -52,16 +53,19 @@ Every section must ladder up to the key message. A section that does not is a se
 
 ## 3. The gate
 
-Before writing any markup, present in conversation, and in **no file**:
+Before building anything, present in conversation, and in **no file** — plain sentences, per
+`${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 4:
 
-- the **objective** in one line,
-- the **section stack**, in order,
-- the **hero headline** (verbatim from `message.md`, or the named variant),
-- the **CTA map**: which button, with what label, pointing at which `products[].url`,
-- the **claims** the page will make, each with the `claims_allowed` entry that permits it,
-- any **flagged gaps** from a thin pack.
+- **what the page is for**, in one line,
+- **the sections, in order**, named the way a person would name them ("the headline, then the
+  problem, then proof, then the offer"),
+- **the headline** it will lead with, verbatim from `message.md` or the named variant,
+- **each button: what it says, and where it goes** — the real destination URL,
+- **every claim the page will make**, each with a word on why it is safe to say: the cleared claim it
+  comes from, in their language, not the field name,
+- **anything you had to leave open** because the brand's details do not cover it.
 
-Get an explicit go-ahead. A wrong stack is cheap to fix here and expensive to fix after four hundred lines of markup.
+Get an explicit go-ahead. Reordering the sections is cheap now and expensive once the page is built.
 
 ## 4. Write the page
 
@@ -91,7 +95,14 @@ A reroll takes the next `v<NN>`. **Never overwrite.** Then follow the log step i
 node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs" "campaigns/<slug>"
 ```
 
-Then report: the path written, the objective and stack, the hero image used, the CTA targets, the claims asserted with their sources, and any flagged gaps. Say plainly that this is a generated artifact, not a cleared one: brand and claim review still apply (`pack.mandatories`, `pack.nogos`), and `campaign-qa` before it ships.
+Then report back per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 5: what the page does,
+the sections it ended up with, the picture it leads with, where the buttons go, the claims it makes,
+and anything you had to leave open. **One path** — the `.html` file, in full, so they can open it —
+and tell them it opens straight from disk in a browser.
+
+Say plainly that nobody has checked it yet: it has not been through their must-includes, the things
+they never say, or the final campaign check. Then **end on a next action** per section 6 — usually an
+offer to walk through it with them, or to write the next thing on the campaign's list.
 
 ## Degradation
 
@@ -116,4 +127,5 @@ A thin pack degrades with a flagged gap; it never guesses.
 - **This engine never deploys.** The page has no URL. Do not publish it, and do not tell the user an ad can point at it until a human has hosted it.
 - **Never overwrite a version.** A reroll is `-v02.html` beside `-v01.html`; supersession is a log  event, not a deleted file.
 - **The page lives in `media/<id>/`.** Not `content/` (which is markdown only, and unversioned), and not a `landing-page/` folder (which does not exist).
+- **Speak plainly.** Everything you say out loud follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the conversation. The provenance header keeps its exact field names; the gate and the report-back do not.
 - British spelling, reduce em dashes, no phrasing that reads as AI-generated. Keep first-person brand-voice copy in the brand voice and product-fact copy plain.

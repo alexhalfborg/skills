@@ -23,6 +23,8 @@ and the generation prompts that brief their visuals.
   If that file is missing the campaign has no manifest yet: route to `campaign-brief` when the campaign
   folder exists, `/halfborg-skills:new-campaign` when it does not. Never infer the brand from the
   folder name or from earlier conversation. See `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`.
+  Everything you say back follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine
+  words belong in the files, not in the conversation.
 - The brand's `brands/<id>/pack.yaml`. It is the source of truth for brand, audience,
   product, and compliance facts, and its `ads` block carries the presenter guardrail, the angle
   bank, and the voice rationing rule. A brand with no `ads` block is not ads-ready: route to
@@ -55,13 +57,15 @@ and the generation prompts that brief their visuals.
    offline behaviour). If the MCP is not connected, do **not** fabricate an asset: hand back the
    prompt, the model id and the resolved settings for the user to render by hand at fal.ai.
 
-   **Multi-clip video ads — start frames first.** Image-to-video needs a start frame per clip, and a
-   video script is a sequence of clips where usually only the payoff/reveal shot binds to the locked
-   master still while each setup shot is a different scene. So you own this two-phase sequencing: (a)
-   **render every clip's start frame first** with `generate-image` (reuse the locked still where the
-   shot is the master-visual reveal; generate a new on-brand still for each other scene), then (b)
-   hand the full set to `generate-video` to animate, which quotes the whole batch and **gates once**
-   for the set rather than per clip. Do not start rendering clips before all start frames exist.
+   **Multi-shot video ads — references, not start frames.** The default model
+   (`bytedance/seedance-2.0/reference-to-video`) takes a small set of identity references, addressed
+   in the prompt as `@Image1`, `@Image2` and so on, and cuts between shots inside a **single**
+   generation. There is no start frame per shot, so **never route to `generate-image` to manufacture
+   one** — `generate-video` says the same thing in bold, and rendering a frame per shot spends real
+   money on files nothing will use. What you own is making sure the reference set exists before the
+   video is submitted: that is `reference-kit`'s job, and it reuses the locked still and real product
+   photos wherever it can rather than generating. Only the `image-to-video` override needs a real
+   start frame, and there it needs exactly one.
 
 ## Where your output goes (per `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`)
 - Concepts → `campaigns/<slug>/content/<pipeline-id>-concepts.md`; scripts and their video prompts →

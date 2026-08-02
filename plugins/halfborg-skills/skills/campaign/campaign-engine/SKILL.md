@@ -155,6 +155,10 @@ Validate against the schema, silently fix failures, and never show a user a vali
   `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` (prose contract, not JSON Schema; the build
   script lints the log on every run).
 - Phase readiness and routing against `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`.
+- Everything said to the user against `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`. The engine's
+  words are for its files; the person reading them is a marketer. The contract carries the
+  translation table, the sentence-and-receipt shape every gate uses, and the list of strings that are
+  never softened — the verbatim prompt, the model id, the money, a path they can open.
 - `message.md` and `voice-profiles.md` are structured but not schema-validated. They are the
   least-guarded seam; `campaign-qa` is where pack-to-profile and message-to-asset consistency
   should be checked.
@@ -209,16 +213,20 @@ the phase that writes it and the phases that read it.
   `Authorization` header by the harness — so no skill ever reads it and no skill ever needs the
   value. To test whether rendering is available, check for live `mcp__fal-ai__*` tools, not for a
   file. Secrets never go in `engine.yaml`, a brand pack, a campaign, or the conversation. Never ask
-  the user to paste a key into chat; point them at `/plugin` → campaign-engine → configure, or at
+  the user to paste a key into chat; point them at `/plugin` → **Installed** → **halfborg-skills**,
+  where Claude Code asks for it, or at
   `/halfborg-skills:setup-engine`. (A workspace running the engine unpackaged may instead set a
   `FAL_KEY` env var in the gitignored `.claude/settings.local.json`; that file must never be read.)
 - No key is a supported way to run this workspace, not a degraded one. `generate-image` and
   `generate-video` render when the fal MCP is live and otherwise hand back the prompt, model id, and
   settings to run by hand at fal.ai — writing no file, no log line, and no invented URL or cost.
   This is the same "never fabricate a generated-image link" rule seen from the offline side.
-- **Never render without human approval.** Every fal call — image and video alike — stops first and
-  shows the user the **verbatim prompt**, the model, the resolved settings and an estimated cost, then
-  offers two routes: the engine renders it, or the user renders it by hand at fal.ai. This gate lives
+- **Never render without human approval.** Every fal call — image and video alike — stops first, in
+  two parts: a plain sentence saying what is about to be made and what it costs, then a literal
+  receipt carrying the **verbatim prompt**, the exact model id, the resolved settings and the
+  estimate. The sentence is what they decide on; the receipt is what they are agreeing to, and it
+  never shrinks to read better. It then offers two routes: the engine renders it, or the user renders
+  it by hand at fal.ai. This gate lives
   in `generate-image` (step 4) and `generate-video` (step 5), which are the only skills that touch
   fal, so every caller inherits it and no expander may bypass it. It is unconditional: no
   `engine.yaml` value relaxes it, and an earlier "make the visuals" is not standing approval for a
@@ -232,6 +240,10 @@ the phase that writes it and the phases that read it.
 British spelling. Reduce em dashes. Avoid clichéd phrasing that reads as AI-generated. Keep
 first-person brand-voice copy in the brand voice and product-fact copy plain. Honour every mandatory
 and no-go in the pack.
+
+The same discipline applies to what a skill *says*, not only what it writes: engine vocabulary is for
+the files, and the conversation gets plain English. `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`
+is the contract, and every skill defers to it.
 
 ## Local tooling and external skills
 

@@ -22,9 +22,9 @@ path shorthand here.
 
 ## Preconditions
 
-The campaign workspace and the active brand should have been provided to you — run
-`/halfborg-skills:setup-engine` if not. The full resolution and routing contract is
-`${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`; the specifics for this phase:
+The full resolution and routing contract is `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`. Everything
+you say out loud follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the
+files, not in the conversation. The specifics for this phase:
 
 - You need the brand pack and an approved `docs/brief.md`. If they are not already in context (a
   cold start in a fresh conversation), resolve them from files rather than asking: read
@@ -36,10 +36,11 @@ The campaign workspace and the active brand should have been provided to you —
   claims bound what you can say. Do not contradict either.
 - Rendering the candidate visuals needs the `fal-ai` MCP (via `generate-image`). If it is connected,
   render the candidates; **if it is not, do not block the phase** — author the spec and the paste-able
-  prompt, present the directions as text, mark `locked_still` pending, and tell the user the anchor
-  still can be minted later once the MCP is connected. The message, tagline, and concept gate still
-  runs without rendering. `media/key-visual/` is created on the first render; it need not exist
-  beforehand.
+  prompt, present the directions as written descriptions, leave `locked_still` pending, and tell the
+  user in plain words that image generation is not connected here, so they can pick a direction now
+  and you will make the actual picture once it is. Never say "mint", "anchor still" or "MCP" out
+  loud. The message, tagline and concept gate all still run without rendering.
+  `media/key-visual/` is created on the first render; it need not exist beforehand.
 
 ## The key message
 
@@ -150,21 +151,31 @@ artifacts the whole campaign leans on. Spend that extra pass on the one winner, 
 
 ## The human gate
 
-Before writing anything, present the key message, the tagline options, and the 2-3 rendered visual
-directions to the user in plain terms. Ask them to pick a tagline **and pick one rendered direction**
-(or ask to re-render / adjust). If they push back on the visuals, offer three moves: (a) re-render
-the same direction with a new seed, (b) revise one direction's spec and re-render just that one, or
-(c) generate a fresh set of directions. Lock only once they have chosen a tagline and approved an
-actual rendered image. Then:
+**What you present.** Before writing anything, put three things in front of the user: the key
+message, the tagline options, and the 2-3 rendered visual directions. Ask them to pick a tagline
+**and pick one rendered picture**. Per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 4,
+this half is plain sentences and pictures only — describe each direction in the words a person would
+use looking at it, and **never show the `master_visual` YAML here**. It is the file's vocabulary, not
+theirs; the "The look, in a sentence" lines you write into `message.md` are what you say out loud.
 
-1. Write `docs/message.md` in the campaign workspace, recording the chosen tagline, the full visual spec, the
-   locked-still path, the render metadata (model / seed / source URL), and the paste-able render
-   prompt. Save the chosen render as the locked anchor still (see "Lock the chosen direction" above).
-2. Offer to move into the deliverable expansion phase, where each manifest entry becomes an asset.
-   The imagery expanders will find the text-free locked still and build on it: `visual-ideas` edits
-   from it for rough idea variations, and `compose-lockup` sets the headline onto it (per the
-   `headline_lockup` spec) for production statics/banners. Do not start producing deliverables
-   yourself here.
+If they push back on the visuals, offer three moves in plain terms: (a) run the same direction again
+for a different take, (b) change one thing about a direction and redo just that one, or (c) start
+again with a fresh set. Lock only once they have chosen a tagline and approved an actual rendered
+image.
+
+**Once they approve, write.** Files take file vocabulary, exactly:
+
+1. Write `docs/message.md` in the campaign workspace, recording the chosen tagline, the plain-English
+   "The look, in a sentence" summary, the full `master_visual` spec, the locked-still path, the
+   render metadata (model / seed / source URL), and the paste-able render prompt. Save the chosen
+   render as the locked anchor still (see "Lock the chosen direction" above).
+2. Do not read any of that back. "That is the message and the look locked in" covers it.
+
+**Then end on the next action**, per section 6 of the same spec: offer to start making the actual
+things on the campaign's list, naming two or three of them as things ("the three static ads and the
+launch email"), not as manifest entries or a phase. Say in a clause that everything from here builds
+on the picture they just chose, so it all hangs together. Name no skill, and do not start producing
+deliverables yourself here.
 
 If the user adjusts the visual after it was locked, re-render to the **next version**
 (`media/key-visual/key-visual-v02.png`, then `v03`…) — never overwrite an earlier version. Append a
@@ -187,6 +198,11 @@ If the user adjusts the visual after it was locked, re-render to the **next vers
 ## Tagline
 Chosen: <the tagline the user picked>
 Considered: <the other options, kept for reference>
+
+## The look, in a sentence
+<two or three plain lines a non-specialist can read: what you see, the mood, and the one or two
+things that stay the same in every picture. This is the part quoted at the gate and on the campaign
+page; the block below is for the skills that build on it.>
 
 ## Master visual concept
 ```yaml

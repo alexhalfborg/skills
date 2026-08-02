@@ -4,7 +4,7 @@
 //
 // Usage: node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs" <campaign-path>
 //
-// Reads (per schema/campaign-structure.md in the campaign-engine plugin):
+// Reads (per schema/campaign-structure.md in the halfborg-skills plugin):
 //   system/generation-log.jsonl   append-only generation log (tolerant parse; warns on bad lines)
 //   system/manifest.yaml          only the campaign block's `name:`/`brand:`, via regex (no YAML parser)
 //   docs/*.md  content/*.md       rendered by the built-in markdown renderer
@@ -33,7 +33,7 @@ if (!existsSync(root)) {
 if (!existsSync(join(root, 'system'))) {
   console.error(
     `error: ${root} has no system/ folder — legacy layout. ` +
-    `See the campaign structure spec (schema/campaign-structure.md in the campaign-engine plugin), ` +
+    `See the campaign structure spec (schema/campaign-structure.md in the halfborg-skills plugin), ` +
     `section 7, for the migration recipe.`
   );
   process.exit(1);
@@ -96,7 +96,7 @@ const brandId = campaignScalar('brand');
 
 // The folder's <brand>- prefix is a human affordance; campaign.brand is authoritative. Warn rather
 // than reconcile — the field wins, so the folder is what needs renaming.
-// See schema/campaign-structure.md section 1.1 (campaign-engine plugin).
+// See schema/campaign-structure.md section 1.1 (halfborg-skills plugin).
 if (brandId && !slug.startsWith(`${brandId}-`)) {
   warnings.push(
     `folder "${slug}" does not carry the "${brandId}-" prefix from campaign.brand in manifest.yaml. ` +

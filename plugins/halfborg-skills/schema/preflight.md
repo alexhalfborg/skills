@@ -12,6 +12,10 @@ campaign, a manifest entry, a deliverable id, a locked still, or a path.
 Run the two tiers in order. Tier 1 is free; only reach for tier 2 when the artifact chain matters to
 what you are about to do.
 
+This document decides **where** you route. How that sounds out loud is
+`${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 7: name what is missing in the user's own
+terms, keep the slash command exact, and do not treat a route as an apology.
+
 ---
 
 ## Tier 1 — context (free, no tool calls)
@@ -21,10 +25,9 @@ what you are about to do.
 itself the proof that the workspace is set up** — and it already tells you the layout and which
 brands exist. Use it before you touch the filesystem.
 
-The idiom, which skills state in their own preconditions:
-
-> The campaign workspace and the active brand should have been provided to you — run
-> `/halfborg-skills:setup-engine` if not.
+Skills do not restate this check, and never narrate it. It costs nothing and it is invisible: if the
+block is there, you already have your answer; if it is not, fall through to tier 2 quietly. The user
+hears about readiness only when a route below is actually taken.
 
 - **Block present.** Proceed. Treat its layout as current, and skip tier 2's workspace check — its
   presence already answers that. No tool calls needed.
@@ -84,9 +87,10 @@ If prefix and field disagree, the field wins. See `campaign-structure.md` sectio
   **Route:** `/halfborg-skills:setup-brand`. Do not interview the user for brand identity from inside
   another skill, and never infer a brand fact you cannot read.
 - **Pack thin but valid** (no voice, no channels, no `mandatories`, sparse claims) → proceed. Richness
-  is a dial, not a gate; expect the phase to ask a few more questions.
+  is a dial, not a gate; expect the phase to ask a few more questions. Say that as a plain heads-up
+  ("I will ask you a couple of extra things as we go"), never as a complaint about the pack.
 - **`mandatories` absent** means *unconfirmed*, not *none*. Confirm rather than assuming the brand has
-  no rules.
+  no rules — and ask for it as "anything that has to appear on everything you publish", not by name.
 - **`ads` block absent** and the task is an ad → hard stop, route to `/halfborg-skills:setup-brand`.
   The block's presence is the proof that a human decided who may appear in an ad; never invent a
   presenter or write the block yourself.
@@ -120,9 +124,15 @@ than at the start.
 
 **Deliverable ids are registered, not invented.** Before creating `media/<deliverable-id>/`, confirm
 the id appears in `system/manifest.yaml` or was registered in `system/generation-log.jsonl`. An
-unregistered id is usually a typo, and creating the folder anyway mints a ghost that only QA will
-catch, much later. This is a **warn and confirm**, not a block: name the id, say it is not registered,
-offer the closest registered match, and proceed once the user confirms.
+unregistered id is usually a typo, and creating the folder anyway leaves an orphan that only QA
+catches, much later.
+
+Warn and confirm, do not block. Ask it as a question about their campaign, not about the register —
+name the thing, say you have nothing by that name on this campaign's list, offer the closest match
+you do have, and carry on once they answer:
+
+> I have nothing called `launch-blog` on this campaign. Did you mean the launch email, or is this
+> something new you want adding?
 
 **Log, then rebuild.** Append one line to `system/generation-log.jsonl` and run the site builder, per
 `campaign-structure.md` section 4.1. A render that happened but was not logged is invisible to QA and

@@ -319,3 +319,16 @@ Ask before writing if any of these are true:
 
 For everything else, go ahead and draft. End the draft with the standing reminder to confirm
 written permission before publication.
+
+## When you hand it back
+
+Follow `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` sections 5 and 6. Three things, in this
+order:
+
+1. **The permission question, first and plainly.** Has the customer given written permission to
+   publish their story, their name and their photos? This is the one thing that stops the piece
+   going out, so it leads — never tuck it under the good news.
+2. **Every placeholder you left**, listed plainly, with what each one needs: a missing quote, a
+   timeline, a photo, a product they actually used.
+3. **One next action** — the next thing on the campaign's list, named as a thing, or an offer of a
+   shorter cut for social. Name no skill.

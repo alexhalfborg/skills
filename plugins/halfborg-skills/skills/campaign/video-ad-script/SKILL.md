@@ -252,8 +252,12 @@ the log step in `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`.
 **Then present it and stop.** Do not write the generation prompt for a script the
 user has not approved. Prompt work done against a script that still changes is
 thrown away, and a prompt sitting under an unapproved script reads as though the
-script were settled. Tell the user the script is ready to lock, and that the
-generation prompt is the next step once they approve it.
+script were settled.
+
+Present it in plain terms per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`
+section 4: the script itself, what happens shot by shot, and how long it runs. End
+on the offer — the script is ready for their yes, and once you have it you will
+build what the video model needs. Name no skill.
 
 ## Reference kit (after approval, before the prompt)
 
@@ -320,8 +324,9 @@ Append the returned block(s) **verbatim** to the same scripts doc, under:
 
 Then re-log the doc with an `iteration` status and rebuild the site.
 
-End by telling the user the prompt is ready to render, and that `generate-video`
-is the next step: it will show a cost estimate and gate before it spends.
+End on the offer, per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 6:
+the clip is ready to be made whenever they are, and you will show them what it
+costs before anything is spent. Name no skill.
 
 Image prompts (a reference still, a thumbnail) are a separate artifact. They come
 from `ai-image-video-prompt-builder`'s image track and land in
@@ -345,6 +350,11 @@ synthetic face as a real, named person — in a clip **or** a reference still: i
 first-person lines and is never generated as a face.
 
 ## House rules
+
+Everything you say out loud follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`:
+engine words belong in the files, not in the conversation. `@ImageN` handles and the
+`REFERENCES` / `AUDIO` blocks are prompt syntax — they stay exact inside the script
+doc and the prompt, and they are not how you describe the ad to the user.
 
 British spelling. No em dashes. Avoid AI clichés. Keep first-person copy in the
 brand voice; keep product-fact copy plain.

@@ -49,6 +49,10 @@ node plugins/halfborg-skills/skills/campaign/campaign-site-builder/scripts/build
 There is no test suite, no build step and no lint config. Validation is `claude plugin validate` plus
 an end-to-end run of the pipeline in a scratch workspace.
 
+[CONTRIBUTING.md](CONTRIBUTING.md) is the human-facing version of most of this file. The root
+`README.md` and the plugin's `README.md` are written for **marketers with no Claude Code
+experience** — keep contributor detail out of both.
+
 ## Architecture of the plugin
 
 Read [skills/campaign/campaign-engine/SKILL.md](plugins/halfborg-skills/skills/campaign/campaign-engine/SKILL.md)
@@ -66,6 +70,9 @@ writes it *and* every phase that reads it.
 disagrees, the spec wins. When changing behaviour, change the spec first, then the skills that defer
 to it:
 
+- `plain-language.md` — what a skill says out loud. The engine's words belong in its files, not in
+  the conversation; section 2 lists the strings that are never translated (the verbatim prompt, the
+  model id, the money, a path they can open). Read it before touching any user-facing line.
 - `preflight.md` — the shared readiness-and-routing contract (referenced 19×). Two tiers: the
   `## Campaign engine` block in the workspace's CLAUDE.md as a free context check, then the
   filesystem artifact chain. Underlying rule: *route, do not guess.*
@@ -115,3 +122,10 @@ to make a skill simpler:
 
 **Prose style** (applies to skill content and to generated marketing copy alike): British spelling,
 few em dashes, no phrasing that reads as AI-generated.
+
+**Who is reading.** Users are marketers, not developers. Skill frontmatter `description` fields are
+the routing table and are never read by a user — keep them precise and jargon-heavy if that is what
+routes accurately. Everything a skill *says out loud* is the opposite, and `schema/plain-language.md`
+governs it: engine vocabulary belongs in the files, plain English in the conversation, and a short
+list of strings (the verbatim render prompt, the model id, the money, a path the user can open)
+never softens.

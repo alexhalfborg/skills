@@ -7,7 +7,9 @@ Create a brand's central reference for the user by talking to them. They should 
 
 ## How to talk
 
-- Plain language, no jargon. Never mention the schema, validation, or file formats.
+- Plain language, no jargon. Never mention the schema, validation, or file formats. The full
+  contract is `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`; this command is its clearest example,
+  so keep it that way.
 - One question at a time. Lead each with an example answer so they can just confirm or adjust.
 - Keep it short. You are capturing a skeleton, not running an audit. The deep detail is filled in later, from their website.
 - If `$ARGUMENTS` looks like a website, offer to read it first and pre-fill answers, so they mostly confirm rather than type.
