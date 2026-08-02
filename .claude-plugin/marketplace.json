@@ -1,0 +1,24 @@
+{
+  "name": "halfborg",
+  "owner": {
+    "name": "Alex",
+    "url": "https://halfborg.com"
+  },
+  "description": "The campaign engine: a brand-agnostic marketing pipeline for Claude Code.",
+  "plugins": [
+    {
+      "name": "campaign-engine",
+      "source": "./",
+      "description": "Turn a fuzzy marketing goal into a full set of campaign deliverables through a fixed, human-gated pipeline. Brief, message, expansion, QA. Swap the brand pack, get a different brand, same pipeline.",
+      "category": "marketing",
+      "keywords": [
+        "marketing",
+        "campaign",
+        "brand",
+        "copywriting",
+        "paid-social",
+        "content"
+      ]
+    }
+  ]
+}

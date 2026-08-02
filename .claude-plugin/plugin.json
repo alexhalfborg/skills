@@ -1,0 +1,29 @@
+{
+  "name": "campaign-engine",
+  "version": "0.1.0",
+  "description": "A brand-agnostic marketing campaign engine. Turns a fuzzy goal into a full set of campaign deliverables through a fixed, human-gated pipeline, reading everything brand-specific from a per-brand pack.",
+  "author": {
+    "name": "Alex",
+    "url": "https://halfborg.com"
+  },
+  "homepage": "https://github.com/alexhalfborg/campaign-engine",
+  "repository": "https://github.com/alexhalfborg/campaign-engine",
+  "license": "MIT",
+  "keywords": [
+    "marketing",
+    "campaign",
+    "brand",
+    "copywriting",
+    "paid-social",
+    "image-generation",
+    "content"
+  ],
+  "userConfig": {
+    "fal_key": {
+      "type": "string",
+      "title": "fal.ai API key",
+      "description": "Optional. Enables real image and video rendering via fal.ai. Without it the engine still runs end to end and hands back the prompt, model id and settings to render by hand at fal.ai. Get a key at https://fal.ai/dashboard/keys",
+      "sensitive": true
+    }
+  }
+}

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<!--
+  campaign-site-builder — fixed page shell. Do NOT redesign this; only fill the placeholders.
+
+  Placeholders to replace (leave none behind):
+    {{TITLE}}       campaign display title, e.g. "Eczema Clothing Meta Ads Refresh"
+    {{META}}        one-line meta, e.g. "Slug: eczema-clothing-meta-refresh · Status: In progress · Started 2026-07-01"
+    {{TABS}}        one <button class="tab" data-tab="ID"> per stage; mark the first with class="tab active"
+    {{PANELS}}      one <section class="panel" id="tab-ID"> per stage; mark the first with class="panel active"
+
+  Contract between {{TABS}} and {{PANELS}}: each tab's data-tab="ID" must match a panel id="tab-ID".
+
+  CSS classes available for rendered content (use these, do not invent styling):
+    .claim-strip    the collected ⚠️ CLAIM CHECK banner — place it at the TOP of the Overview panel only
+                    (not above the tab bar), or omit it entirely if the campaign has no claim flags
+    .doc            wrapper for one rendered markdown document (gets a card)
+    .doc-head       the document's H1/title row (holds title + optional source link)
+    .source-link    small link back to the source .md, e.g. <a class="source-link" href="../brief.md">source</a>
+    .preamble       the leading ">" blockquote of a doc, rendered as a distinct note (not body prose)
+    .claim          inline highlight for a ⚠️ CLAIM CHECK line: <span class="claim">…</span> or <div class="claim">…</div>
+    .toc            within-tab table of contents (a <nav class="toc"> with anchor links) for tabs holding long/multiple docs
+    .empty          muted placeholder text when a stage has a folder but no content worth showing
+    .media-grid     grid wrapper for media cards (Media tab, key-visual gallery)
+    .media-card     one artifact: <img>/<video> + .file + .meta-line rows + badges
+    .badge          status chip; variants .badge-locked .badge-final .badge-superseded .badge-rejected .badge-unlogged
+    details.prompt  collapsed generation prompt inside a media card
+    .deliverable-group  wrapper for one deliverable's cards in the Media chronology
+
+  Everything is inline and offline: no external fonts, scripts, or stylesheets.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}} — campaign</title>
+<style>
+  :root {
+    --bg: #f6f4ef;
+    --surface: #ffffff;
+    --ink: #23312e;
+    --ink-soft: #5c6b66;
+    --line: #e3ded4;
+    --accent: #3f7d6e;      /* muted sage-teal */
+    --accent-soft: #e7f0ec;
+    --note: #eef2f6;
+    --note-line: #cfdae2;
+    --warn-bg: #fdf3e3;
+    --warn-line: #e8c98a;
+    --warn-ink: #6b4b16;
+    --radius: 12px;
+    --maxw: 940px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px 80px; }
+
+  /* Header */
+  header.site { padding: 34px 0 18px; }
+  header.site h1 { margin: 0 0 6px; font-size: 1.7rem; letter-spacing: -0.01em; }
+  header.site .meta { margin: 0; color: var(--ink-soft); font-size: 0.9rem; }
+
+  /* Claim strip (compliance) */
+  .claim-strip {
+    background: var(--warn-bg);
+    border: 1px solid var(--warn-line);
+    color: var(--warn-ink);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin: 8px 0 22px;
+    font-size: 0.92rem;
+  }
+  .claim-strip h2 { margin: 0 0 8px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .claim-strip ul { margin: 0; padding-left: 18px; }
+  .claim-strip li { margin: 4px 0; }
+
+  /* Tab bar */
+  .tabbar {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    position: sticky; top: 0; z-index: 5;
+    background: var(--bg);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 26px;
+  }
+  .tab {
+    appearance: none; border: 0; background: transparent; cursor: pointer;
+    font: inherit; font-size: 0.94rem; font-weight: 600; color: var(--ink-soft);
+    padding: 9px 15px; border-radius: 999px; transition: background .15s, color .15s;
+  }
+  .tab:hover { color: var(--ink); background: var(--accent-soft); }
+  .tab.active { color: #fff; background: var(--accent); }
+
+  /* Panels */
+  .panel { display: none; animation: fade .18s ease; }
+  .panel.active { display: block; }
+  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  /* Within-tab TOC */
+  nav.toc {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 12px 16px; margin: 0 0 24px; font-size: 0.9rem;
+  }
+  nav.toc strong { display: block; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; margin-bottom: 6px; }
+  nav.toc a { display: inline-block; margin: 2px 14px 2px 0; color: var(--accent); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+
+  /* Document card */
+  .doc {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 8px 28px 24px; margin: 0 0 26px; scroll-margin-top: 70px;
+  }
+  .doc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.3; }
+  .doc h1 { font-size: 1.35rem; margin: 18px 0 4px; }
+  .doc h2 { font-size: 1.12rem; margin: 26px 0 8px; padding-top: 6px; border-top: 1px solid var(--line); }
+  .doc h3 { font-size: 1rem; margin: 20px 0 6px; }
+  .doc h2:first-of-type { border-top: 0; }
+  .source-link {
+    font-size: 0.8rem; font-weight: 600; color: var(--accent);
+    text-decoration: none; white-space: nowrap; border: 1px solid var(--line);
+    padding: 3px 10px; border-radius: 999px;
+  }
+  .source-link:hover { background: var(--accent-soft); }
+  .doc p { margin: 10px 0; }
+  .doc a { color: var(--accent); }
+  .doc ul, .doc ol { margin: 10px 0; padding-left: 22px; }
+  .doc li { margin: 4px 0; }
+  .doc hr { border: 0; border-top: 1px solid var(--line); margin: 22px 0; }
+  .doc code { background: var(--note); padding: 1px 6px; border-radius: 5px; font-size: 0.88em; }
+  .doc pre { background: var(--note); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; overflow-x: auto; }
+  .doc pre code { background: none; padding: 0; }
+
+  /* Preamble (leading ">" note) */
+  .preamble {
+    background: var(--note); border: 1px solid var(--note-line); border-left: 3px solid var(--accent);
+    border-radius: 8px; padding: 10px 14px; margin: 12px 0 18px;
+    color: var(--ink-soft); font-size: 0.92rem;
+  }
+  .preamble p { margin: 4px 0; }
+
+  /* Tables (status tables, funnel maps, AV script/timing tables) */
+  .doc table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 0.9rem; }
+  .doc th, .doc td { border: 1px solid var(--line); padding: 7px 10px; text-align: left; vertical-align: top; }
+  .doc thead th { background: var(--accent-soft); color: var(--ink); font-weight: 600; }
+  .doc tbody tr:nth-child(even) { background: #fbfaf7; }
+
+  /* Inline claim-check highlight */
+  .claim {
+    display: block; background: var(--warn-bg); border: 1px solid var(--warn-line);
+    border-radius: 8px; padding: 8px 12px; margin: 10px 0; color: var(--warn-ink); font-size: 0.92rem;
+  }
+  .claim code { background: rgba(0,0,0,.05); }
+
+  .empty { color: var(--ink-soft); font-style: italic; }
+
+  /* Media gallery (Media tab + key-visual gallery) */
+  .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin: 14px 0 26px; }
+  .media-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px; font-size: 0.85rem; }
+  .media-card img, .media-card video { width: 100%; border-radius: 8px; display: block; background: var(--note); }
+  .media-card .file { font-weight: 600; margin: 8px 0 2px; word-break: break-all; }
+  .media-card .meta-line { color: var(--ink-soft); margin: 2px 0; }
+  .badge { display: inline-block; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; padding: 2px 8px; border-radius: 999px; background: var(--note); border: 1px solid var(--note-line); color: var(--ink-soft); margin: 6px 6px 0 0; }
+  .badge-locked { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .badge-final { background: #e9f6e4; border-color: #7fbb6a; color: #35672a; }
+  .badge-superseded, .badge-rejected { opacity: 0.55; }
+  .badge-unlogged { background: var(--warn-bg); border-color: var(--warn-line); color: var(--warn-ink); }
+  details.prompt { margin-top: 6px; }
+  details.prompt summary { cursor: pointer; color: var(--accent); font-size: 0.8rem; font-weight: 600; }
+  details.prompt pre { white-space: pre-wrap; margin: 6px 0 0; background: var(--note); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+  .deliverable-group h3 { margin: 30px 0 4px; }
+  .deliverable-group .group-meta { color: var(--ink-soft); font-size: 0.85rem; margin: 0 0 8px; }
+
+  footer.site { margin-top: 40px; color: var(--ink-soft); font-size: 0.8rem; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="site">
+    <h1>{{TITLE}}</h1>
+    <p class="meta">{{META}}</p>
+  </header>
+
+  <nav class="tabbar" role="tablist">
+    {{TABS}}
+  </nav>
+
+  <main>
+    {{PANELS}}
+  </main>
+
+  <footer class="site">Compiled from the campaign markdown by the campaign-site-builder skill. Regenerate after edits.</footer>
+</div>
+
+<script>
+  (function () {
+    var tabs = document.querySelectorAll('.tab');
+    var panels = document.querySelectorAll('.panel');
+    function show(id) {
+      tabs.forEach(function (t) { t.classList.toggle('active', t.dataset.tab === id); });
+      panels.forEach(function (p) { p.classList.toggle('active', p.id === 'tab-' + id); });
+      if (history.replaceState) history.replaceState(null, '', '#' + id);
+    }
+    tabs.forEach(function (t) {
+      t.addEventListener('click', function () { show(t.dataset.tab); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+    });
+    // Deep-link support: open the tab named in the URL hash on load.
+    var hash = (location.hash || '').replace('#', '');
+    if (hash && document.getElementById('tab-' + hash)) show(hash);
+  })();
+</script>
+</body>
+</html>

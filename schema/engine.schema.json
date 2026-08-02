@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://halfborg.com/schema/engine.schema.json",
+  "title": "Engine config",
+  "description": "Engine-level defaults for the campaign engine, at the repo root as engine.yaml. This is the one config file that is neither per-brand nor per-campaign: it holds the settings the engine itself uses, chiefly which generation models the render skills reach for by default. It is COMMITTED and must never hold secrets — the FAL key lives in the gitignored .claude/settings.local.json and is read by the harness, never by a skill. Like the brand pack, this file is a dial and not a gate: it is optional, only `engine` is required, and every value has a literal fallback in the skill that reads it. Precedence is invocation argument, then engine.yaml, then the skill's own documented default; a missing or invalid file means the skill falls back silently. Extra keys are tolerated. Author as YAML (engine.yaml) and validate the parsed object against this schema.",
+  "type": "object",
+  "required": ["engine"],
+  "properties": {
+    "engine": {
+      "type": "object",
+      "description": "The irreducible skeleton. A file containing only `engine: {version: 1}` is valid.",
+      "required": ["version"],
+      "properties": {
+        "version": {
+          "type": "integer",
+          "description": "Config schema version. 1 is the only version; assume the latest when absent.",
+          "minimum": 1
+        }
+      }
+    },
+    "media": {
+      "type": "object",
+      "description": "Optional. Default model ids for the render skills. Any sub-field may be omitted; the skill that reads it falls back to its own documented default, so an absent value is never an error. A model id is passed to the fal MCP verbatim — see https://fal.ai/models.",
+      "properties": {
+        "image_model": {
+          "type": "string",
+          "description": "Default model for generate-image. Skill fallback: fal-ai/nano-banana-2",
+          "minLength": 1
+        },
+        "video_model": {
+          "type": "string",
+          "description": "Default model for generate-video. Skill fallback: bytedance/seedance-2.0/reference-to-video",
+          "minLength": 1
+        },
+        "lockup_model": {
+          "type": "string",
+          "description": "Default model for compose-lockup, which sets a headline onto the locked key visual. Must be an edit-capable model: it takes a reference image plus a prompt. Prefer one strong at typography and layout, since crisp headline type is this step's hard gate. Not every edit endpoint exposes a mask (openai/gpt-image-2/edit does, the nano-banana edit endpoints do not); compose-lockup treats the mask as optional and schema-dependent. Skill fallback: fal-ai/nano-banana-pro/edit",
+          "minLength": 1
+        },
+        "reference_model": {
+          "type": "string",
+          "description": "Default model for reference-kit, which derives on-model identity reference stills off the locked master visual for a video ad. Must be an identity-preserving edit-capable model: it takes a reference image (image_urls) plus a prompt, so it is the /edit endpoint, not the base text-to-image one. Skill fallback: fal-ai/nano-banana-2/edit",
+          "minLength": 1
+        }
+      }
+    },
+    "cost": {
+      "type": "object",
+      "description": "Optional. Guardrails on spending real money at render time. These never relax an existing gate: BOTH render skills gate unconditionally on human approval before they spend (generate-image step 4, generate-video step 5), showing the verbatim prompt and offering the render-it-by-hand route, and no value here can switch that off. confirm_video_above only widens what else gets confirmed.",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "description": "ISO currency for cost estimates shown at an approval gate, e.g. \"USD\". Case-insensitive; normalised to uppercase on read. This is a display unit only — the engine does no conversion.",
+          "pattern": "^[A-Za-z]{3}$"
+        },
+        "confirm_video_above": {
+          "type": "number",
+          "description": "Estimated cost at or above which a render must be confirmed before it spends. 0 means always confirm, which is the current behaviour and the default. Raising it does not disable generate-video's approval gate.",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}
