@@ -1,14 +1,14 @@
 {
-  "name": "marketing-skills",
+  "name": "halfborg",
   "owner": {
     "name": "Alex",
     "url": "https://halfborg.com"
   },
-  "description": "Marketing plugins for Claude Code. Currently the campaign engine: a brand-agnostic, human-gated pipeline from a fuzzy goal to a full set of campaign deliverables.",
+  "description": "Halfborg skills for Claude Code, as installable plugins.",
   "plugins": [
     {
-      "name": "campaign-engine",
-      "source": "./plugins/campaign-engine",
+      "name": "halfborg-skills",
+      "source": "./plugins/halfborg-skills",
       "description": "Turn a fuzzy marketing goal into a full set of campaign deliverables through a fixed, human-gated pipeline. Brief, message, expansion, QA. Swap the brand pack, get a different brand, same pipeline.",
       "category": "marketing",
       "keywords": [
