@@ -7,7 +7,10 @@ worked inside its own repo; now installable into any folder.
 
 ### Packaging
 
-- Repo is both marketplace (`halfborg`) and plugin (`campaign-engine`), via `"source": "./"`.
+- Repo `alexhalfborg/marketing-skills` is a marketplace **container**: the catalogue is
+  `.claude-plugin/marketplace.json` at the root and each plugin is self-contained under
+  `plugins/<name>/`, resolved via `metadata.pluginRoot`. Adding a second plugin is a folder plus one
+  entry, with no restructuring. Install: `/plugin install campaign-engine@marketing-skills`.
 - Components moved to plugin roots: `.claude/skills` → `skills/`, `.claude/agents` → `agents/`,
   `.claude/commands` → `commands/`, `.claude/schema` → `schema/`.
 - All engine-internal paths rewritten to `${CLAUDE_PLUGIN_ROOT}`, which resolves inline in skill and
