@@ -26,15 +26,20 @@ The idiom, which skills state in their own preconditions:
 > The campaign workspace and the active brand should have been provided to you — run
 > `/campaign-engine:setup-engine` if not.
 
-- **Block present.** Proceed. Treat its brand list and layout as current. No tool calls needed.
-- **Block absent.** Say so in one line and offer `/campaign-engine:setup-engine`. Do not scaffold the
-  workspace yourself, and do not silently proceed on the assumption that the layout is standard.
+- **Block present.** Proceed. Treat its layout as current, and skip tier 2's workspace check — its
+  presence already answers that. No tool calls needed.
+- **Block absent.** This is a **hint, not a verdict.** The block is missing in two very different
+  situations: a folder that was never set up, and a perfectly good workspace whose owner set it up by
+  hand or deleted the block. Fall through to tier 2 and let the filesystem decide. If tier 2's
+  workspace check then passes, proceed with the work and mention
+  `/campaign-engine:setup-engine` once, in a clause, as the thing that would make future sessions
+  cheaper — never as a blocker. Only stop if tier 2 itself fails.
 
 Two caveats worth keeping straight. The block is a *static* signal: it is refreshed when
 `/campaign-engine:setup-engine` re-runs, so a brand added five minutes ago may not appear in it yet —
 when the brand list matters, verify against `brands/` rather than trusting the block alone. And it
 says nothing about any individual campaign's progress, because that changes within a session. For
-anything on the artifact chain, go to tier 2.
+anything on the artifact chain, go to tier 2 regardless of what tier 1 said.
 
 ---
 
