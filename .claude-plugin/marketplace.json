@@ -1,7 +1,8 @@
 {
   "name": "halfborg",
   "owner": {
-    "name": "Alex",
+    "name": "Alex Tan",
+    "email": "alex@halfborg.com",
     "url": "https://halfborg.com"
   },
   "description": "Halfborg skills for Claude Code, as installable plugins.",
