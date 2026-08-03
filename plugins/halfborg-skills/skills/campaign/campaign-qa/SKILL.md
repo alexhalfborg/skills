@@ -149,14 +149,10 @@ or a PASS you did not derive from the artifact — the same "never fabricate" ru
 
 `docs/qa-report.md` lives in `docs/`, which is **not** filename-versioned — it is edited in place and
 git carries its history, exactly like `brief.md` and `message.md`. Consistent with those gate docs, the
-report needs no `generate` log line to appear; the **QA tab is already wired** in the site builder and
-picks up `docs/qa-report.md` directly. Optionally append one `note` event so the QA run shows in the
-chronology (`{"event":"note","skill":"campaign-qa","deliverable":"<scope>","notes":"QA pass: <verdict>"}`).
-Then rebuild:
-
-```
-node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs" "campaigns/<slug>"
-```
+report needs no `generate` log line to appear; the **QA section is already covered** by
+`campaign-site-builder` and picks up `docs/qa-report.md` directly. Optionally append one `note` event so
+the QA run shows in the chronology (`{"event":"note","skill":"campaign-qa","deliverable":"<scope>","notes":"QA pass: <verdict>"}`).
+Then rebuild the page once — follow `campaign-site-builder` for `campaigns/<slug>`.
 
 Then report to the user, per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` sections 5 and 6. The
 report file keeps `PASS` / `WARN` / `FAIL` and the verdict words exactly; **the conversation does

@@ -89,11 +89,7 @@ campaigns/<slug>/media/<id>/<id>-v<NN>.html
 ```
 
 A reroll takes the next `v<NN>`. **Never overwrite.** Then follow the log step in
-`${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` §4.1: append one `generate` line with `status: iteration`, and a `status: final` line when the user approves the page as shipped. The line carries no `model`, `cost_usd`, `seed`, or `source_url` — nothing was rendered by a model. Put the section stack in `notes`. Then rebuild the site:
-
-```
-node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs" "campaigns/<slug>"
-```
+`${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` §4.1: append one `generate` line with `status: iteration`, and a `status: final` line when the user approves the page as shipped. The line carries no `model`, `cost_usd`, `seed`, or `source_url` — nothing was rendered by a model. Put the section stack in `notes`. Then rebuild the campaign page once — follow `campaign-site-builder` for `campaigns/<slug>`.
 
 Then report back per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 5: what the page does,
 the sections it ended up with, the picture it leads with, where the buttons go, the claims it makes,

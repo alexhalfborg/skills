@@ -160,9 +160,10 @@ Example lines:
 
 ### 4.1 The log step (canonical append-and-rebuild instruction)
 
-Every skill that produces a campaign artifact (media **or** a text deliverable in `content/`)
-finishes by appending exactly one minified JSON line per artifact and rebuilding the site. Use a
-quoting-proof mechanism so prompt text cannot break shell parsing.
+Every skill that produces a campaign artifact (media **or** a text deliverable in `content/`) logs
+one minified JSON line per artifact as it is produced, using a quoting-proof mechanism so prompt
+text cannot break shell parsing. Once every artifact from this invocation is logged, rebuild the
+page **once** — never once per artifact.
 
 Bash:
 
@@ -170,7 +171,6 @@ Bash:
 cat >> "campaigns/<slug>/system/generation-log.jsonl" <<'JSONL'
 {"ts":"...","event":"generate","skill":"...","deliverable":"...","file":"...","status":"iteration"}
 JSONL
-node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs" "campaigns/<slug>"
 ```
 
 PowerShell:
@@ -179,16 +179,20 @@ PowerShell:
 Add-Content -Path "campaigns/<slug>/system/generation-log.jsonl" -Value @'
 {"ts":"...","event":"generate","skill":"...","deliverable":"...","file":"...","status":"iteration"}
 '@
-node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs" "campaigns/<slug>"
 ```
+
+Then, once — after this invocation's last artifact is logged, not after each one — rebuild the
+page: follow the `campaign-site-builder` skill's instructions for `campaigns/<slug>`. It reads the
+updated log, manifest, docs, content and media and writes `site/index.html` itself; there is no
+script to run.
 
 Rules:
 
 - Never rewrite, reorder, or delete existing lines.
-- If the build script warns that the line just appended is malformed, fix only that line.
+- If a batch partially fails, still rebuild once at the end with whatever succeeded logged.
 - If the log file is missing (older campaign), create it empty first; `/halfborg-skills:new-campaign` scaffolds it.
-- The build script re-parses every line on every run and warns per malformed line, so it doubles as
-  the log linter.
+- Re-reading the log on every rebuild is itself the log linter: a malformed line is skipped and
+  reported as a warning, exactly as before, just by the skill reading it rather than a script.
 
 ## 5. Text deliverables (`content/`)
 
@@ -203,26 +207,24 @@ One `.md` per deliverable:
 
 Text files are **not** filename-versioned; they are edited in place and git carries their history.
 Filename versioning (section 3) applies to `media/` only. Text deliverables still get a `generate`
-log entry on creation (with `file` pointing at the `.md`) so they appear in the site's Content tab
-and chronology.
+log entry on creation (with `file` pointing at the `.md`) so they appear in the site's Content
+section and chronology.
 
 ## 6. The site
 
-`site/index.html` is a self-contained, offline-viewable page generated **only** by:
-
-```
-node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs" <campaign-path>
-```
-
+`site/index.html` is a self-contained, offline-viewable page written **only** by the
+`campaign-site-builder` skill, following `${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/SKILL.md`.
 It renders the docs, content, and the media chronology from the generation log, with media
-relatively linked (`../media/...`). Never hand-edit it; it is overwritten on each build and
-gitignored (`campaigns/*/site/`). The rebuild is deterministic: same inputs, byte-identical output.
+relatively linked (`../media/...`). Never hand-edit it; it is overwritten on each rebuild and
+gitignored (`campaigns/*/site/`). The rebuild is authored by Claude, not run by a deterministic
+script — the exact wording can vary between runs, but it must never contain anything not actually
+present in the campaign's own files.
 
 ## 7. Legacy campaigns
 
 Campaigns created before this spec (an `output/` + `reference/` layout, or an `ads/` layout) are
-read-only history. The build script refuses them with a clear error (no `system/` folder). To bring
-one forward, follow the migration recipe: move gate docs to `docs/`, text deliverables to
-`content/`, media into `media/<deliverable-id>/` folders with grammar-compliant versioned names,
-manifest and README to `system/`, then backfill `system/generation-log.jsonl` with
+read-only history. `campaign-site-builder` will not attempt to build a page for one (no `system/`
+folder to read). To bring one forward, follow the migration recipe: move gate docs to `docs/`, text
+deliverables to `content/`, media into `media/<deliverable-id>/` folders with grammar-compliant
+versioned names, manifest and README to `system/`, then backfill `system/generation-log.jsonl` with
 `"backfilled": true` entries dated from file history.

@@ -211,15 +211,12 @@ Invoke-WebRequest -Uri "<fal-image-url>" -OutFile "campaigns/<slug>/media/<deliv
 curl -L -o "campaigns/<slug>/media/<deliverable-id>/<name>-v01.png" "<fal-image-url>"
 ```
 
-**Log it and rebuild the site.** For each downloaded image, follow the log step in
+**Log it and rebuild the page.** For each downloaded image, follow the log step in
 `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`: append one `generate` line to
 `campaigns/<slug>/system/generation-log.jsonl` (birth status `candidate` for candidates and ideas,
-`iteration` otherwise; include the prompt or a `prompt_ref`, the model, seed, source URL, and cost),
-then run:
-
-```bash
-node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs" "campaigns/<slug>"
-```
+`iteration` otherwise; include the prompt or a `prompt_ref`, the model, seed, source URL, and cost).
+Once every image from this call is logged, rebuild the page **once** — follow `campaign-site-builder`
+for `campaigns/<slug>`; never once per image.
 
 ## 7. Report back, and keep the claim posture
 

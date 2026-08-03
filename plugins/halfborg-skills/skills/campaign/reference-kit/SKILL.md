@@ -188,8 +188,7 @@ step in `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`: append a `generate
 `ref`, with the prompt or `prompt_ref`, model, seed, source URL, cost), then a **`status: locked`**
 line — the contract defines `locked` precisely as the status for "reference inputs the campaign binds
 to." Optionally append one `note` event capturing the Layer-3 verdict (residual soft flags). Then
-rebuild the site (`node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs"
-"campaigns/<slug>"`).
+rebuild the page once — follow `campaign-site-builder` for `campaigns/<slug>`.
 
 Then report. Two audiences here, and they get different things.
 

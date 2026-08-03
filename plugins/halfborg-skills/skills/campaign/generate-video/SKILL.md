@@ -60,8 +60,8 @@ and `ffmpeg` (a still frame to eyeball), so a working ffmpeg is what lets you ch
 Confirm with `ffprobe -version` rather than assuming — it is an optional dependency and may not be
 installed. ffmpeg is required only for verification, never for rendering: if it cannot be found,
 still deliver the clip but say clearly that you could **not** check it — in those words, not as
-"unverified" — rather than skipping silently or claiming a check you did not run.
-`/halfborg-skills:setup-engine` reports whether it is present.
+"unverified" — rather than skipping silently or claiming a check you did not run. This is the only
+place ffmpeg is checked at all — nothing upstream checks it for you, so confirm it here, every time.
 
 **The fal MCP.** The fal MCP is a plugin-scoped streamable-HTTP server declared in the
 `halfborg-skills` plugin's `.mcp.json` (`fal-ai` → `https://mcp.fal.ai/mcp`), authenticated with the plugin's `fal_key`
@@ -328,14 +328,12 @@ Invoke-WebRequest -Uri "<fal-video-url>" -OutFile "campaigns/<slug>/media/<deliv
 curl -L -o "campaigns/<slug>/media/<deliverable-id>/<deliverable-id>-clip1-v01.mp4" "<fal-video-url>"
 ```
 
-**Log it and rebuild the site.** Follow the log step in `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`:
+**Log it and rebuild the page.** Follow the log step in `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`:
 append one `generate` line per clip to `campaigns/<slug>/system/generation-log.jsonl` (role `clip`,
 status `iteration`, with the prompt or `prompt_ref`, model, seed, source URL, and the cost you know
-from step 5), then run:
-
-```bash
-node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs" "campaigns/<slug>"
-```
+from step 5). Once every clip from this invocation is logged, rebuild the page **once** — follow
+`campaign-site-builder` for `campaigns/<slug>`; for a batch script (below) that means once for the
+whole batch, never once per clip or segment.
 
 ## 8. Verify the downloaded clip (ffprobe / ffmpeg)
 

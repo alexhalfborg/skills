@@ -19,9 +19,10 @@ Keep the two worlds straight when working here:
   by the plugin at runtime and never exist in this repo. The installed plugin is read-only and never
   writes into itself.
 
-Almost all "code" here is prose that an LLM executes. The only executable is
-[build-site.mjs](plugins/halfborg-skills/skills/campaign/campaign-site-builder/scripts/build-site.mjs)
-(415 lines, Node ≥18, zero dependencies, no `package.json` anywhere).
+There is no executable code anywhere in this repo — no script, no Node dependency, no
+`package.json`. All "code" here is prose that an LLM executes, including the campaign page itself:
+`campaign-site-builder` reads a campaign's own files and writes `site/index.html` directly, rather
+than running a build script.
 
 ## Commands
 
@@ -39,15 +40,10 @@ Test against the local checkout, never the GitHub copy:
 `SKILL.md` edits take effect immediately. Changes to `agents/`, `.mcp.json` or `plugin.json` need
 `/reload-plugins` or a restart.
 
-Smoke-test the site builder directly against any campaign folder — it is deterministic (same inputs,
-byte-identical output) and doubles as the generation-log linter, warning per malformed line:
-
-```powershell
-node plugins/halfborg-skills/skills/campaign/campaign-site-builder/scripts/build-site.mjs <campaign-path>
-```
-
-There is no test suite, no build step and no lint config. Validation is `claude plugin validate` plus
-an end-to-end run of the pipeline in a scratch workspace.
+There is no test suite, no build step and no lint config, and nothing left to smoke-test as a
+script — the campaign page is validated by actually looking at the rebuilt `site/index.html` during
+an end-to-end run of the pipeline in a scratch workspace, which is also how `claude plugin validate`
+is complemented.
 
 [CONTRIBUTING.md](CONTRIBUTING.md) is the human-facing version of most of this file. The root
 `README.md` and the plugin's `README.md` are written for **marketers with no Claude Code

@@ -5,16 +5,17 @@ network beyond what the agent already has. Everything below is a dial. None of i
 none of it is an error when absent — the degraded behaviour is the *intended* behaviour, not a
 failure, and should be reported that way.
 
-`/halfborg-skills:setup-engine` reports on all three.
+`/halfborg-skills:setup-engine` does not check any local binary — there is nothing left to check.
+`site/index.html` is authored by the `campaign-site-builder` skill directly, no separate runtime
+required. ffmpeg readiness is checked only by `generate-video` itself, when it is actually used.
 
 ## Local tooling
 
 | Binary | Used by | Behaviour without it |
 |---|---|---|
-| **Node** (v18+) | `campaign-site-builder`, which shells out to `build-site.mjs` after every artifact | Every phase still runs and every artifact is still written. You just do not get the browsable `site/index.html`. Say so once; do not retry, and do not hand-write the page. |
 | **ffmpeg** (`ffprobe`, `ffmpeg`) | `generate-video` step 8, to verify a downloaded clip (duration, resolution, a sample frame) | You still get the clip. Report it **unverified** rather than silently assuming it is good or claiming a check you did not run. |
 
-Confirm with `node --version` and `ffprobe -version` rather than assuming. Do not print install
+`generate-video` confirms with `ffprobe -version` rather than assuming. Do not print install
 commands for a specific package manager unless the user asks — this engine runs on any OS.
 
 ## Image and video generation (the fal MCP)

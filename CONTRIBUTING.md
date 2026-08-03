@@ -4,9 +4,10 @@ This repo is the **source** of a Claude Code plugin marketplace. Nothing here ru
 `.claude-plugin/marketplace.json` is the catalogue, and each plugin is self-contained under
 `plugins/<name>/`. Today there is one, `halfborg-skills`.
 
-Almost all "code" here is prose that a model executes. The only executable is
-[build-site.mjs](plugins/halfborg-skills/skills/campaign/campaign-site-builder/scripts/build-site.mjs)
-— Node ≥18, zero dependencies, no `package.json` anywhere.
+There is no executable code anywhere in this repo — no script, no Node dependency, no
+`package.json`. Almost all "code" here is prose that a model executes, including the campaign page
+itself: `campaign-site-builder` reads a campaign's own files and writes `site/index.html` directly,
+rather than running a build script.
 
 ## Repo layout
 
@@ -55,15 +56,10 @@ Validate before pushing:
 claude plugin validate ./
 ```
 
-Smoke-test the site builder directly against any campaign folder. It is deterministic — same inputs,
-byte-identical output — and doubles as the generation-log linter, warning per malformed line:
-
-```
-node plugins/halfborg-skills/skills/campaign/campaign-site-builder/scripts/build-site.mjs <campaign-path>
-```
-
-There is no test suite, no build step and no lint config. Validation is `claude plugin validate` plus
-an end-to-end run of the pipeline in a scratch workspace.
+There is no test suite, no build step and no lint config, and nothing left to smoke-test as a
+script — the campaign page is validated by actually looking at the rebuilt `site/index.html` during
+an end-to-end run of the pipeline in a scratch workspace, which is also how `claude plugin validate`
+is complemented.
 
 ## The `schema/` directory is the authority
 

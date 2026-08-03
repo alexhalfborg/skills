@@ -6,42 +6,34 @@ Turn the current working directory into a campaign workspace, and tell the user 
 stand.
 
 This command **asks, and never enforces**. Nothing in it blocks. There is no failure state: a
-workspace with no key, no ffmpeg, and nothing but Node is a working workspace. Your job is to report
-honestly, scaffold what is missing, offer to fix what is worth fixing, and hand off. Re-running is
-normal and expected — it is how the user confirms a key after a restart, and how the brand list in
-the project-instructions block gets refreshed — so **every step must be safe to repeat**.
+workspace with no key is a working workspace. Your job is to report honestly, scaffold what is
+missing, offer to fix what is worth fixing, and hand off. Re-running is normal and expected — it is
+how the user confirms a key after a restart, and how the brand list in the project-instructions
+block gets refreshed — so **every step must be safe to repeat**.
 
 This is very often the first thing a user ever runs, and they are a marketer, not a developer.
 Everything you say follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in
 the files, not in the conversation. Name a tool only when its absence changes what they can do, and
 then say what it changes rather than what it is.
 
-## 1. Explore, then lead with the promise
+## 1. Say hello, then explore
 
-Look before you write. Read the current state of the working directory: is there an `engine.yaml`? a
-`brands/` with anything in it? a `campaigns/`? a `CLAUDE.md` or an `AGENTS.md`, and does either
-already carry a `## Campaign engine` block? a `.gitignore`? Is this a git repo at all?
+Before touching anything, say in one or two plain sentences what you are about to do — most people
+running this have never seen it before:
+
+> Let's get this folder set up for your campaigns. I'll check what's already here, tell you what's
+> optional as I go, and get you ready to start.
+
+Then look before you write. Read the current state of the working directory: is there an
+`engine.yaml`? a `brands/` with anything in it? a `campaigns/`? a `CLAUDE.md` or an `AGENTS.md`, and
+does either already carry a `## Campaign engine` block? a `.gitignore`? Is this a git repo at all?
 
 Then say the thing that stops the rest of this reading as a list of problems: everything here is
 optional, and the pipeline runs without any of it. A key changes **how** media is produced — rendered
 here, or handed back as a prompt to run at fal.ai — not **whether** the campaign can run. Keep it to
 a sentence.
 
-## 2. Check the toolchain
-
-Two binaries. Report each as present or absent **with its consequence**, never as a bare pass/fail.
-Neither blocks.
-
-- `node --version` — needs v18 or newer. Without it the campaign page (`site/index.html`) is not
-  rebuilt after each artifact. Every phase still runs; the artifacts are all still written to disk.
-- `ffprobe -version` — optional. Used only to check a rendered video after the fact. Without it you
-  still get the clip; you just cannot open it to confirm its length and size afterwards. Say it that
-  way, not as "unverified".
-
-If a binary is missing, name it and say what it unlocks. Do not print install commands for a
-specific package manager unless the user asks — this workspace runs on any OS.
-
-## 3. Scaffold the workspace
+## 2. Scaffold the workspace
 
 Create what is absent; touch nothing that already exists.
 
@@ -52,7 +44,7 @@ Create what is absent; touch nothing that already exists.
   show the user a validation error.** If it is beyond repair, say the defaults are being used and
   move on — the skills all fall back on their own.
 
-## 4. Write the project-instructions block
+## 3. Write the project-instructions block
 
 This is the one genuinely intrusive thing this command does, because it edits a file the user owns.
 Draft it, show it, let them change it, then write.
@@ -83,7 +75,7 @@ already there.
   rather than appending a duplicate.
 - Never touch the surrounding sections. Everything outside the block must come out byte-identical.
 
-## 5. Guard the .gitignore
+## 4. Guard the .gitignore
 
 If the working directory is a git repo, make sure `.gitignore` covers the two things that should
 never be committed:
@@ -97,14 +89,14 @@ campaigns/*/site/
 rewrite or reorder what is there. If it does not exist, create it with just these lines. If this is
 not a git repo, skip the step silently — it is not worth a sentence.
 
-## 6. Point at the image-generation key
+## 5. Point at the image-generation key
 
 Rendering images and video needs a fal.ai key. **Never ask the user to type or paste a key into the
 chat, and never ask to see its value.** You do not need it and must never hold it: it is a setting on
 this plugin, stored in secure storage, and the harness substitutes it into the plugin's `.mcp.json`
 `Authorization` header itself. All you ever touch is the `mcp__fal-ai__*` tools.
 
-So there is no file to inspect and no state to detect here. If step 7 shows the tools are not live,
+So there is no file to inspect and no state to detect here. If step 6 shows the tools are not live,
 tell the user in plain language how to set it:
 
 > Open `/plugin`, go to the **Installed** tab and select **halfborg-skills**. Claude Code asks for
@@ -117,7 +109,7 @@ If they would rather not, that is a finished setup, not an abandoned one. Say so
 is a `FAL_KEY` env var in the gitignored `.claude/settings.local.json`. Mention it in one line if it
 comes up, and never read that file.)
 
-## 7. Report where fal stands
+## 6. Report where fal stands
 
 The real answer is whether the `mcp__fal-ai__*` tools are live in **this** session. A key set a moment
 ago does not take effect until `/reload-plugins` or a restart, which is why this command is worth
@@ -129,12 +121,12 @@ re-running.
   finished prompt and the model to run it with, at <https://fal.ai/models>, and everything else in
   the pipeline is identical. Frame it as a choice. It is the intended offline behaviour, not a defect.
 
-## 8. Hand off
+## 7. Hand off
 
 Close with one or two plain sentences: what is wired, and what to do next.
 
 - If `brands/` holds no brand, point at `/halfborg-skills:setup-brand`.
 - If it holds brands, list them and point at `/halfborg-skills:new-campaign <id>`.
 
-Do not read file contents back to the user beyond the block you drafted in step 4, and never print
+Do not read file contents back to the user beyond the block you drafted in step 3, and never print
 the contents of `.claude/settings.local.json`.

@@ -51,10 +51,9 @@ the seams.
    deliverable, and no expander invokes it: producers feed it, QA reads.
 
 Every skill that produces a campaign artifact appends one line to the campaign's append-only
-generation log (`system/generation-log.jsonl`) and then runs the deterministic site builder
-(`node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs" campaigns/<slug>`),
-so `site/index.html` — the whole campaign as one navigable page, chronology included — is always
-current at no LLM cost.
+generation log (`system/generation-log.jsonl`) and then, once per invocation, rebuilds the campaign
+page itself, per the `campaign-site-builder` skill, so `site/index.html` — the whole campaign as one
+scrolling page, chronology included — stays current.
 
 ## How to operate
 
@@ -102,7 +101,6 @@ brand or campaign files inside it.
 ```
 commands/                     setup-engine, setup-brand, new-campaign
 skills/                       every engine skill, including this one
-  campaign-site-builder/scripts/build-site.mjs   the deterministic campaign-page builder
 schema/                       the contracts (below), plus preflight.md
 templates/                    seeds copied into a workspace: engine.yaml, claude-md-block.md, design.md
 .mcp.json                     the fal-ai server, authenticated with the plugin's fal_key setting
@@ -122,7 +120,7 @@ campaigns/<brand>-<YYYY-MM-DD>-<slug>/
   content/                    text deliverables (.md): blogs, concepts, scripts, prompt docs
   media/<deliverable-id>/     ALL generated media, iterations side by side, versioned, never overwritten
   system/                     manifest.yaml, generation-log.jsonl (append-only), README.md
-  site/                       generated index.html (gitignored; rebuilt by build-site.mjs)
+  site/                       generated index.html (gitignored; rebuilt by campaign-site-builder)
 ```
 
 **One home per deliverable, status in the log.** Every generated media file lives in
@@ -247,9 +245,9 @@ is the contract, and every skill defers to it.
 
 ## Local tooling and external skills
 
-See `references/integrations.md` beside this file for what Node, ffmpeg and the fal MCP each unlock,
-and exactly how the engine behaves when each is absent. The short version: all three are optional and
-none of them blocks a phase.
+See `references/integrations.md` beside this file for what ffmpeg and the fal MCP each unlock, and
+exactly how the engine behaves when either is absent. The short version: both are optional and
+neither blocks a phase.
 
 Generation prompts are written by `ai-image-video-prompt-builder`, bundled here (one skill, an image
 track for Nano Banana and a video track for Veo / Gemini Omni etc.). Image prompts call it directly;

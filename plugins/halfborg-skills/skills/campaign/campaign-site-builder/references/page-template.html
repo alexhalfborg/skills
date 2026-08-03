@@ -1,26 +1,31 @@
 <!DOCTYPE html>
 <!--
-  campaign-site-builder — fixed page shell. Do NOT redesign this; only fill the placeholders.
+  campaign-site-builder — CSS and structural reference, not a script's template.
 
-  Placeholders to replace (leave none behind):
-    {{TITLE}}       campaign display title, e.g. "Eczema Clothing Meta Ads Refresh"
-    {{META}}        one-line meta, e.g. "Slug: eczema-clothing-meta-refresh · Status: In progress · Started 2026-07-01"
-    {{TABS}}        one <button class="tab" data-tab="ID"> per stage; mark the first with class="tab active"
-    {{PANELS}}      one <section class="panel" id="tab-ID"> per stage; mark the first with class="panel active"
+  The campaign-site-builder skill reads this file and reuses the <style> block and class
+  conventions below verbatim when it writes a real campaigns/<slug>/site/index.html by hand. This
+  file is not filled by a script and holds no {{PLACEHOLDER}} tokens to substitute — copy the
+  <style> block as-is, and use the classes below for the content you compose. Do not invent new
+  classes for something already styled here.
 
-  Contract between {{TABS}} and {{PANELS}}: each tab's data-tab="ID" must match a panel id="tab-ID".
+  Page shape: one continuous scrolling page. A top-level <h2 class="section-title"> opens each of
+  Overview / Strategy / Concept / Content / Media / QA, in that order; there is no tab bar and no
+  click-to-reveal — a section with nothing to show is left out of the page entirely, not shown
+  empty. The example markup below is illustrative content, not real campaign data.
 
   CSS classes available for rendered content (use these, do not invent styling):
-    .claim-strip    the collected ⚠️ CLAIM CHECK banner — place it at the TOP of the Overview panel only
-                    (not above the tab bar), or omit it entirely if the campaign has no claim flags
+    .claim-strip    the collected ⚠️ CLAIM CHECK banner — place it at the TOP of the Overview
+                    section only, or omit it entirely if the campaign has no claim flags
+    .section-title  the <h2> that opens each of the six top-level sections
+    .section-nav    a bare in-page anchor list (no JS) for a section with many long docs — used
+                    today only at the top of Content; omit elsewhere
     .doc            wrapper for one rendered markdown document (gets a card)
     .doc-head       the document's H1/title row (holds title + optional source link)
     .source-link    small link back to the source .md, e.g. <a class="source-link" href="../brief.md">source</a>
     .preamble       the leading ">" blockquote of a doc, rendered as a distinct note (not body prose)
     .claim          inline highlight for a ⚠️ CLAIM CHECK line: <span class="claim">…</span> or <div class="claim">…</div>
-    .toc            within-tab table of contents (a <nav class="toc"> with anchor links) for tabs holding long/multiple docs
-    .empty          muted placeholder text when a stage has a folder but no content worth showing
-    .media-grid     grid wrapper for media cards (Media tab, key-visual gallery)
+    .empty          muted placeholder text when a section has a folder but no content worth showing
+    .media-grid     grid wrapper for media cards (Media section, key-visual gallery)
     .media-card     one artifact: <img>/<video> + .file + .meta-line rows + badges
     .badge          status chip; variants .badge-locked .badge-final .badge-superseded .badge-rejected .badge-unlogged
     details.prompt  collapsed generation prompt inside a media card
@@ -32,7 +37,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{TITLE}} — campaign</title>
+<title>Example campaign — campaign</title>
 <style>
   :root {
     --bg: #f6f4ef;
@@ -62,7 +67,7 @@
   .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px 80px; }
 
   /* Header */
-  header.site { padding: 34px 0 18px; }
+  header.site { padding: 34px 0 18px; border-bottom: 1px solid var(--line); margin-bottom: 26px; }
   header.site h1 { margin: 0 0 6px; font-size: 1.7rem; letter-spacing: -0.01em; }
   header.site .meta { margin: 0; color: var(--ink-soft); font-size: 0.9rem; }
 
@@ -80,41 +85,26 @@
   .claim-strip ul { margin: 0; padding-left: 18px; }
   .claim-strip li { margin: 4px 0; }
 
-  /* Tab bar */
-  .tabbar {
-    display: flex; flex-wrap: wrap; gap: 4px;
-    position: sticky; top: 0; z-index: 5;
-    background: var(--bg);
-    padding: 8px 0;
-    border-bottom: 1px solid var(--line);
-    margin-bottom: 26px;
+  /* Sections (top-level, one continuous scrolling page) */
+  section.section { margin: 0 0 48px; scroll-margin-top: 20px; }
+  h2.section-title {
+    font-size: 1.3rem; letter-spacing: -0.005em; margin: 0 0 18px;
+    padding-bottom: 10px; border-bottom: 2px solid var(--accent);
   }
-  .tab {
-    appearance: none; border: 0; background: transparent; cursor: pointer;
-    font: inherit; font-size: 0.94rem; font-weight: 600; color: var(--ink-soft);
-    padding: 9px 15px; border-radius: 999px; transition: background .15s, color .15s;
-  }
-  .tab:hover { color: var(--ink); background: var(--accent-soft); }
-  .tab.active { color: #fff; background: var(--accent); }
 
-  /* Panels */
-  .panel { display: none; animation: fade .18s ease; }
-  .panel.active { display: block; }
-  @keyframes fade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
-
-  /* Within-tab TOC */
-  nav.toc {
+  /* In-page anchor list, no JS (Content section only) */
+  nav.section-nav {
     background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
     padding: 12px 16px; margin: 0 0 24px; font-size: 0.9rem;
   }
-  nav.toc strong { display: block; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; margin-bottom: 6px; }
-  nav.toc a { display: inline-block; margin: 2px 14px 2px 0; color: var(--accent); text-decoration: none; }
-  nav.toc a:hover { text-decoration: underline; }
+  nav.section-nav strong { display: block; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.72rem; margin-bottom: 6px; }
+  nav.section-nav a { display: inline-block; margin: 2px 14px 2px 0; color: var(--accent); text-decoration: none; }
+  nav.section-nav a:hover { text-decoration: underline; }
 
   /* Document card */
   .doc {
     background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
-    padding: 8px 28px 24px; margin: 0 0 26px; scroll-margin-top: 70px;
+    padding: 8px 28px 24px; margin: 0 0 26px; scroll-margin-top: 20px;
   }
   .doc-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
   .doc h1, .doc h2, .doc h3, .doc h4 { line-height: 1.3; }
@@ -160,7 +150,7 @@
 
   .empty { color: var(--ink-soft); font-style: italic; }
 
-  /* Media gallery (Media tab + key-visual gallery) */
+  /* Media gallery (Media section + key-visual gallery) */
   .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin: 14px 0 26px; }
   .media-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px; font-size: 0.85rem; }
   .media-card img, .media-card video { width: 100%; border-radius: 8px; display: block; background: var(--note); }
@@ -183,37 +173,43 @@
 <body>
 <div class="wrap">
   <header class="site">
-    <h1>{{TITLE}}</h1>
-    <p class="meta">{{META}}</p>
+    <h1>Example campaign</h1>
+    <p class="meta">Slug: example-brand-2026-08-01-launch · Status: In progress · Started 2026-08-01</p>
   </header>
 
-  <nav class="tabbar" role="tablist">
-    {{TABS}}
-  </nav>
-
   <main>
-    {{PANELS}}
+    <section class="section" id="overview">
+      <h2 class="section-title">Overview</h2>
+      <!-- deliverables table, claim-strip, artifact counts and logged cost sum -->
+    </section>
+
+    <section class="section" id="strategy">
+      <h2 class="section-title">Strategy</h2>
+      <!-- docs/brief.md, rendered as one .doc card -->
+    </section>
+
+    <section class="section" id="concept">
+      <h2 class="section-title">Concept</h2>
+      <!-- docs/message.md, rendered, plus the key-visual .media-grid gallery -->
+    </section>
+
+    <section class="section" id="content">
+      <h2 class="section-title">Content</h2>
+      <!-- nav.section-nav anchor list, then one .doc card per content/*.md -->
+    </section>
+
+    <section class="section" id="media">
+      <h2 class="section-title">Media</h2>
+      <!-- .deliverable-group per deliverable, .media-grid of .media-card entries, time order -->
+    </section>
+
+    <section class="section" id="qa">
+      <h2 class="section-title">QA</h2>
+      <!-- docs/qa-report.md, rendered, when present -->
+    </section>
   </main>
 
-  <footer class="site">Compiled from the campaign markdown by the campaign-site-builder skill. Regenerate after edits.</footer>
+  <footer class="site">Written by the campaign-site-builder skill from the campaign's own files. Ask for a rebuild after edits.</footer>
 </div>
-
-<script>
-  (function () {
-    var tabs = document.querySelectorAll('.tab');
-    var panels = document.querySelectorAll('.panel');
-    function show(id) {
-      tabs.forEach(function (t) { t.classList.toggle('active', t.dataset.tab === id); });
-      panels.forEach(function (p) { p.classList.toggle('active', p.id === 'tab-' + id); });
-      if (history.replaceState) history.replaceState(null, '', '#' + id);
-    }
-    tabs.forEach(function (t) {
-      t.addEventListener('click', function () { show(t.dataset.tab); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-    });
-    // Deep-link support: open the tab named in the URL hash on load.
-    var hash = (location.hash || '').replace('#', '');
-    if (hash && document.getElementById('tab-' + hash)) show(hash);
-  })();
-</script>
 </body>
 </html>

@@ -61,8 +61,8 @@ stops and shows you what it is about to make, what it costs, and the exact text 
 you choose between it making the thing and you making it yourself. **No setting relaxes either
 gate.**
 
-After every artifact, a small script rebuilds `site/index.html`: the whole campaign as one navigable
-page, with running costs, at no cost in tokens.
+Once you've finished creating things in a session, `site/index.html` gets rebuilt: the whole
+campaign as one scrolling page, with running costs.
 
 ## What it creates in your folder
 
@@ -93,7 +93,6 @@ finishing a campaign.
 
 | | Gives you | Without it |
 |---|---|---|
-| **Node** v18 or newer | the one-page campaign view | Everything is still written to your folder; you just do not get `site/index.html`. |
 | **ffmpeg** | checking a video after it is made | You still get the clip. It just says it could not open the file to check it. |
 | **a fal.ai key** | images and video made here | It hands you the finished prompt and settings to run yourself at fal.ai, and writes nothing. |
 

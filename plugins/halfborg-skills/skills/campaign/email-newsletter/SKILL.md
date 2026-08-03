@@ -151,11 +151,8 @@ Campaign work → `campaigns/<slug>/content/<descriptive-name>.md` (e.g. `conten
 sequence in one doc with each email under an `## Email N —` heading). Paths per
 `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`. Then follow that spec's §4.1 log step: append one `generate`
 line per deliverable doc (`status: iteration`, `file` pointing at the `.md`, the subject-line options
-or arc in `notes`; no `model`/`cost_usd` — nothing was rendered by a model), and rebuild the site:
-
-```
-node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs" "campaigns/<slug>"
-```
+or arc in `notes`; no `model`/`cost_usd` — nothing was rendered by a model). Then rebuild the page
+once — follow `campaign-site-builder` for `campaigns/<slug>`.
 
 Outside a campaign, write where the user asks and skip the log step.
 

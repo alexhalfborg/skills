@@ -186,8 +186,7 @@ step in `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`: append a `generate
 saved file, and when the user approves it as the shipped static, a `status: final` line. Optionally
 append one concise `note` event capturing the Layer-3 verdict (its residual soft flags) — the `note`
 event is the only contract-legal home for the critique, since the log has no analysis-artifact slot.
-Then rebuild the site (`node "${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/scripts/build-site.mjs"
-"campaigns/<slug>"`).
+Then rebuild the page once — follow `campaign-site-builder` for `campaigns/<slug>`.
 
 Then report per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 5:
 
