@@ -67,8 +67,6 @@ uses. Never leave a placeholder in the written output. Keep the whole block unde
 Never create `AGENTS.md` when `CLAUDE.md` already exists, or the reverse. Always edit the one that is
 already there.
 
-**Then show the user the drafted block and let them edit it before you write it.**
-
 **Write it:**
 
 - If a `## Campaign engine` block already exists in the chosen file, update its contents **in place**
@@ -91,7 +89,7 @@ not a git repo, skip the step silently — it is not worth a sentence.
 
 ## 5. Point at the image-generation key
 
-Rendering images and video needs a fal.ai key. **Never ask the user to type or paste a key into the
+Explain to user that you can also help to render images. This requires an account at fal.ai and an api key. **Never ask the user to type or paste a key into the
 chat, and never ask to see its value.** You do not need it and must never hold it: it is a setting on
 this plugin, stored in secure storage, and the harness substitutes it into the plugin's `.mcp.json`
 `Authorization` header itself. All you ever touch is the `mcp__fal-ai__*` tools.
