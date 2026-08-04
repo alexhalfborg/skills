@@ -41,7 +41,7 @@ conversation.
 2. **`brands/<id>/design.md`** — resolve `<id>` from `campaign.brand` in
    `campaigns/<slug>/system/manifest.yaml` rather than asking which brand this is
    (`${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` section 1.1); you read that manifest at step 1.3 anyway.
-   Read the brand **typeface name** and **colour hex** values. Freeform prose, not a schema, and often
+   Read the brand **typeface name** and **colour** values. Freeform prose, not a schema, and often
    a minimal shape (only `colors` + `typography.fontStacks`): read what is there, carry on without
    what is missing. The headline colour comes from `headline_lockup`/`palette`; the typeface name from
    here. If neither names a face, ask for an appropriate face rather than guessing a brand font.
@@ -87,15 +87,19 @@ upstream in `campaign-message` as a new key visual; say so rather than forcing o
 
 ## 4. Write the lockup prompt
 
-Because GPT-Image-2 Edit preserves the reference, write an **edit instruction** from the inputs and
-the archetype:
+Because the edit model preserves the reference, write an **edit instruction** from the inputs and
+the archetype. The key visual is the only reference, so it is `#Image1` — cite it by handle and
+ordinal ("`#Image1`, the reference image, is the photograph to keep") rather than saying "this image"
+and hoping:
 
 - The type of deliverable (poster, web banner, social image).
 - An "add a headline to this image" instruction and the **exact headline text, in quotes**, spelled
   and punctuated exactly as `message.md` gives it (do not alter it). State the case.
 - The **typeface** by name and character (from `design.md`, e.g. "a soft old-style serif" or "a bold
-  rounded sans-serif like Baloo 2") and the **colour** as a name plus hex, chosen from
-  `headline_lockup`/`palette` **for contrast against the measured backdrop tone** from Layer 1.
+  rounded sans-serif like Baloo 2") and the **colour** as a name plus a **sigil-free** hex value —
+  `deep plum (hex 7A1F3D)`, never `#7A1F3D`, because `#` opens a reference handle and a bare hex is
+  ambiguous beside `#Image1`. Choose it from `headline_lockup`/`palette` **for contrast against the
+  measured backdrop tone** from Layer 1.
 - The **archetype and target zone** from step 3: where the headline sits, and any scrim clause (a soft
   photographic gradient for legibility — never a hard band or letterbox).
 - A **preserve clause**: keep the subject, palette and composition unchanged; add only the headline
@@ -117,7 +121,9 @@ Then delegate to `generate-image` with:
 - **model:** `media.lockup_model` in the workspace `engine.yaml`, else `fal-ai/nano-banana-pro/edit`
   (silent fallback if `engine.yaml` is missing or names nothing). Whatever it names must be
   **edit-capable** (reference image + prompt).
-- **image_urls:** `[the uploaded key visual URL]` (this model takes an **array** of reference images).
+- **image_urls:** `[the uploaded key visual URL]` — a **single-element array**, so the key visual is
+  `#Image1` and the step-4 prompt must cite that handle. This model takes an array of reference
+  images; pass exactly the one.
 - **prompt:** the step-4 lockup prompt.
 - **resolution:** `2K` on nano-banana-pro (its enum is `1K` / `2K` / `4K`, default `1K`) — headline type
   wants the pixels. On a model that exposes `quality` instead (gpt-image-2), use its highest setting.
@@ -182,7 +188,7 @@ campaigns/<slug>/media/<id>/<id>-<ratio>-v<NN>.png    # if you produced more tha
 ```
 
 A regeneration of the same deliverable takes the next `v<NN>` — never overwrite. Then follow the log
-step in `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`: append a `generate` line (status `iteration`) for the
+step in `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`: append a `generate` line (status `iteration`, with `refs` naming the key visual it was composed onto) for the
 saved file, and when the user approves it as the shipped static, a `status: final` line. Optionally
 append one concise `note` event capturing the Layer-3 verdict (its residual soft flags) — the `note`
 event is the only contract-legal home for the critique, since the log has no analysis-artifact slot.
@@ -221,8 +227,9 @@ want another go with a change.
   archetypes are out of scope.
 - **The key visual is text-free.** If the locked still already carries baked text, stop — that is the
   upstream bug; do not lay a second headline over it.
-- **Bounded reroll.** Reroll only on a hard failure, capped at 2 rounds; GPT-Image-2 Edit costs real
-  money per image.
+- **Bounded reroll.** Reroll only on a hard failure, capped at 2 rounds; the lockup model is the
+  priciest per image the engine uses.
+- **Colour carries no `#`.** Write `deep plum (hex 7A1F3D)`. The sigil belongs to `#Image1`.
 - **Safe area is channel-driven, not platform-hardcoded.** Read `channel`/`format` and apply the
   matching margins; never bake one platform's chrome into the skill.
 - **Finals live in `media/<id>/`,** named `<id>[-<ratio>]-v<NN>.png`; promotion to `final` happens in

@@ -46,6 +46,19 @@ Then derive the angle bank yourself rather than asking them to invent one from a
 
 Write the `ads` block with `presenter` always set, `buying_mode: acute` on any product they flagged as an impulse buy, and the agreed angle bank. Never write an `ads` block without a human answer to the presenter question: the ad tools treat that block's presence as confirmation that a person decided who may appear in an ad.
 
+## Product photos (optional, ask only if they named products)
+
+Ask once, plainly: "Do you have photos of any of these? Even a phone shot on a plain background is
+worth more than a generated one." Explain the reason in a clause, not a lecture — a picture made up
+from scratch looks like the product without being it, so anything showing a real item is better off
+built on a real photo.
+
+For anything they point you at, record the path as that product's `photo` in `pack.yaml`, relative to
+the brand folder (`assets/serum-bottle.jpg`). Copy nothing and move nothing — just record where it is.
+
+Absent is fine and stays valid; the ad and video tools ask for a photo at the moment they need one.
+Never invent a path, and never record a file you have not been told exists.
+
 ## Look & feel (optional)
 
 Offer once: "Want me to capture your look — your main colours and fonts — so ads and pages come out on-brand?" Non-gating; if they decline, write no `design.md` and the image and page skills fall back to a generic-but-tasteful look.

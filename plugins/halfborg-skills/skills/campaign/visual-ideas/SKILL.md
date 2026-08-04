@@ -60,10 +60,11 @@ conversation.
    looser guidance than a locked concept — the output is even rougher and must be labelled as such.
 2. **`brands/<id>/design.md`** — resolve `<id>` from `campaign.brand` in
    `campaigns/<slug>/system/manifest.yaml` rather than asking which brand this is
-   (`${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` section 1.1). Read **only** the brand typeface name and the brand colour hex
-   values (e.g. Source Serif 4; `#1e3a5f`, `#f7f9fb`, teal accents). This file is freeform prose,
-   not a schema: read the values, and if a hex or the typeface is missing, carry on without it
-   rather than failing. Do **not** import its composition, whitespace, or "avoid harsh medical
+   (`${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` section 1.1). Read **only** the brand typeface name and the brand colour
+   values (e.g. Source Serif 4; a deep navy, an off-white, teal accents). This file is freeform prose,
+   not a schema: read the values, and if a colour or the typeface is missing, carry on without it
+   rather than failing. The file stores them as `#1e3a5f`; step 3 says how they are written into a
+   prompt, which is not with the `#`. Do **not** import its composition, whitespace, or "avoid harsh medical
    imagery" house-style rules into the prompt — those belong to production, and pulling them in here
    just reconstitutes the over-detailed prompt this skill exists to avoid.
 3. **The deliverable parameters** — the deliverable **type** (banner ad, poster, landing-page
@@ -101,7 +102,9 @@ Write **one** short prompt, reused across the batch. It must be deliberately lig
 not a spec:
 
 - The `master_visual.concept` left in the model's own creative hands.
-- The brand **typeface** name and **colour** hex values from step 1, as palette and type guidance.
+- The brand **typeface** name and **colour** values from step 1, as palette and type guidance. Name
+  two or three at most, each as a name plus a sigil-free hex — `deep plum (hex 7A1F3D)`, never
+  `#7A1F3D`, because `#` opens a reference handle.
 - The **tagline** as **soft** guidance ("integrate the headline text into the composition") —
   accept that in-image text will be approximate. Do not demand exact placement, exact spelling, or a
   specific card / box treatment.
@@ -126,7 +129,8 @@ Delegate to `generate-image` with the step-3 prompt, the primary ratio, and `num
 varied seeds so the variations actually differ:
 
 - **Edit mode:** `model: fal-ai/nano-banana-2/edit`, passing the uploaded subject-photo URL as the
-  edit input.
+  single edit input — so it is `#Image1`, and the step-3 prompt cites that handle when it refers to
+  the subject.
 - **Text-to-image mode:** `model: fal-ai/nano-banana-2` (no image input).
 
 Let `generate-image` resolve the exact fal parameter names via `get_model_schema` — do not hardcode

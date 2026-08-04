@@ -42,6 +42,37 @@ style descriptors. "A tired detective in a rain-soaked alley, shot on anamorphic
 traffic and pedestrians." Do this silently in the output. Never leave bare "no X, no Y" phrasing
 in the final prompt.
 
+### How references are addressed (image and video alike)
+
+Endpoints that take several reference images — the nano-banana `/edit` endpoints, Seedance 2.0
+reference-to-video, Kling reference — address them inside the prompt as `#Image1`, `#Image2`,
+`#Video1`, `#Audio1`. **Position is what binds a file to its handle:** the first reference passed is
+`#Image1`, the second is `#Image2`. Nothing else connects them.
+
+**References carry identity; the prompt carries composition.** A reference says what a character, a
+product, a palette or a style *looks like*. It does not fix the framing, so shot size, angle and
+placement are yours to specify, and a hero object can appear in several different shots or positions
+while staying itself.
+
+Four rules follow, and none of them is optional:
+
+1. **Cite every reference you pass.** A reference the prompt never names is silently ignored — no
+   error, no warning, just a render that quietly used less than you gave it. State the role as you
+   cite it: "`#Image2` is the product: match the fabric exactly".
+2. **Name the ordinal in words as well as the handle.** Write "`#Image1`, the first reference image,
+   is the bottle" rather than the handle alone. It costs a clause and it keeps the prompt legible to
+   a model that indexes references differently.
+3. **Fix the order before you write the prompt.** The prompt is authored against a specific pass
+   order. If the order changes, rewrite the prompt — never re-shuffle the files under a prompt that
+   already names them.
+4. **`#` opens a handle, so never write a bare `#RRGGBB`.** A hex colour goes in as a name plus the
+   value with no sigil: `deep plum (hex 7A1F3D)`. This holds whether or not the prompt carries
+   references, so it stays right when a reference is added later.
+
+List the references in the output's REFERENCES block **in the order they must be passed**, because
+that order is the binding. If a prompt goes into a `.md` file, keep it inside a fenced code block or
+at least never start a line with a handle — `#Image1` at the start of a line is a Markdown heading.
+
 **Materials and textures get named explicitly.** Not "suit" but "navy blue tweed." Not "coffee
 mug" but "minimalist matte ceramic mug." Specificity in materials translates directly to surface
 fidelity.
@@ -61,8 +92,9 @@ Ask only what's missing:
 3. **Aspect ratio** —
    - Image: 1:1, 4:5, 3:4, 4:3, 3:2, 2:3, 9:16, 16:9, 21:9, or wider strips (1:4 / 4:1)
    - Video: 16:9, 9:16, 1:1
-4. **Reference images?** (yes/no, what each shows, and — for image — what role each plays:
-   character, structure, texture, style, or scene)
+4. **Reference images?** (yes/no, what each shows, what role each plays — character, structure,
+   texture, style, or scene — and the order they will be passed in, since that is what binds each
+   one to its handle)
 5. **Core idea in 1-2 sentences?**
 
 If the user has already said "edit this" or attached references (image), infer the mode and skip
@@ -101,7 +133,9 @@ shows..."
 **Text rendering uses quotes plus font plus placement.** Wrap exact words in quotation marks:
 `The sign reads "URBAN EXPLORER"`. Specify font style (bold sans-serif, elegant serif, modern
 geometric, Century Gothic), placement (centered, top-left, across the bottom), and color. Without
-quotes, the model may read the words as a description rather than a literal string to render.
+quotes, the model may read the words as a description rather than a literal string to render. Give
+the colour as a name plus a sigil-free hex — `deep plum (hex 7A1F3D)` — never `#7A1F3D`, which reads
+as a reference handle.
 
 **Editing is conversational, not regenerative.** If the user has a base image and wants to change
 one thing, focus on what changes and what stays the same, and be explicit about preservation:
@@ -130,9 +164,12 @@ shot on medium-format analog film, pronounced grain, high saturation, cinematic 
 **Multimodal generation (with references):**
 `[Reference roles] + [Relationship instruction] + [New scenario]`
 
-Example: "Using the attached napkin sketch as the structure and the attached fabric sample as the
-texture, transform this into a high-fidelity 3D armchair render. Place it in a sun-drenched,
-minimalist living room." Always state explicitly what each reference contributes.
+Example: "Using `#Image1`, the first reference image, as the structure — a napkin sketch of an
+armchair — and `#Image2`, the second reference image, as the texture — a fabric sample — transform
+this into a high-fidelity 3D armchair render. Place it in a sun-drenched, minimalist living room."
+
+Always cite each reference by its handle and state explicitly what it contributes. Cite them in pass
+order, and remember an uncited reference is silently dropped.
 
 **Image editing (conversational):** focus on what changes plus what stays the same:
 - "Remove the man from the photo, keep the architecture, lighting, and color grade identical."
@@ -191,9 +228,9 @@ PROMPT:
 If text-in-image, include exact text in quotes with font, weight, and placement per line.
 If editing, lead with what changes and explicitly state what stays.]
 
-REFERENCES (if applicable):
-- Image 1: [filename or description] — role: [character / structure / texture / style / scene]
-- Image 2: ...
+REFERENCES (in pass order, if applicable):
+- #Image1 — [filename or description] — role: [character / structure / texture / style / scene]
+- #Image2 — ...
 
 EXCLUSIONS (positive phrasing):
 ...
@@ -257,19 +294,15 @@ mutters, sarcastically).
 drifts, orbits): sequential phrasing leaks cuts. Between shots of a multi-shot prompt, a deliberate
 cut is the point, so name it as one.
 
-## Reference-to-video: how references are addressed
+## Reference-to-video: what is different here
 
-Some endpoints (Seedance 2.0 reference-to-video, Kling O1 reference) take several references rather
-than a start frame, addressed inside the prompt as `@Image1`, `@Image2`, `@Video1`, `@Audio1`.
+The handle convention, the cite-or-ignored rule and the pass-order rule are shared with the image
+track — see **How references are addressed** under Shared principles, and follow it exactly.
 
-**References carry identity; the prompt carries composition.** A reference says what a character, a
-product, a palette, or a style *looks like*. It does not fix the framing, so shot size and camera are
-yours to specify, and a hero object can appear across several different shots while staying itself.
-
-Cite every reference explicitly in the prompt text and state the role it plays ("`@Image2` is the
-product: match the fabric exactly"). A reference the prompt never names is silently ignored. List the
-references in the output's NOTES block in the order they must be passed, because position is what
-binds a file to its `@ImageN` handle.
+What is specific to video: Seedance 2.0 reference-to-video and Kling O1 reference take these
+references **instead of a start frame**, not alongside one. There is no first frame to supply and no
+series of stills to render. One locked still plus the product photograph usually carries identity
+across every shot the prompt describes, so reach for a reference before you reach for a sequence.
 
 ## Step 2 (video): Feasibility check
 
@@ -310,7 +343,7 @@ style consistency. Use double-redundant anti-cut language. Don't over-stack cine
 
 **Seedance 2.0 (multi-shot):** write the shot sequence in order, each shot named by its framing and
 camera, cutting between them in plain language. No anti-cut language. Address references as
-`@ImageN` and state each one's role. Duration is 4-15 seconds for the whole sequence, so budget the
+`#ImageN` and state each one's role. Duration is 4-15 seconds for the whole sequence, so budget the
 seconds across the shots and say what you budgeted. Bracketed camera directives (`[Low-angle shot]`)
 are documented for Seedance **v1 Pro**, not 2.0 — prefer plain prose and do not assume the syntax
 carries over.
@@ -335,8 +368,8 @@ Ambient noise: ...
 Music: ...
 
 REFERENCES (in pass order):
-- @Image1 — [file] — role: [identity / product / style / scene]
-- @Image2 — [file] — role: ...
+- #Image1 — [file] — role: [identity / product / style / scene]
+- #Image2 — [file] — role: ...
 
 EXCLUSIONS (positive phrasing):
 ...
@@ -380,6 +413,9 @@ equivalent.
 - Don't pad with adjectives to hit a word count
 - Don't accept vague subjects — always push for specificity first
 - Don't write negatives as "no X, no Y" — rewrite them positively
+- **References (both media):** don't pass a reference the prompt never cites; don't cite a handle you
+  are not passing; don't write a bare `#RRGGBB` hex; don't shuffle the pass order after the prompt
+  names it; don't start a line in a `.md` prompt doc with a handle
 - **Image:** don't use "a series of" / "in succession"; don't forget to wrap exact text in quotes;
   don't oversimplify (Nano Banana handles stacked requirements); don't ignore reference roles or
   aspect ratio; don't build a series by repeating "change only X" against one base image

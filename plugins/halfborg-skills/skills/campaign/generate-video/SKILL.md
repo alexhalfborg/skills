@@ -32,7 +32,7 @@ hand. If the MCP cannot run, it renders nothing and hands the prompt back to run
 key is a supported way to run this workspace.
 
 Default model: **`bytedance/seedance-2.0/reference-to-video`** — up to nine reference images (also
-videos and audio), addressed inside the prompt as `@Image1`, `@Image2` and so on, with native audio
+videos and audio), addressed inside the prompt as `#Image1`, `#Image2` and so on, with native audio
 and director-level camera control, 4-15 seconds per generation.
 
 **The references are not a first frame.** They tell the model what things *look like* — a character,
@@ -93,9 +93,9 @@ receipt in step 5:
 - the **model id** you would have used, exactly;
 - the **settings** you resolved, as plain labels and real values — length, size, shape, sound on or
   off;
-- the **reference stills** as local paths, each with the `@ImageN` handle it maps to. Say in one
-  sentence that they get uploaded at fal.ai and that the prompt refers to them by those handles, in
-  the order listed;
+- the **reference stills** as local paths, each with the `#ImageN` handle it maps to. Say in one
+  sentence that at fal.ai they attach each still by typing `#` in the prompt box, in the order listed,
+  and that the prompt already refers to them by those handles;
 - where to run it: <https://fal.ai/models>.
 
 Then, once and in a clause: `/halfborg-skills:setup-engine` sets a key up if they would rather these
@@ -113,19 +113,25 @@ Required:
   for it (or offer to build one with `ai-image-video-prompt-builder` first). Do not write the
   creative prompt yourself here.
 - **reference images** — up to nine stills that tell the model what things look like, passed as
-  `image_urls` and addressed in the prompt as `@Image1`, `@Image2`, and so on. Local paths or URLs.
+  `image_urls` and addressed in the prompt as `#Image1`, `#Image2`, and so on. Local paths or URLs.
   They are **not** start frames: they carry identity, not composition. If this is campaign work and
   the user hasn't named any, default to the campaign's locked still (`docs/message.md`
   `master_visual.locked_still`, e.g. `media/key-visual/key-visual-v02.png`) so the video matches the
-  campaign's canonical subject, and add the real product photograph as a second reference when a hero
-  object must match a live SKU. A video prompt from `video-ad-script` may cite further identity
-  references (an ad-scoped prop, a second subject) that `reference-kit` has already rendered and
-  locked off the master visual — pass those as additional `@ImageN` stills. They are still identity
+  campaign's canonical subject, and add the real product photograph (`products[].photo` in the pack)
+  as a second reference when a hero object must match a live SKU. If that field is empty and the clip
+  turns on a real product, **ask for the photo rather than rendering a stand-in** — a synthesised SKU
+  looks like the product without being it. A video prompt from `video-ad-script` may cite further
+  identity references (an ad-scoped prop, a second subject) that `reference-kit` has already rendered
+  and locked off the master visual — pass those as additional `#ImageN` stills. They are still identity
   references, not start frames, so this does not change the rule below.
 
-  The prompt must actually **cite** each reference by its `@ImageN` handle, and the ordering of
-  `image_urls` is what binds a handle to a file. A prompt that names `@Image2` while only one image is
-  passed will not error; it will quietly ignore the reference. Check the two agree before submitting.
+  **The binding rule, stated once for this whole skill.** `image_urls` is ordered and the order is the
+  only thing connecting a picture to the prompt: `image_urls[0]` is `#Image1`, `image_urls[1]` is
+  `#Image2`. The prompt must **cite** every reference by its handle, and you must pass every handle the
+  prompt cites. Neither half errors when it is wrong — a handle with no file is quietly ignored, and a
+  file the prompt never names is quietly unused. So check the two agree before submitting, and **never
+  re-order, drop, or pad `image_urls` to resolve a mismatch**: fix the prompt or stop. Steps 5 and 6
+  refer back to this rule rather than restating it.
 
   Do **not** route to `generate-image` to manufacture a start frame per shot. Under reference-to-video
   there is no such thing. (The `image-to-video` override does require exactly one real start frame;
@@ -172,7 +178,7 @@ generation, and a short ad usually fits in one, cuts and all. Only a script that
 duration cap is a batch. When there genuinely is more than one segment (or several ads at once):
 
 1. **References first, not start frames.** Confirm every segment cites reference images that exist,
-   and that the `@ImageN` handles in the prompt match the `image_urls` you are about to pass. Do not
+   and that the `#ImageN` handles in the prompt match the `image_urls` you are about to pass. Do not
    render any start frames.
 2. **Quote the set, gate once.** Sum the per-segment estimates and present **one** combined cost block
    for the batch, then take a **single** approval — do not prompt per segment. On approval, render
@@ -201,10 +207,8 @@ files across all modalities). If the user gave local files (the usual case — t
 disk), call `upload_file` on each to get fal-hosted URLs. Pass existing URLs through unchanged.
 **Never fabricate a URL** — if an upload fails, stop and report it.
 
-Order matters: `image_urls[0]` is `@Image1`, `image_urls[1]` is `@Image2`, and so on. Before
-submitting, re-read the prompt and confirm every `@ImageN` it cites has a corresponding upload. A
-missing reference is ignored silently rather than raising an error, which shows up later as a subject
-that does not match the campaign's anchor.
+**Upload in the order step 2 fixed, and keep it.** The binding rule is in step 2; apply it here. A
+mismatch shows up later as a subject that does not match the campaign's anchor, never as an error.
 
 ## 5. Estimate cost, then GATE on approval
 
@@ -242,7 +246,7 @@ by-hand route is more often the sensible pick.
      the gloss;
    - the **settings**, as plain labels and real values — `Length: 6 seconds`, `Size: 720p`,
      `Shape: vertical (9:16)`, `Sound: on`;
-   - the **reference pictures**, each as a filename **and** the `@ImageN` handle it maps to, in
+   - the **reference pictures**, each as a filename **and** the `#ImageN` handle it maps to, in
      order. Keep the handles exactly as written: they are what the prompt cites, and they are what
      the user needs if they take the by-hand route;
    - the **estimated cost with its arithmetic** — `$0.30/second × 6 seconds = about $1.80` — the
@@ -259,7 +263,7 @@ by-hand route is more often the sensible pick.
 4. **Stop and ask which route they want**, three plain choices of equal weight:
    - **You make it** — proceed to step 6 on an explicit go.
    - **They run it themselves** — hand back the same paste-ready block as the offline path in step 1
-     (prompt, model id, settings, the reference stills in `@ImageN` order, and
+     (prompt, model id, settings, the reference stills in `#ImageN` order, and
      <https://fal.ai/models>), then **stop**: write no file, append no log line, invent no URL or
      cost. If they later hand back a rendered clip, save, verify and log it per steps 7-8, recording
      only what actually happened.
@@ -330,7 +334,9 @@ curl -L -o "campaigns/<slug>/media/<deliverable-id>/<deliverable-id>-clip1-v01.m
 
 **Log it and rebuild the page.** Follow the log step in `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`:
 append one `generate` line per clip to `campaigns/<slug>/system/generation-log.jsonl` (role `clip`,
-status `iteration`, with the prompt or `prompt_ref`, model, seed, source URL, and the cost you know
+status `iteration`, with the prompt or `prompt_ref`, `refs` — the reference stills as **paths**, in
+handle order, since the fal URLs are re-uploaded every run and a logged URL is a logged untruth —
+model, seed, source URL, and the cost you know
 from step 5). Once every clip from this invocation is logged, rebuild the page **once** — follow
 `campaign-site-builder` for `campaigns/<slug>`; for a batch script (below) that means once for the
 whole batch, never once per clip or segment.
@@ -415,9 +421,12 @@ whether they want to watch it before you carry on, or the next clip in the set.
 - **Render, never invent.** This skill executes an existing prompt; it does not write, embellish, or
   "fix" the creative. Prompt authoring is `ai-image-video-prompt-builder`.
 - **References carry identity, the prompt carries composition.** Under reference-to-video there is no
-  start frame to render, so never route to `generate-image` to manufacture one. Confirm instead that
-  every `@ImageN` the prompt cites is actually uploaded, in order. Only the `image-to-video` override
-  needs a real start frame, and there it needs exactly one.
+  start frame to render, so never route to `generate-image` to manufacture one. Only the
+  `image-to-video` override needs a real start frame, and there it needs exactly one.
+- **Never re-order the references.** Pass order binds a file to its handle (step 2). On a mismatch,
+  fix the prompt or stop — never shuffle, drop, or pad `image_urls` to make it line up.
+- **Ask for a real product photo; never synthesise a live SKU.** If `products[].photo` is empty and
+  the clip turns on a real product, ask. Asking costs one question.
 - **Audio is the brand's call, not this skill's.** Obey the prompt's `AUDIO:` block. If it is silent
   on the question, ask at the cost gate. Audio-on synthesises speech, so guessing here can put words
   in a real person's mouth.

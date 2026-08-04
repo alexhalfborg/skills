@@ -93,7 +93,8 @@ log's `register` events are the sub-id registry.
   - `setup` — a start frame rendered only to animate
   - `clip` — one video segment of a multi-clip deliverable
   - `idea` — a `visual-ideas` ideation variation
-  - `ref` — an identity reference still (a `reference-kit` artifact) bound as a video `@ImageN`
+  - `ref` — an identity reference still (a `reference-kit` artifact) bound as a `#ImageN` reference
+    and recorded in the consuming render's `refs` (section 4)
 - **seq** — distinguishes siblings of the same role: letters for candidates (`A`, `B`, `C`),
   numbers fused to the role for clips (`clip1`, `clip2`), two-digit numbers for ideas (`idea-01`),
   and a short descriptive slug for setup frames (`setup-guilt-receipts`) and reference stills
@@ -137,12 +138,30 @@ and 5.
 
 | event | meaning | additional fields |
 |---|---|---|
-| `generate` | an artifact was created | `file` (campaign-root-relative, forward slashes — required), `status` (`candidate` or `iteration` — required), `role`, `parent` (pipeline id, for sub-ids), `prompt` (full text, newlines as `\n`) or `prompt_ref` (path#anchor of a prompt doc), `model`, `seed`, `source_url`, `cost_usd`, `notes` |
+| `generate` | an artifact was created | `file` (campaign-root-relative, forward slashes — required), `status` (`candidate` or `iteration` — required), `role`, `parent` (pipeline id, for sub-ids), `prompt` (full text, newlines as `\n`) or `prompt_ref` (path#anchor of a prompt doc), `refs` (the reference images this render bound to — see below), `model`, `seed`, `source_url`, `cost_usd`, `notes` |
 | `register` | a pipeline sub-id now exists | `parent` (required), `title`, `format`, `channel`, `funnel_stage` |
 | `status` | promotion/demotion of an existing file | `file` (required), `status` ∈ `locked` / `final` / `superseded` / `rejected` (required), `reason` |
 | `note` | free-form annotation | `notes` (required), `file` optional |
 
 Entries reconstructed after the fact (migrations) add `"backfilled": true`.
+
+**`refs` — what a render bound to.** An ordered array of strings, one per reference image passed to
+the model. **The array index is the handle number:** `refs[0]` is the `#Image1` the prompt cites,
+`refs[1]` is `#Image2`, and so on. That one rule records the whole binding, so there is no separate
+handle field.
+
+- **Paths, not URLs.** A fal-hosted URL is ephemeral and is re-uploaded every run, so logging one
+  logs something that will not be true tomorrow. Record the file.
+- Campaign-root-relative with forward slashes, the same convention as `file` — **except** for a
+  reference that lives outside the campaign, which is written as given. A real product photograph
+  under `brands/<id>/` is a legitimate reference and often the one most worth recording; a
+  campaign-relative-only rule would silently drop it.
+- **Optional, and absent means _unknown_, not _none_.** Every entry written before this field
+  existed lacks it. Nothing needs backfilling for its own sake.
+- Not yet surfaced on the campaign page — `campaign-site-builder` ignores it for now.
+
+A render that cites `#Image2` in its prompt and has no `refs` is a render nobody can reproduce, which
+is the whole reason the field exists.
 
 **Status model.** A file is born `candidate` (options awaiting a pick, ideation) or `iteration`
 (a working generation). Promotion is a `status` event: `locked` for anchors/reference inputs the
@@ -154,7 +173,7 @@ implicitly supersedes the previous lock. **No `latest`/`final` file copies** —
 Example lines:
 
 ```json
-{"ts":"2026-07-08T16:26:00+08:00","event":"generate","skill":"generate-video","deliverable":"AD-R1-b","parent":"paid-funnel","role":"clip","file":"media/AD-R1-b/AD-R1-b-clip1-v01.mp4","prompt_ref":"content/AD-R1-b-scripts.md#segment-1","model":"bytedance/seedance-2.0/image-to-video","cost_usd":0.62,"status":"iteration"}
+{"ts":"2026-07-08T16:26:00+08:00","event":"generate","skill":"generate-video","deliverable":"AD-R1-b","parent":"paid-funnel","role":"clip","file":"media/AD-R1-b/AD-R1-b-clip1-v01.mp4","prompt_ref":"content/AD-R1-b-scripts.md#segment-1","refs":["media/key-visual/key-visual-v02.png","brands/lumen/assets/serum-bottle.jpg"],"model":"bytedance/seedance-2.0/image-to-video","cost_usd":0.62,"status":"iteration"}
 {"ts":"2026-07-09T07:00:00+08:00","event":"status","skill":"campaign-message","deliverable":"key-visual","file":"media/key-visual/key-visual-v02.png","status":"locked","reason":"re-rolled full-bleed, removed inner-border artifact"}
 ```
 

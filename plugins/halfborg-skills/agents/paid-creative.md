@@ -59,7 +59,7 @@ and the generation prompts that brief their visuals.
 
    **Multi-shot video ads — references, not start frames.** The default model
    (`bytedance/seedance-2.0/reference-to-video`) takes a small set of identity references, addressed
-   in the prompt as `@Image1`, `@Image2` and so on, and cuts between shots inside a **single**
+   in the prompt as `#Image1`, `#Image2` and so on, and cuts between shots inside a **single**
    generation. There is no start frame per shot, so **never route to `generate-image` to manufacture
    one** — `generate-video` says the same thing in bold, and rendering a frame per shot spends real
    money on files nothing will use. What you own is making sure the reference set exists before the

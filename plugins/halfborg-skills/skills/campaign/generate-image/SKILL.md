@@ -65,7 +65,10 @@ call you cannot make), then hand back a paste-ready block — the same shape as 
 - the **prompt**, verbatim and unedited, in a fenced code block;
 - the **model id** you would have used, exactly;
 - the **settings** you resolved, as plain labels and real values — size, how many pictures, seed if
-  any, reference pictures;
+  any;
+- the **reference pictures** as local paths, each with the handle it maps to, in order. Say in one
+  sentence that at fal.ai they attach each picture by typing `#` in the prompt box, in this order,
+  and that the prompt already refers to them by those handles;
 - where to run it: <https://fal.ai/models>.
 
 Then, once and in a clause: `/halfborg-skills:setup-engine` sets a key up if they would rather these
@@ -90,7 +93,10 @@ Optional (use sensible defaults, confirm only if ambiguous):
 - **number of images** — default **1**. Only batch when asked (cost is per image).
 - **seed** — pass through if the user wants reproducibility.
 - **reference image URL(s)** — nano-banana supports image-conditioned edits; pass these through
-  when the user provides source/reference images.
+  when the user provides source/reference images. **They are an ordered list, and the order is the
+  only thing binding a picture to the prompt:** the first is `#Image1`, the second `#Image2`. Take
+  the order from the caller and preserve it exactly — see step 4 for what to do when it disagrees
+  with the prompt.
 - **output folder** — see step 6.
 
 ## 3. Resolve the model and its schema
@@ -135,7 +141,12 @@ unabbreviated:
 - the **settings**, as plain labels and real values — `Size: square (1:1)`, `Pictures: 1`,
   `Starting point: 51823` (omit the line entirely when you are not setting a seed). Show every value
   that will actually be sent. Plain labels, never the raw parameter names;
-- the **reference picture(s)**, if any, as filenames in the order the model receives them;
+- the **reference picture(s)**, if any, as filenames in the order the model receives them, each with
+  the handle it maps to (`#Image1`, `#Image2`). Writing this list honestly is also the check: **with
+  more than one reference, if a handle the prompt cites has no file here, or a file here is never
+  cited, stop and say so.** Never reorder, de-duplicate, or pad the list to make a mismatch go away —
+  a wrong binding renders silently and costs the same as a right one. Hand it back to the caller to
+  fix. (One reference needs no check, and the `image-to-video` shape has no handles at all.);
 - the **estimated cost**: the figure, the word "estimate", and how you got there
   (`get_pricing` × number of pictures). If pricing failed, say so and invent no number.
 
@@ -149,7 +160,8 @@ Then ask, as three plain choices of equal weight:
 
 1. **You make it** — proceed to step 5.
 2. **They run it themselves** — hand back the same paste-ready block as the offline path in step 1
-   (prompt, model id, settings, reference files, and <https://fal.ai/models>), then **stop**: write no
+   (prompt, model id, settings, reference files with their handles and the `#`-to-attach line, and
+   <https://fal.ai/models>), then **stop**: write no
    file, append no log line, invent no URL or cost. If they later hand back a rendered file or URL,
    save and log it per steps 6-7, recording what actually happened — the model they used, and no
    cost figure you did not receive.
@@ -214,7 +226,10 @@ curl -L -o "campaigns/<slug>/media/<deliverable-id>/<name>-v01.png" "<fal-image-
 **Log it and rebuild the page.** For each downloaded image, follow the log step in
 `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`: append one `generate` line to
 `campaigns/<slug>/system/generation-log.jsonl` (birth status `candidate` for candidates and ideas,
-`iteration` otherwise; include the prompt or a `prompt_ref`, the model, seed, source URL, and cost).
+`iteration` otherwise; include the prompt or a `prompt_ref`, `refs` if the render used reference
+images, the model, seed, source URL, and cost). `refs` is the ordered list of the pictures you passed,
+as **paths** — the fal URLs are ephemeral and re-uploaded every run, so a logged URL is a logged
+untruth. Index order is handle order, so `refs[0]` is what the prompt called `#Image1`.
 Once every image from this call is logged, rebuild the page **once** — follow `campaign-site-builder`
 for `campaigns/<slug>`; never once per image.
 
@@ -252,6 +267,10 @@ a menu.
   `run_model` — and an earlier "make me some images" is not standing approval for this one.
 - **Render, never invent.** This skill executes an existing prompt; it does not write, embellish,
   or "fix" the creative. Prompt authoring is `ai-image-video-prompt-builder`.
+- **Never re-order the references.** Pass order is what binds a picture to `#Image1` / `#Image2`, and
+  the caller fixed it when it wrote the prompt. On a mismatch between the handles the prompt cites and
+  the files you hold, stop and hand it back — do not shuffle, drop, or pad the list to make it line
+  up. This is the same rule as "render, never invent", applied to the inputs.
 - **Never fabricate URLs or paths.** Report only what `run_model` actually returned and what you
   actually saved. If the MCP is down, produce no image and say so.
 - **Lean by default.** One image, `fal-ai/nano-banana-2`, unless the user asks for more or a

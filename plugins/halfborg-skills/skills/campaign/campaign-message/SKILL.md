@@ -77,8 +77,9 @@ Each direction, and the final chosen one, is populated as the master_visual name
   assets (who or what, defining features, wardrobe or form, anything that must stay constant).
   Give each a stable id (subject-1, subject-2) so expanders reference the same definition rather
   than reinventing it per asset.
-- palette: specific colours, not "warm tones". Reference the brand's colours where the pack has
-  them.
+- palette: specific colours, not "warm tones". Reference the brand's colours where
+  `brands/<id>/design.md` has them — that file is where colour lives, not `pack.yaml`, which carries
+  no colour field at all.
 - lighting: the light treatment that must carry across assets.
 - composition: the layout logic (where the subject sits, negative space, focal point). Include where
   the headline lockup is expected to go (e.g. "clean upper third reserved for the headline") so the
@@ -91,8 +92,8 @@ Each direction, and the final chosen one, is populated as the master_visual name
 - constants: what must not change across sizes, ratios, or formats. This is the anti-drift list. The
   anchor still is **text-free** (no baked headline, tagline, or logo) — that is itself a constant.
 
-Ground it in the brand. Pull colours, fonts, and assets from the pack rather than inventing a look
-that fights the brand's identity.
+Ground it in the brand. Pull colours and fonts from `brands/<id>/design.md`, and products and assets
+from the pack, rather than inventing a look that fights the brand's identity.
 
 ### Generate 2-3 candidate directions
 
@@ -107,6 +108,8 @@ Render one representative image per direction so the user chooses from pictures,
 no locked subject yet — this is the phase that mints it — so these are **text-to-image**. Write your
 own deliberately minimal prompt per direction (concept plus the brand colours and the deliverable's
 hero framing), in the same minimal-prompt spirit as `visual-ideas`; do not pin down every placement.
+Name two or three colours at most, each as a name plus a sigil-free hex — `deep plum (hex 7A1F3D)`,
+never `#7A1F3D`, since `#` opens a reference handle in a prompt.
 
 **Render the key visual text-free — no headline, no tagline, no logo.** The anchor carries the
 subject and the look, not the words. Typography is a separate downstream lockup layer (`compose-lockup`

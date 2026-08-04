@@ -89,6 +89,10 @@
           "price": { "type": "string" },
           "url": { "type": "string" },
           "claims_allowed": { "type": "array", "items": { "type": "string" } },
+          "photo": {
+            "type": "string",
+            "description": "Optional. Path to a real photograph of this product, relative to the brand folder (e.g. \"assets/serum-bottle.jpg\"). Used as an identity reference image by reference-kit and generate-video whenever a rendered hero object must match the live SKU. Absent is fine and common; a skill that needs it and does not find it asks the user for the photo rather than synthesising the product."
+          },
           "buying_mode": {
             "type": "string",
             "enum": ["considered", "acute"],

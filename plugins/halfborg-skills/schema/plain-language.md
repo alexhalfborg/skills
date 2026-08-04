@@ -59,8 +59,11 @@ a friendlier equivalent. Simplifying one of these is a defect, not a style impro
   never omitted because it is small.
 - **The exact path of a file they can open**, and any URL you actually received back. Written out in
   full so it is clickable.
-- **Slash commands, and the `@Image1` handles in a hand-back block** — text the user has to type or
+- **Slash commands, and the `#Image1` handles in a hand-back block** — text the user has to type or
   paste somewhere else.
+- **A colour written as `deep plum (hex 7A1F3D)` inside a prompt.** The missing `#` is deliberate:
+  `#` opens a reference handle, so a bare `#7A1F3D` is ambiguous to the model. It looks like a typo
+  and it is not. Never "correct" it back when you show the prompt at a gate or hand it over.
 - **A refusal, a failure, or a thing you could not check.** Say the plain version of the bad news,
   never the polished one.
 
@@ -87,7 +90,8 @@ the *sentence around* the literal thing, never for the literal thing.
 | `aspect_ratio`, `image_size` | "square", "portrait", "vertical, for reels". Put the ratio in brackets in a receipt |
 | `seed` | nothing — unless you are reusing one: "same starting point as last time, so it comes out close" |
 | output format, `bitrate_mode`, `end_user_id`, `enable_safety_checker` | nothing |
-| `@Image1`, `@ImageN` | "the first reference picture", "the second". Keep the handles exactly as they are inside a hand-back block |
+| `#Image1`, `#ImageN` | "the first reference picture", "the second". Keep the handles exactly as they are inside a hand-back block |
+| `refs`, "the refs array", "pass order" | "the pictures I gave it, in this order" — or just name them: "the bottle and the founder" |
 | `claims_allowed` | the claims you have cleared for this product |
 | `mandatories` | your must-includes |
 | `nogos` | the things you have said never to say |

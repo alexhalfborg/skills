@@ -164,7 +164,7 @@ subject that appears in **two or more shots**, ask one question: does the asset 
 are about to REUSE actually *contain that subject's identity-defining features*? A
 product-led master visual that shows only hands does **not** contain a face, hair or
 wardrobe. If the subject shows features the candidate asset lacks, it is **not
-covered** — do not paper over the gap by pointing `@Image1` at the anchor and hoping.
+covered** — do not paper over the gap by pointing `#Image1` at the anchor and hoping.
 Two honest outcomes:
 
 - **Route it to `campaign-message`.** If the uncovered subject belongs in the
@@ -180,7 +180,7 @@ Two honest outcomes:
 **Declare the reference kit; do not render it in step A.** A reference-to-video
 model binds a small set of **identity references** — stills that say what the
 subject *looks like*, not start frames. So under the subject definition, enumerate
-each `@ImageN` the prompt will need and map each to one of:
+each `#ImageN` the prompt will need and map each to one of:
 
 - **REUSE** — an asset that already exists **and that covers the feature it stands
   for** (per the coverage test above): `message.md`'s `master_visual.locked_still`, a
@@ -193,7 +193,7 @@ each `@ImageN` the prompt will need and map each to one of:
 recurring person needs is **not one image**. At minimum it lists the master still (for
 scene, palette and lighting), that subject's own identity still (face, hair, build,
 wardrobe), and the real product photo when a hero SKU must match. A `REFERENCES`
-block that names a single `@Image1` for an ad with a recurring faced subject is the
+block that names a single `#Image1` for an ad with a recurring faced subject is the
 failure this whole section exists to prevent — treat it as a defect, not a shortcut.
 
 Do not render anything here, and do not flag a GENERATE gap as a `generate-image`
@@ -261,7 +261,7 @@ build what the video model needs. Name no skill.
 
 ## Reference kit (after approval, before the prompt)
 
-The video prompt cites each reference by an exact `@ImageN` file path, so the
+The video prompt cites each reference by an exact `#ImageN` file path, so the
 references must exist before you write it. Once the script is approved, resolve the
 reference kit you declared in step A:
 
@@ -288,7 +288,7 @@ prompt per **segment**, which for a multi-shot model may cover the whole ad.
 
 **Do not author prompt craft here.** Invoke `ai-image-video-prompt-builder` (its
 video track) via the Skill tool, once per segment. That skill owns the single-take
-versus multi-shot rules, the `@ImageN` reference convention, the `AUDIO:`
+versus multi-shot rules, the `#ImageN` reference convention, the `AUDIO:`
 contract, and the output template. Feed it, from the script:
 
 - the target model, the aspect ratio, and the seconds budgeted to this segment
@@ -305,7 +305,7 @@ Two seams break most often, so state both when you hand off:
    `AUDIO: none` — say that plainly rather than omitting the line. Audio-on
    synthesises speech, so a guess can put words in a real person's mouth.
 2. **References carry identity, not composition.** Each reference still is a
-   `@ImageN` handle, and pass order is what binds a file to its handle. Every
+   `#ImageN` handle, and pass order is what binds a file to its handle. Every
    reference the prompt uses must be named in the prompt text with its role
    stated, and listed under `REFERENCES (in pass order)`. The **resolved reference
    kit** supplies the exact locked paths — the REUSE paths and the ones
@@ -352,7 +352,7 @@ first-person lines and is never generated as a face.
 ## House rules
 
 Everything you say out loud follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`:
-engine words belong in the files, not in the conversation. `@ImageN` handles and the
+engine words belong in the files, not in the conversation. `#ImageN` handles and the
 `REFERENCES` / `AUDIO` blocks are prompt syntax — they stay exact inside the script
 doc and the prompt, and they are not how you describe the ad to the user.
 
