@@ -1,6 +1,6 @@
 {
   "name": "halfborg-skills",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Halfborg marketing skills for Claude Code. Currently the campaign engine: a brand-agnostic, human-gated pipeline that turns a fuzzy goal into a full set of campaign deliverables, reading everything brand-specific from a per-brand pack.",
   "author": {
     "name": "Alex",

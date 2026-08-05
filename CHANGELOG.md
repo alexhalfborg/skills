@@ -1,5 +1,51 @@
 # Changelog
 
+## 0.2.0
+
+Everything below landed after 0.1.0 was published and reached nobody, because a pinned `version` in
+`plugin.json` is the cache key Claude Code uses to decide whether an update exists. Bumping the field
+is what ships a release; pushing commits is not.
+
+### How it talks
+
+- New `schema/plain-language.md`, referenced by all 18 skills, the 3 commands and the 5 agents the
+  way `preflight.md` is. Every gate and report-back used to be specified as a list of field names, so
+  the engine's vocabulary leaked into the conversation. The rule is two columns: file vocabulary
+  stays exact because other skills parse it, and chat gets none of it. A short list of strings — the
+  verbatim render prompt, the model id, the money, a path you can open — is never softened.
+- `/halfborg-skills:setup-engine` opens with a plain welcome before any tool call, instead of a
+  silent toolchain probe, and the onboarding text it ends on is a good deal shorter.
+
+### No runtime dependencies
+
+- `campaign-site-builder` reads a campaign's own files and writes `site/index.html` directly rather
+  than shelling out to a build script, so Node is no longer needed to preview a campaign. The page is
+  one continuous scroll instead of tabs. The ffmpeg check moved into `generate-video`, where it is
+  made only when video is actually used.
+
+### Reference images
+
+- Reference pictures are addressed as `#Image1`, `#Image2` and so on, position in the pass order
+  being the only thing that binds a file to its handle. Because `#` opens a handle, a colour in a
+  prompt is written `deep plum (hex 7A1F3D)`. New optional `refs` array on the `generate` log event
+  records what a render actually bound to, as paths rather than ephemeral URLs.
+- New `products[].photo` in the brand pack: skills now ask for a real photograph of a live SKU rather
+  than synthesising one.
+
+### The brand logo
+
+- `/halfborg-skills:setup-brand` lifts the brand's logo off its website when it reads the site,
+  verifies the downloaded bytes really are an image, and saves it to `brands/<id>/assets/`. New
+  `brand.logo` in the pack schema (`path`, optional `dark_path` / `kind` / `source_url`, and
+  `confirmed`, which is `false` on anything site-lifted). It asks no question and writes nothing it
+  could not verify: a favicon is never recorded, and a missing logo is said out loud, not guessed at.
+  The lookup order was rehearsed against live sites — a site's own JSON-LD declaration is tried
+  before any scan of the header, because a press strip or customer wall is full of other people's
+  logos.
+- `landing-page` is the sole consumer. It embeds the file, inline SVG or a data URI under ~50KB, so
+  the page stays self-contained, and falls back to the brand name set as type. The logo never reaches
+  a render: generated visuals stay text-free and logo-free.
+
 ## 0.1.0
 
 First release as an installable plugin. Previously a project-scoped `.claude/` workspace that only
@@ -36,14 +82,6 @@ worked inside its own repo; now installable into any folder.
   and writes a `## Campaign engine` block into the workspace's `CLAUDE.md` (or `AGENTS.md`) —
   drafting it for review first, editing the existing block in place, never clobbering surrounding
   sections, and asking which file to create when neither exists.
-- `/halfborg-skills:setup-brand` now lifts the brand's logo off its website when it reads the site,
-  verifies the downloaded bytes really are an image, and saves it to `brands/<id>/assets/`. New
-  `brand.logo` in the pack schema (`path`, optional `dark_path` / `kind` / `source_url`, and
-  `confirmed`, which is `false` on anything site-lifted). It asks no question and writes nothing it
-  could not verify: a favicon is never recorded, and a missing logo is said out loud, not guessed at.
-  `landing-page` is the sole consumer — it embeds the file (inline SVG, or a data URI under ~50KB)
-  so the page stays self-contained, and falls back to the brand name set as type. The logo never
-  reaches a render: generated visuals stay text-free and logo-free.
 
 ### Out-of-sequence handling
 
