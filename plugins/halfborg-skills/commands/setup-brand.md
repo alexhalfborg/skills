@@ -67,28 +67,45 @@ page is real HTML rather than a rendered picture, so it is the one place a true 
 
 **Where to look, in order. The first thing that verifies wins.**
 
-1. `<link rel="icon" type="image/svg+xml">` — usually the real mark, in the ideal format.
-2. A header or nav `<img>` or inline `<svg>` whose `src`, `alt`, `class` or `id` mentions logo,
-   brand, or wordmark. Inline `<svg>` markup is written straight to a file as-is.
-3. A `schema.org` JSON-LD `"logo"` value, or `<meta property="og:logo">`.
+1. A `schema.org` JSON-LD `"logo"` value, or `<meta property="og:logo">`. Try this first: it is the
+   site declaring its own logo, so it cannot be somebody else's, and on a Shopify or WordPress store
+   it is usually there and usually full size.
+2. A `<link rel="icon">` pointing at an SVG — either `type="image/svg+xml"` or simply an `href`
+   ending `.svg`. Plenty of sites set no `type` at all, so go by the extension too.
+3. A header or nav `<img>` or inline `<svg>` whose `src`, `alt`, `class` or `id` mentions logo,
+   brand, or wordmark. Inline `<svg>` markup is written straight to a file as-is. **Take this rung
+   slowly.** Pages are full of other companies' logos — press strips, customer walls, payment badges,
+   partner rows — and they match this description perfectly. A real page carried `BuzzFeed_Logo`,
+   `Huffpost_Logo` and `Yahoo_Logo` before it carried its own. Only accept a match inside the page
+   header or nav, and only when it carries the brand's own name. If you cannot tell whose logo it is,
+   it is not a match.
 4. `apple-touch-icon` — typically a 180×180 PNG.
 5. A `data:` URI already sitting in the markup. Decode it and write the file; that is a real logo.
 
 Never record a `.ico`, and never fall back to `/favicon.ico`. A favicon is not a brand asset, and a
-16px mark stretched across a page header is worse than no logo at all.
+16px mark stretched across a page header is worse than no logo at all. Watch, too, for a favicon that
+is the real logo shrunk by query string — `?crop=center&height=32&width=32` on a CDN URL. Drop the
+sizing parameters and take the full-size file.
 
 **Getting the file.** The jina.ai markdown fallback below surfaces `<img>` URLs but strips inline
-SVG and CSS background images, which is where most header logos actually live — so read the raw HTML
-too when it is reachable. Resolve a relative `src` against the site's origin. Download with
+SVG entirely, along with CSS background images, and those are where most header logos live — so read
+the raw HTML too when it is reachable. Three URL shapes all turn up in the wild and all need
+fixing before you fetch: a protocol-relative `//host/path` takes an `https:` prefix, a relative
+`href` resolves against the **page's** URL rather than the site root, and a JSON-LD value arrives
+with its slashes escaped as `\/`. Then download with
 `curl -L -o "brands/<id>/assets/logo.<ext>" "<url>"`.
 
 **Then verify the bytes on disk, not the HTTP status.** A server answering 200 with an error page is
 common, and recording that as a logo is the one outcome worse than finding nothing.
 
 - SVG starts `<svg` or `<?xml`; PNG starts with the PNG magic bytes; JPEG with `\xff\xd8`; GIF with
-  `GIF8`; WEBP with `RIFF` then `WEBP`.
-- Reject anything under about 1KB — that is a tracking pixel or a placeholder, not a logo.
-- Prefer SVG. For anything raster, prefer 256px or more on the long edge.
+  `GIF8`; WEBP with `RIFF` then `WEBP`. Anything opening `<html` or `<!DOCTYPE` is an error page
+  wearing an image's filename. A `Content-Type` of `text/html` on a file you asked for as an image
+  says the same thing sooner.
+- Prefer SVG, and judge it by its markup rather than its weight — a clean vector mark is often only
+  three or four hundred bytes. Real ones measured at 315B and 412B.
+- For anything raster, prefer 256px or more on the long edge, and reject anything under about 1KB:
+  at that size it is a tracking pixel or a placeholder, not a logo.
 
 Only once a file has verified, record it as `logo` under the brand block in `pack.yaml`: its `path`
 relative to the brand folder (`assets/logo.svg`), the `source_url` you took it from, a `confirmed`
