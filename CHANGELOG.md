@@ -36,6 +36,14 @@ worked inside its own repo; now installable into any folder.
   and writes a `## Campaign engine` block into the workspace's `CLAUDE.md` (or `AGENTS.md`) —
   drafting it for review first, editing the existing block in place, never clobbering surrounding
   sections, and asking which file to create when neither exists.
+- `/halfborg-skills:setup-brand` now lifts the brand's logo off its website when it reads the site,
+  verifies the downloaded bytes really are an image, and saves it to `brands/<id>/assets/`. New
+  `brand.logo` in the pack schema (`path`, optional `dark_path` / `kind` / `source_url`, and
+  `confirmed`, which is `false` on anything site-lifted). It asks no question and writes nothing it
+  could not verify: a favicon is never recorded, and a missing logo is said out loud, not guessed at.
+  `landing-page` is the sole consumer — it embeds the file (inline SVG, or a data URI under ~50KB)
+  so the page stays self-contained, and falls back to the brand name set as type. The logo never
+  reaches a render: generated visuals stay text-free and logo-free.
 
 ### Out-of-sequence handling
 

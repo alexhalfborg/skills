@@ -1,7 +1,7 @@
 ---
 name: landing-page
 description: >-
-  Build a campaign's landing page: a real, self-contained, offline-viewable HTML page written from the brand pack, the approved brief, and the locked campaign message. Use whenever the user wants the page a campaign's traffic lands on: "build the landing page", "make the landing page for [deliverable]", "write the LP", "the page the ads point at", "we need a page for this offer", "generate the campaign landing page". Reads campaigns/<slug>/docs/brief.md (the page objective, audience, constraints), campaigns/<slug>/docs/message.md (the key message, the chosen tagline as the default hero headline, and master_visual.locked_still as the text-free hero image), campaigns/<slug>/system/manifest.yaml (its own asset entry: id, offer_ref, audience_ref, funnel_stage), brands/<id>/pack.yaml (products with price / url / claims_allowed / buying_mode, audience pains and jobs, voice, mandatories, nogos) and the whole of brands/<id>/design.md (typeface, colour hexes, radius, spacing grid, shadows, component patterns). Gates on the section stack in conversation, then writes one versioned .html into campaigns/<slug>/media/<id>/ and logs it. Do NOT use to invent the concept, key message, or tagline (that is campaign-message, read-only here); to generate imagery (that is generate-image); to produce a rough mockup IMAGE of a page rather than a working page (that is visual-ideas); to build the campaign's internal review site (that is campaign-site-builder); or to deploy or host anything, which this engine never does.
+  Build a campaign's landing page: a real, self-contained, offline-viewable HTML page written from the brand pack, the approved brief, and the locked campaign message. Use whenever the user wants the page a campaign's traffic lands on: "build the landing page", "make the landing page for [deliverable]", "write the LP", "the page the ads point at", "we need a page for this offer", "generate the campaign landing page". Reads campaigns/<slug>/docs/brief.md (the page objective, audience, constraints), campaigns/<slug>/docs/message.md (the key message, the chosen tagline as the default hero headline, and master_visual.locked_still as the text-free hero image), campaigns/<slug>/system/manifest.yaml (its own asset entry: id, offer_ref, audience_ref, funnel_stage), brands/<id>/pack.yaml (products with price / url / claims_allowed / buying_mode, audience pains and jobs, voice, mandatories, nogos, and brand.logo, the one skill that embeds it) and the whole of brands/<id>/design.md (typeface, colour hexes, radius, spacing grid, shadows, component patterns). Gates on the section stack in conversation, then writes one versioned .html into campaigns/<slug>/media/<id>/ and logs it. Do NOT use to invent the concept, key message, or tagline (that is campaign-message, read-only here); to generate imagery (that is generate-image); to produce a rough mockup IMAGE of a page rather than a working page (that is visual-ideas); to build the campaign's internal review site (that is campaign-site-builder); or to deploy or host anything, which this engine never does.
 ---
 
 # Landing page — the page the campaign's traffic lands on
@@ -40,6 +40,9 @@ conversation.
    - `audience[]` for `pains` and `jobs` — the raw material for the problem and proof sections.
    - `voice.summary` and `voice.spelling`; `voice.skills` names the voice skill(s) for any long-form body copy under a byline.
    - `brand.url`, `market.currency` (price formatting), `assets[]` (testimonials, proof).
+   - `brand.logo` — `path` is relative to `brands/<id>/`, so the file sits at
+     `brands/<id>/<path>`. Read the file itself; it gets embedded, not linked (section 4). This is
+     the only skill that uses it: a logo never goes near a render.
    - `mandatories` and `nogos`. **Absent `mandatories` means unconfirmed, not none** — confirm with the user rather than assuming the brand has no rules.
 5. **`brands/<id>/design.md`** — read the **whole file**. Typeface, colour hexes, border radius, the spacing grid, shadow rules, and the card / button / imagery component patterns. Unlike  `compose-lockup` and `visual-ideas`, which are restricted to the typeface name and colour hexes, a web build honours the full design system. Freeform prose, not a schema: read what is there and carry on past anything missing.
 
@@ -71,11 +74,18 @@ Get an explicit go-ahead. Reordering the sections is cheap now and expensive onc
 
 One self-contained `.html` file. It opens from disk and makes no network request.
 
-- **Provenance header first.** An HTML comment block immediately after the doctype, recording: the deliverable `id`, the campaign slug, the source `message.md` tagline, every product claim used with the `claims_allowed` entry that permits it, the mandatories honoured, and any font substitution. This is what lets `campaign-qa` check claims without parsing prose out of markup.
+- **Provenance header first.** An HTML comment block immediately after the doctype, recording: the deliverable `id`, the campaign slug, the source `message.md` tagline, every product claim used with the `claims_allowed` entry that permits it, the mandatories honoured, any font substitution, and the `brand.logo` `path` embedded (noting `confirmed: false` when it is unconfirmed, or that no logo was available). This is what lets `campaign-qa` check claims without parsing prose out of markup.
 - **Styles inline**, in one `<style>` block. Design tokens straight from `design.md`: the colour hexes as CSS custom properties, the radius, the spacing scale, the shadow rule.
 - **No web fonts.** Offline and self-contained forbids `@import` and any CDN. Name the brand typeface first in a local-first stack that degrades to a system face of the same character, e.g. `font-family: 'Source Serif 4', 'Source Serif Pro', Georgia, serif`. Record the substitution in the provenance header.
 - **The hero is the text-free key visual**, referenced relatively from the sibling media folder:
   `../key-visual/key-visual-v01.png`. Use the exact versioned path from `master_visual.locked_still`. Never use a `compose-lockup` output as the hero; its headline is baked in and would double up.
+- **The logo goes in the header, embedded rather than linked** — and in the footer too, if the stack
+  has one. It lives outside the campaign, so a relative link would break the moment the file is
+  handed to a developer. An SVG is inlined as `<svg>` markup: drop any `width`/`height`, keep the
+  `viewBox`, size it in CSS. Recolour it to `currentColor` **only** if the mark is monochrome; leave
+  a coloured logo exactly as the brand drew it. Anything raster becomes a base64 `data:` URI, capped
+  at roughly 50KB. Over that cap, or with no logo in the pack at all, the header is the brand name
+  set in the display face.
 - **Semantic and responsive.** Real landmarks, a sensible heading order, a single `<h1>`, and a layout that works from a phone to a desktop without a framework.
 - **Copy.** Body copy in the brand voice per `voice.summary`; product facts plain. Only
   `claims_allowed` may be asserted about a product. Honour every `nogo`.
@@ -93,7 +103,8 @@ A reroll takes the next `v<NN>`. **Never overwrite.** Then follow the log step i
 
 Then report back per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 5: what the page does,
 the sections it ended up with, the picture it leads with, where the buttons go, the claims it makes,
-and anything you had to leave open. **One path** — the `.html` file, in full, so they can open it —
+and anything you had to leave open. If the logo you used was unconfirmed, one clause: it came off
+their site and is worth a glance. If there was none, say the header carries their name as type. **One path** — the `.html` file, in full, so they can open it —
 and tell them it opens straight from disk in a browser.
 
 Say plainly that nobody has checked it yet: it has not been through their must-includes, the things
@@ -112,6 +123,7 @@ A thin pack degrades with a flagged gap; it never guesses.
 | `products[].price` | Omit price. Never invent one. |
 | `products[].claims_allowed` | Assert nothing product-specific. Sell on the key message alone. |
 | a named typeface in `design.md` | A generic stack of the right character. Flag it. |
+| `brand.logo` | The brand name set as type in the header. Flag it. Never draw or invent a mark. |
 | `mandatories` | Unconfirmed, not none. Ask. |
 
 ## House rules
@@ -119,7 +131,8 @@ A thin pack degrades with a flagged gap; it never guesses.
 - **The hero is the text-free key visual, never a lockup.** The headline is live `<h1>` text laid over the clean image. This is why `campaign-message` keeps the anchor text-free; do not undo it.
 - **Never invent the message.** The key message and tagline are locked upstream in `message.md`. This skill expresses them as a page; it does not reword them.
 - **Only `claims_allowed` may be asserted** about a product. Honour every mandatory and no-go.
-- **Self-contained and offline.** No CDN, no web fonts, no external scripts, no analytics. The hero image, referenced relatively, is the only thing outside the file.
+- **Self-contained and offline.** No CDN, no web fonts, no external scripts, no analytics. The hero image, referenced relatively, is the only thing outside the file — the logo is embedded, inline or as a data URI, precisely so it stays inside it.
+- **The logo is for this page only.** It is embedded in markup a person wrote. It is never a reference picture for a render, and no model is ever asked to draw it: the key visual stays text-free and logo-free.
 - **This engine never deploys.** The page has no URL. Do not publish it, and do not tell the user an ad can point at it until a human has hosted it.
 - **Never overwrite a version.** A reroll is `-v02.html` beside `-v01.html`; supersession is a log  event, not a deleted file.
 - **The page lives in `media/<id>/`.** Not `content/` (which is markdown only, and unversioned), and not a `landing-page/` folder (which does not exist).

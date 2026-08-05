@@ -59,6 +59,48 @@ the brand folder (`assets/serum-bottle.jpg`). Copy nothing and move nothing — 
 Absent is fine and stays valid; the ad and video tools ask for a photo at the moment they need one.
 Never invent a path, and never record a file you have not been told exists.
 
+## Logo (only when a website is available)
+
+Ask nothing. Whenever you read the site — the `$ARGUMENTS` pre-fill, the **Look & feel** read, or
+enrichment — try once to come away with the brand's logo, so pages built later carry it. A landing
+page is real HTML rather than a rendered picture, so it is the one place a true logo file belongs.
+
+**Where to look, in order. The first thing that verifies wins.**
+
+1. `<link rel="icon" type="image/svg+xml">` — usually the real mark, in the ideal format.
+2. A header or nav `<img>` or inline `<svg>` whose `src`, `alt`, `class` or `id` mentions logo,
+   brand, or wordmark. Inline `<svg>` markup is written straight to a file as-is.
+3. A `schema.org` JSON-LD `"logo"` value, or `<meta property="og:logo">`.
+4. `apple-touch-icon` — typically a 180×180 PNG.
+5. A `data:` URI already sitting in the markup. Decode it and write the file; that is a real logo.
+
+Never record a `.ico`, and never fall back to `/favicon.ico`. A favicon is not a brand asset, and a
+16px mark stretched across a page header is worse than no logo at all.
+
+**Getting the file.** The jina.ai markdown fallback below surfaces `<img>` URLs but strips inline
+SVG and CSS background images, which is where most header logos actually live — so read the raw HTML
+too when it is reachable. Resolve a relative `src` against the site's origin. Download with
+`curl -L -o "brands/<id>/assets/logo.<ext>" "<url>"`.
+
+**Then verify the bytes on disk, not the HTTP status.** A server answering 200 with an error page is
+common, and recording that as a logo is the one outcome worse than finding nothing.
+
+- SVG starts `<svg` or `<?xml`; PNG starts with the PNG magic bytes; JPEG with `\xff\xd8`; GIF with
+  `GIF8`; WEBP with `RIFF` then `WEBP`.
+- Reject anything under about 1KB — that is a tracking pixel or a placeholder, not a logo.
+- Prefer SVG. For anything raster, prefer 256px or more on the long edge.
+
+Only once a file has verified, record it as `logo` under the brand block in `pack.yaml`: its `path`
+relative to the brand folder (`assets/logo.svg`), the `source_url` you took it from, a `confirmed`
+of `false` because nobody has looked at it yet, and `kind` if the markup makes it obvious. Save it as
+`assets/logo.<ext>`, and a second file the site serves for dark backgrounds as
+`assets/logo-dark.<ext>`. Do not put a version number in the name; that belongs to campaign media,
+not to a brand's own files.
+
+If nothing verifies, write no logo at all and say so at the end, in a clause: you could not find a
+usable logo on the site, so pages will set their name as type until they drop the file in
+themselves. Never invent a path, and never record a file you have not seen land on disk.
+
 ## Look & feel (optional)
 
 Offer once: "Want me to capture your look — your main colours and fonts — so ads and pages come out on-brand?" Non-gating; if they decline, write no `design.md` and the image and page skills fall back to a generic-but-tasteful look.
@@ -91,12 +133,17 @@ If they agree, read the site and enrich in place — never overwriting a value t
 - **`audience[].pains` and `.jobs`** — the real problems and goals the site speaks to, per segment. These are the primary audience read for `ad-creative` and `landing-page`.
 - **`voice-profiles.md` corpus** — pull the **real** opener lines, the founder's characteristic phrasings, and pointers to actual published posts into the profile authored above. This is the one part a conversation genuinely cannot supply.
 - **`design.md`** — confirm or refine the typeface and palette against the site's real CSS, if the look step ran off inference.
+- **The logo** — if no earlier site read already came away with one, take the pass described in **Logo** above now. Once per setup, not once per read.
 
 If the brand has no published writing, say so plainly: the pack, design, and the authorable parts of the voice profile are all set, but the voice corpus stays sparse until real examples exist — no one can honestly generate a founder's real sentences from nothing.
 
 ## Finish
 
 Confirm back in one or two plain sentences what you set up — the pack, and if you wrote them, that you captured their look (colours and fonts) and their voice so ads, pages, and posts come out on-brand. Then tell them they can start a campaign with `/halfborg-skills:new-campaign <id>`. Do not read the file contents back to them.
+
+If you saved a logo, that file is the one thing worth them opening, so give its full path once and
+say plainly that you took it off their site and it is worth a glance. If you looked and came away
+with nothing, say that instead, in a clause.
 
 ## Tools 
 

@@ -28,7 +28,32 @@
           "minLength": 1
         },
         "description": { "type": "string" },
-        "url": { "type": "string", "description": "Site URL. Scheme optional; normalised on read." }
+        "url": { "type": "string", "description": "Site URL. Scheme optional; normalised on read." },
+        "logo": {
+          "type": "object",
+          "description": "Optional. The brand's logo as a real file under the brand folder, written by /halfborg-skills:setup-brand when it reads the brand's website, and only after the downloaded bytes were verified to be an image. Consumed by landing-page, which embeds it in the page rather than linking it. Never passed to an image or video render: the engine's generated visuals stay text-free and logo-free. Absent means no usable logo was found, never that the brand has none.",
+          "required": ["path"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Path relative to the brand folder, e.g. \"assets/logo.svg\". SVG preferred; PNG, WEBP and JPEG acceptable. Never an .ico: a favicon is not a brand asset."
+            },
+            "dark_path": {
+              "type": "string",
+              "description": "Optional. A variant for dark backgrounds, recorded only when the site actually serves a second file. Never derived or invented."
+            },
+            "kind": {
+              "type": "string",
+              "description": "Optional. wordmark = the brand name set as type; mark = the symbol alone; lockup = both together.",
+              "enum": ["wordmark", "mark", "lockup"]
+            },
+            "source_url": { "type": "string", "description": "Where the file was downloaded from." },
+            "confirmed": {
+              "type": "boolean",
+              "description": "false when lifted from a website and not yet eyeballed by a human. A consumer may use an unconfirmed logo, but should mention once that it came off the site."
+            }
+          }
+        }
       }
     },
     "market": {

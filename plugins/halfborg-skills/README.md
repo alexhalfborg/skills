@@ -45,7 +45,8 @@ complete.
 
 `setup-engine` reports what it found and what that means for you, then gets out of the way.
 `setup-brand` interviews you in plain questions, and if you give it a website it will read the site
-and fill in the detail itself. You never write or read a config file.
+and fill in the detail itself, logo included, so your pages come out carrying it. You never write or
+read a config file.
 
 From there the pipeline runs itself, one stage at a time.
 
@@ -75,6 +76,7 @@ brands/<id>/
   pack.yaml               everything it knows about your brand
   design.md               your typeface and colours              (optional)
   voice-profiles.md       samples of how you actually write      (optional)
+  assets/                 your logo and product photos           (optional)
 campaigns/<brand>-<YYYY-MM-DD>-<name>/
   docs/                   the plan, the message, the final check
   content/                the written pieces

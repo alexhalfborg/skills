@@ -115,6 +115,8 @@ brands/<id>/
   pack.yaml                   ALL brand facts, including the `ads` block (validated)
   design.md                   design tokens (typeface, colour hex); written by /halfborg-skills:setup-brand
   voice-profiles.md           voice corpus (persona, opener banks); written by /halfborg-skills:setup-brand
+  assets/                     the brand's own real files: logo.svg (embedded by landing-page only),
+                              product photographs referenced by products[].photo. Not versioned.
 campaigns/<brand>-<YYYY-MM-DD>-<slug>/
   docs/                       approved gate artifacts: brief.md, message.md, qa-report.md
   content/                    text deliverables (.md): blogs, concepts, scripts, prompt docs
