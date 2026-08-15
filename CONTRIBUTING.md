@@ -2,11 +2,11 @@
 
 This repo is the **source** of a Claude Code plugin marketplace. Nothing here runs where it sits:
 `.claude-plugin/marketplace.json` is the catalogue, and each plugin is self-contained under
-`plugins/<name>/`. Today there is one, `halfborg-skills`.
+`plugins/<name>/`. Today there is one, `halfborg-campaign`.
 
 There is no executable code anywhere in this repo — no script, no Node dependency, no
 `package.json`. Almost all "code" here is prose that a model executes, including the campaign page
-itself: `campaign-site-builder` reads a campaign's own files and writes `site/index.html` directly,
+itself: `build-site` reads a campaign's own files and writes `site/index.html` directly,
 rather than running a build script.
 
 ## Repo layout
@@ -14,23 +14,39 @@ rather than running a build script.
 ```
 .claude-plugin/marketplace.json   the catalogue
 plugins/
-  halfborg-skills/                one plugin, self-contained
+  halfborg-campaign/              one plugin, self-contained
     .claude-plugin/plugin.json
-    skills/campaign/<18 skills>/  grouped by domain
+    skills/<18 skills>/           one folder per skill, no category layer
     commands/ agents/ schema/ templates/ .mcp.json
 ```
 
-Skills are grouped by domain under `skills/`, so a new area of work is a new category folder
-alongside `campaign/`. Because they sit a level deeper than Claude Code's default scan, each one is
-listed explicitly in `plugin.json`'s `skills` array — add a skill, add its path. Files under
-`schema/` are read as plain content and are **not** registered anywhere.
+Skills sit directly under `skills/`, which is exactly where Claude Code's default scan looks, so
+they are discovered automatically. There is no `skills` array in `plugin.json` and there should not
+be one — the array only ever *adds to* the default scan, so at this depth it would be pure
+duplication. Add a folder with a `SKILL.md` in it and you are done. Files under `schema/` are read
+as plain content and are **not** registered anywhere.
 
-A second *plugin* is only worth it for something with a very different always-on context cost that
-you would want installable on its own; that is a folder under `plugins/` plus one entry in
-`marketplace.json`. Ordinary new work belongs inside `halfborg-skills`. Nothing at the repo root is
-loaded by Claude Code except the catalogue, and a plugin's own `CLAUDE.md` is not loaded as project
-context — which is why the engine's architecture document is the `campaign-engine` skill rather than
-a `CLAUDE.md`.
+Nothing at the repo root is loaded by Claude Code except the catalogue, and a plugin's own
+`CLAUDE.md` is not loaded as project context — which is why the engine's architecture document is
+the `architecture` skill rather than a `CLAUDE.md`.
+
+## Naming: one plugin per workflow family
+
+New families get their own plugin, as a sibling folder under `plugins/`:
+
+- **Slug is `halfborg-<family>`** — `halfborg-campaign`, and a hypothetical `halfborg-productivity`.
+  Set `displayName` for the human-readable name the plugin browser shows.
+- **One marketplace, `halfborg`**, listing them all. The suffix a user types after `@` is the
+  marketplace name, never the repo name.
+- **Relative sources**, `./plugins/<name>`, so the catalogue resolves inside this repo.
+- **Split by workflow family, never by client brand or output type.** A brand is a pack the engine
+  reads at runtime, not a plugin; "the video one" and "the blog one" are skills inside a family, not
+  families. Getting this wrong fragments the install list and duplicates the schema contracts.
+
+The bar for a new plugin is a genuinely different always-on context cost that someone would want to
+install on its own. Ordinary new work belongs inside an existing family. Renaming or removing a
+plugin means an **append-only** entry in the catalogue's `renames` map, so existing installs migrate
+themselves — keep old entries forever, and never edit one.
 
 Everything an installed plugin references internally goes through `${CLAUDE_PLUGIN_ROOT}`, so a
 plugin never depends on where it was installed and never writes into itself. The files it creates —
@@ -40,20 +56,33 @@ content, so reading `schema/*.md` as ordinary repo files shows the raw placehold
 
 ## Test against the local checkout
 
-Install from the checkout rather than GitHub, so you test the code in front of you:
+Authoring happens in this repo; the engine runs somewhere else. Keep a scratch campaign workspace
+outside this repo, and **never run the engine in here** — it would scaffold `engine.yaml`, `brands/`
+and `campaigns/` into the plugin source tree, which must never exist here.
 
+Load the plugin straight from disk with `--plugin-dir`, which takes precedence over the installed
+copy for that session:
+
+```powershell
+cd <scratch-workspace>
+claude --plugin-dir <path-to-this-repo>/plugins/halfborg-campaign
 ```
-/plugin marketplace add ./                        # from this repo's root
-/plugin install halfborg-skills@halfborg
-```
 
-`SKILL.md` edits take effect immediately. Changes to `agents/`, `.mcp.json` or `plugin.json` need
-`/reload-plugins` or a restart.
+`/reload-plugins` then picks up `SKILL.md` edits — no commit, no push, no reinstall. Changes to
+`agents/`, `.mcp.json` or `plugin.json` want a restart.
 
-Validate before pushing:
+**Do not register this checkout as the marketplace source.** `/plugin marketplace add ./` looks
+ideal, because a `directory` source is read live. But marketplace names are global, and a
+project-scope `extraKnownMarketplaces` does not override a user-scope entry of the same name, so
+pointing `halfborg` at a working tree serves unreleased skills to *every* workspace on the machine —
+real campaign workspaces included. `--plugin-dir` is per-session; prefer it.
 
-```
+Validate before pushing. Run both: the first checks the catalogue and the `renames` map, the second
+parses skill frontmatter, agents and commands.
+
+```powershell
 claude plugin validate ./
+claude plugin validate ./plugins/halfborg-campaign
 ```
 
 There is no test suite, no build step and no lint config, and nothing left to smoke-test as a
@@ -76,11 +105,22 @@ defer to it.
 
 ## Adding a skill
 
-Skills live at `skills/<category>/<skill-name>/SKILL.md`. Frontmatter is `name` plus a long
-`description` carrying trigger phrases, what the skill reads, and explicit `Do NOT use for…` routing
-to the sibling skill that owns that job. **The descriptions are the routing table** — they are read
-by the model to decide which skill fires, and never read by a user, so keep them precise and do not
-de-jargon them. Keep the negative half accurate when responsibilities move.
+Skills live at `skills/<skill-name>/SKILL.md`, one folder deep, picked up by the default scan.
+Frontmatter is `name` plus a long `description` carrying trigger phrases, what the skill reads, and
+explicit `Do NOT use for…` routing to the sibling skill that owns that job. **The descriptions are
+the routing table** — they are read by the model to decide which skill fires, and never read by a
+user, so keep them precise and do not de-jargon them. Keep the negative half accurate when
+responsibilities move.
+
+`name` must match the folder. Write the `description` as a `>-` block scalar: a plain YAML scalar
+breaks on the first colon-space in the prose, and a skill whose frontmatter fails to parse loads
+with **empty metadata** rather than erroring, so it goes quietly unroutable. `claude plugin validate
+./plugins/<name>` catches it; nothing at runtime will.
+
+**Naming.** A skill that performs work is verb-led and says what it does: `write-brief`,
+`build-site`, `generate-video`, `analyse-competitor-ads`. The exception is a skill that carries
+reference knowledge rather than doing anything — that takes a noun, because a verb would advertise
+an action it never performs. `architecture` is the only one today. Do not "fix" it into a verb.
 
 Agents carry `tools:`, `model: inherit` and a `color:`.
 

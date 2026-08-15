@@ -21,19 +21,23 @@ there is a terminal version if you prefer. You will need a Claude subscription.
 
 ```
 /plugin marketplace add alexhalfborg/skills
-/plugin install halfborg-skills@halfborg
+/plugin install halfborg-campaign@halfborg
 ```
 
 The first line just tells Claude Code where to look — it installs nothing on its own. The second
 installs the engine. (If `/plugin` is not available where you are, the desktop app has a plugin
 browser that does the same thing.)
 
+Type the second line exactly as written. The bit after the `@` is the **catalogue's** name,
+`halfborg` — not the repo name, `skills`, which is what the first line uses. They are different on
+purpose, and mixing them up is the usual reason install comes back with "plugin not found".
+
 **3. Point it at a folder and start.** Any folder will do, empty is fine:
 
 ```
-/halfborg-skills:setup-engine            sets the folder up
-/halfborg-skills:setup-brand acme.com    tells it about your brand
-/halfborg-skills:new-campaign acme spring-launch
+/halfborg-campaign:setup-engine            sets the folder up
+/halfborg-campaign:setup-brand acme.com    tells it about your brand
+/halfborg-campaign:new-campaign acme spring-launch
 ```
 
 `setup-brand` is a conversation, not a form. Give it your website and it will read it and ask you
@@ -82,7 +86,7 @@ with what everything cost. Open it in any browser.
 ## Full detail
 
 The manual, including what to do about video and how the brand file works:
-[plugins/halfborg-skills/README.md](plugins/halfborg-skills/README.md).
+[plugins/halfborg-campaign/README.md](plugins/halfborg-campaign/README.md).
 
 Working on the engine itself: [CONTRIBUTING.md](CONTRIBUTING.md).
 

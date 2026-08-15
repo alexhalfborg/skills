@@ -1,5 +1,69 @@
 # Changelog
 
+## 0.3.0
+
+Renamed, for room to grow. The marketplace is about to carry more than one family of skills, and
+`halfborg-skills` read as though it owned all of them.
+
+**Upgrading.** Nothing to do — the catalogue carries a `renames` entry, so Claude Code migrates the
+plugin on the next session and says so once. Two follow-ups worth knowing about, both below: re-run
+`setup-engine` in each existing workspace, and expect old campaigns to show old skill names in their
+logs.
+
+### Names
+
+- Plugin `halfborg-skills` → **`halfborg-campaign`**, directory `plugins/halfborg-campaign`, display
+  name "Halfborg Campaign Engine". Install is now
+  `/plugin install halfborg-campaign@halfborg`. The marketplace is still `halfborg` — that suffix is
+  the catalogue's name, never the repo's.
+- Skills moved from `skills/campaign/<name>/` up to `skills/<name>/` and dropped the redundant
+  `campaign-` prefix, so every invocation changes. A skill that does something is now verb-led; the
+  one skill that is pure reference takes a noun.
+
+  | Was | Now | | Was | Now |
+  |---|---|---|---|---|
+  | `campaign-brief` | `write-brief` | | `customer-story` | `write-customer-story` |
+  | `campaign-message` | `write-message` | | `email-newsletter` | `write-email` |
+  | `campaign-qa` | `run-qa` | | `landing-page` | `build-landing-page` |
+  | `campaign-engine` | `architecture` | | `personal-post` | `write-personal-post` |
+  | `campaign-site-builder` | `build-site` | | `reference-kit` | `prepare-reference-kit` |
+  | `ad-creative` | `write-ad-creative` | | `video-ad-script` | `write-video-ad-script` |
+  | `ai-image-video-prompt-builder` | `write-generation-prompt` | | `visual-ideas` | `explore-visual-ideas` |
+  | `competitor-ads` | `analyse-competitor-ads` | | | |
+
+  `compose-lockup`, `generate-image` and `generate-video` were already verb-led and are unchanged.
+
+- One plugin per workflow family, slug `halfborg-<family>`, all under the single `halfborg`
+  marketplace as sibling folders under `plugins/`. Never split by client brand or output type.
+  Written down in [CONTRIBUTING.md](CONTRIBUTING.md) so the next family does not re-decide it.
+
+### Packaging
+
+- The explicit `skills` array is **gone** from `plugin.json`. That array only ever added to the
+  default `skills/` scan; one level shallower, the scan finds all 18 on its own. Adding a skill is
+  now adding a folder.
+- Catalogue gained a `renames` map. It is append-only — entries stay forever, so a chain of renames
+  still resolves for someone upgrading from far back.
+
+### Fixed
+
+- The `architecture` skill (formerly `campaign-engine`) had an unquoted colon-space in its
+  `description`, which broke the YAML frontmatter. Claude Code loads such a skill with *empty
+  metadata* rather than erroring, so it had no name and no description and was effectively
+  unroutable. Now a block scalar, and validated. Its description also claimed to be "the reference
+  every other engine skill assumes", which was never true — nothing reads it at runtime — and now
+  describes what it actually does.
+
+### Known effects
+
+- **Existing workspaces keep stale commands.** `setup-engine` writes a `## Campaign engine` block
+  into your workspace's `CLAUDE.md`, and older ones list `/halfborg-skills:*`. The `renames` map
+  migrates the plugin, not text already written into your files. Re-run
+  `/halfborg-campaign:setup-engine` in each workspace; it edits the block in place.
+- **Old campaign logs carry old skill names.** `generation-log.jsonl` records the producing skill
+  verbatim, so a campaign that spans the upgrade holds both vocabularies. The log is append-only
+  history and is not rewritten. Nothing keys off that field, so mixed logs render fine.
+
 ## 0.2.0
 
 Everything below landed after 0.1.0 was published and reached nobody, because a pinned `version` in

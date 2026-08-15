@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://halfborg.com/schema/brand-pack.schema.json",
+  "title": "Brand pack",
+  "description": "Per-client brand context consumed by the campaign engine. This is machine-facing: authored and enriched by the /halfborg-campaign:setup-brand command, not hand-written by users. A minimal pack is valid on purpose (graceful degradation): only the brand skeleton is required, and the more that is filled in, the fewer questions intake has to ask. Extra keys are tolerated. Author as YAML (brands/<id>/pack.yaml) and validate the parsed object against this schema.",
+  "type": "object",
+  "required": ["brand"],
+  "properties": {
+    "version": {
+      "type": "string",
+      "description": "Optional pack schema version, e.g. \"1\". Written by the tooling; assume the latest when absent.",
+      "pattern": "^[0-9]+(\\.[0-9]+)?$"
+    },
+    "brand": {
+      "type": "object",
+      "description": "The irreducible skeleton. This is the one part a user can give in a sentence.",
+      "required": ["id", "name", "positioning"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Slug matching the brands/<id>/ folder. Lowercase and hyphens preferred; other characters tolerated and normalised on read.",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "name": { "type": "string", "minLength": 1 },
+        "positioning": {
+          "type": "string",
+          "description": "One line: what the brand is, for whom, and why it is different.",
+          "minLength": 1
+        },
+        "description": { "type": "string" },
+        "url": { "type": "string", "description": "Site URL. Scheme optional; normalised on read." },
+        "logo": {
+          "type": "object",
+          "description": "Optional. The brand's logo as a real file under the brand folder, written by /halfborg-campaign:setup-brand when it reads the brand's website, and only after the downloaded bytes were verified to be an image. Consumed by build-landing-page, which embeds it in the page rather than linking it. Never passed to an image or video render: the engine's generated visuals stay text-free and logo-free. Absent means no usable logo was found, never that the brand has none.",
+          "required": ["path"],
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "Path relative to the brand folder, e.g. \"assets/logo.svg\". SVG preferred; PNG, WEBP and JPEG acceptable. Never an .ico: a favicon is not a brand asset."
+            },
+            "dark_path": {
+              "type": "string",
+              "description": "Optional. A variant for dark backgrounds, recorded only when the site actually serves a second file. Never derived or invented."
+            },
+            "kind": {
+              "type": "string",
+              "description": "Optional. wordmark = the brand name set as type; mark = the symbol alone; lockup = both together.",
+              "enum": ["wordmark", "mark", "lockup"]
+            },
+            "source_url": { "type": "string", "description": "Where the file was downloaded from." },
+            "confirmed": {
+              "type": "boolean",
+              "description": "false when lifted from a website and not yet eyeballed by a human. A consumer may use an unconfirmed logo, but should mention once that it came off the site."
+            }
+          }
+        }
+      }
+    },
+    "market": {
+      "type": "object",
+      "description": "Optional but recommended. Any sub-field may be omitted; intake asks for whatever is missing.",
+      "properties": {
+        "geo": { "type": "array", "items": { "type": "string" } },
+        "language": { "type": "string", "description": "Content language / locale, e.g. \"en-GB\"." },
+        "currency": { "type": "string", "description": "ISO currency, e.g. \"SGD\". Case-insensitive; normalised to uppercase on read.", "pattern": "^[A-Za-z]{3}$" }
+      }
+    },
+    "audience": {
+      "type": "array",
+      "description": "Optional. Zero, one, or many segments. If absent, intake asks who the campaign is for. If present, intake asks only which of these a campaign targets.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" },
+          "name": { "type": "string", "minLength": 1 },
+          "description": { "type": "string", "minLength": 1 },
+          "pains": { "type": "array", "items": { "type": "string" } },
+          "jobs": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "voice": {
+      "type": "object",
+      "description": "Optional. Satisfiable EITHER by a reference to existing voice skills OR by a prose summary. A brand-new user with no skills provides a summary; an established setup references skills. At least one is needed only if the voice key is present at all.",
+      "anyOf": [
+        { "required": ["skills"] },
+        { "required": ["summary"] }
+      ],
+      "properties": {
+        "skills": {
+          "type": "array",
+          "description": "Names of the generic voice skills deliverable expanders invoke, e.g. [\"write-personal-post\", \"write-customer-story\"]. Each skill reads this brand's delta from brands/<id>/voice-profiles.md.",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1
+        },
+        "summary": {
+          "type": "string",
+          "description": "One-paragraph description of the voice, for brands without dedicated voice skills."
+        },
+        "spelling": { "type": "string", "enum": ["UK", "US"] }
+      }
+    },
+    "products": {
+      "type": "array",
+      "description": "Optional. If absent, intake asks what the campaign promotes. If present, intake picks from this list.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Za-z0-9_-]+$" },
+          "name": { "type": "string", "minLength": 1 },
+          "summary": { "type": "string" },
+          "price": { "type": "string" },
+          "url": { "type": "string" },
+          "claims_allowed": { "type": "array", "items": { "type": "string" } },
+          "photo": {
+            "type": "string",
+            "description": "Optional. Path to a real photograph of this product, relative to the brand folder (e.g. \"assets/serum-bottle.jpg\"). Used as an identity reference image by prepare-reference-kit and generate-video whenever a rendered hero object must match the live SKU. Absent is fine and common; a skill that needs it and does not find it asks the user for the photo rather than synthesising the product."
+          },
+          "buying_mode": {
+            "type": "string",
+            "enum": ["considered", "acute"],
+            "description": "Buying behaviour, read by the ads pipeline. \"considered\" (the default when absent) means nobody buys on impulse: the full Reach/Trust/Sell funnel applies. \"acute\" means high-intent cold traffic can convert in a single ad, qualifying the product for an additional direct-response concept tested against the warm-only Sell ad."
+          }
+        }
+      }
+    },
+    "channels": {
+      "type": "array",
+      "description": "Optional. If present, intake selects from these and the choice seeds the deliverable manifest.",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string" },
+          "formats": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "ads": {
+      "type": "object",
+      "description": "Optional. Present only for brands that run paid ads; read by write-ad-creative and write-video-ad-script, ignored by every other phase. SAFETY-RELEVANT: if this block is present, `presenter` is required, because the ads pipeline treats it as the confirmed answer to who may appear in an ad. A brand with no `ads` block is not ads-ready, and write-ad-creative routes to /halfborg-campaign:setup-brand rather than guessing.",
+      "required": ["presenter"],
+      "properties": {
+        "presenter": {
+          "type": "string",
+          "enum": ["product-led", "founder-voice-only", "founder-on-camera"],
+          "description": "Who fronts an ad. \"product-led\": no named person. \"founder-voice-only\": the founder's real voice carries first-person lines but they are never filmed. \"founder-on-camera\": the founder appears as a filmed person. Must be answered by a human; never inferred."
+        },
+        "voice_rationing": {
+          "type": "string",
+          "description": "How much of the brand's output uses the founder's first-person voice, and where. Only meaningful when voice.skills names a first-person voice skill. Absent means the engine default: first-person only for experiential claims, weighted top-of-funnel."
+        },
+        "angle_bank": {
+          "type": "object",
+          "description": "Raw material for Reach variants. The ads pipeline permutes one trigger moment against one framing to generate each variant. Extend from real customer language over time.",
+          "properties": {
+            "trigger_moments": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "The recurring problem, desire, or occasion moments that bring a customer to the brand. Audience insight to inform the hook's feeling, not a literal visual to depict."
+            },
+            "framings": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "The emotional stance a hook takes toward a trigger moment."
+            }
+          }
+        }
+      }
+    },
+    "mandatories": {
+      "type": "array",
+      "description": "Non-negotiable legal / regulatory / brand-safety rules every deliverable must obey. Optional in the schema so a thin pack still validates, but SAFETY-RELEVANT: absence means 'unconfirmed', not 'none'. The /halfborg-campaign:setup-brand command always writes this key (even as []), and intake and QA must confirm compliance rather than assuming there are none.",
+      "items": { "type": "string" }
+    },
+    "nogos": { "type": "array", "items": { "type": "string" } },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": { "type": "string" },
+          "ref": { "type": "string" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "competitors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      }
+    }
+  }
+}

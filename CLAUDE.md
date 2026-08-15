@@ -7,13 +7,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 The **source** of a Claude Code plugin marketplace — not a campaign workspace. Everything here is
 authored content that gets *installed elsewhere*: `.claude-plugin/marketplace.json` is the catalogue,
 and each plugin is self-contained under `plugins/<name>/`. Today there is one plugin,
-`halfborg-skills` (the campaign engine).
+`halfborg-campaign` (the campaign engine).
 
 Keep the two worlds straight when working here:
 
 - **This repo** holds skills, commands, agents, schemas and templates. Nothing at the repo root is
   loaded by Claude Code except the catalogue, and a plugin's own `CLAUDE.md` is *not* loaded as
-  project context (that is why the engine's architecture doc had to become the `campaign-engine`
+  project context (that is why the engine's architecture doc had to become the `architecture`
   skill rather than a `CLAUDE.md`).
 - **A user's workspace** holds `engine.yaml`, `brands/`, `campaigns/`. Those directories are created
   by the plugin at runtime and never exist in this repo. The installed plugin is read-only and never
@@ -21,29 +21,55 @@ Keep the two worlds straight when working here:
 
 There is no executable code anywhere in this repo — no script, no Node dependency, no
 `package.json`. All "code" here is prose that an LLM executes, including the campaign page itself:
-`campaign-site-builder` reads a campaign's own files and writes `site/index.html` directly, rather
+`build-site` reads a campaign's own files and writes `site/index.html` directly, rather
 than running a build script.
 
 ## Commands
 
 ```powershell
-claude plugin validate ./            # validate the marketplace + plugin manifests; run before pushing
+claude plugin validate ./                          # catalogue, plugin manifest, renames map
+claude plugin validate ./plugins/halfborg-campaign # + skill frontmatter, agents, commands
 ```
 
-Test against the local checkout, never the GitHub copy:
+Run both before pushing. The second is the one that catches a `SKILL.md` whose frontmatter fails to
+parse — which loads with empty metadata rather than erroring, so the skill goes quietly unroutable.
 
-```
-/plugin marketplace add ./           # from this repo's root
-/plugin install halfborg-skills@halfborg
+### The dev loop
+
+Authoring happens in this repo; the engine runs somewhere else. Keep a scratch campaign workspace in
+a folder outside this repo, and **never run the engine in here** — no `setup-engine`, no
+`new-campaign`. It would scaffold `engine.yaml`, `brands/` and `campaigns/` into the plugin source
+tree, which per the section above must never exist here. Preflight normally catches it (no
+`## Campaign engine` block, no artifact chain) and routes to `setup-engine` rather than scaffolding
+silently, but that is a backstop, not a lock.
+
+Iterate against the working tree with `--plugin-dir`, which loads the plugin **directly from disk**
+and takes precedence over the installed copy for that session:
+
+```powershell
+cd <scratch-workspace>
+claude --plugin-dir <path-to-this-repo>/plugins/halfborg-campaign
 ```
 
-`SKILL.md` edits take effect immediately. Changes to `agents/`, `.mcp.json` or `plugin.json` need
-`/reload-plugins` or a restart.
+Then `/reload-plugins` in that session picks up `SKILL.md` edits — no commit, no push, no reinstall.
+A new skill folder needs nothing else, since `skills/` is scanned by default; changes to `agents/`
+or `.mcp.json` want a restart.
+
+Two things that look like shortcuts and are not:
+
+- **Do not register this checkout as the marketplace source.** `/plugin marketplace add ./` creates a
+  `directory` source that *is* read live, so it looks ideal — but marketplace names are global, and a
+  project-scope `extraKnownMarketplaces` does **not** override a user-scope entry of the same name.
+  Pointing the marketplace at a working tree therefore serves unreleased skills to *every* workspace
+  on that machine, real campaign workspaces included. `--plugin-dir` is per-session; prefer it.
+- **Do not disable the plugin here** with `enabledPlugins: false` in a repo-level
+  `.claude/settings.json`. Because `--plugin-dir` points into this tree, that disable also suppresses
+  the plugin in the scratch workspace and silently breaks the loop above.
 
 There is no test suite, no build step and no lint config, and nothing left to smoke-test as a
 script — the campaign page is validated by actually looking at the rebuilt `site/index.html` during
-an end-to-end run of the pipeline in a scratch workspace, which is also how `claude plugin validate`
-is complemented.
+an end-to-end run of the pipeline in a scratch workspace (reset it by deleting `engine.yaml`,
+`brands/` and `campaigns/`), which is also how `claude plugin validate` is complemented.
 
 [CONTRIBUTING.md](CONTRIBUTING.md) is the human-facing version of most of this file. The root
 `README.md` and the plugin's `README.md` are written for **marketers with no Claude Code
@@ -51,11 +77,11 @@ experience** — keep contributor detail out of both.
 
 ## Architecture of the plugin
 
-Read [skills/campaign/campaign-engine/SKILL.md](plugins/halfborg-skills/skills/campaign/campaign-engine/SKILL.md)
+Read [skills/architecture/SKILL.md](plugins/halfborg-campaign/skills/architecture/SKILL.md)
 first — it is the architecture reference every other skill assumes. The short version:
 
 Four phases, first two human-gated:
-`campaign-brief` → `campaign-message` → expansion (the many expander skills) → `campaign-qa`.
+`write-brief` → `write-message` → expansion (the many expander skills) → `run-qa`.
 The artifact chain between phases is the interface: `docs/brief.md` + `system/manifest.yaml` →
 `docs/message.md` → `content/` + `media/`. Changing one of those shapes means updating the phase that
 writes it *and* every phase that reads it.
@@ -88,14 +114,27 @@ absolute path. Reading these files as plain repo files shows the raw placeholder
 
 ## Conventions when editing
 
-**Adding a skill.** Skills live at `skills/<category>/<skill-name>/SKILL.md` — a level deeper than
-Claude Code's default scan — so each one must also be listed in `plugin.json`'s `skills` array. A new
-area of work is a new category folder alongside `campaign/`. Ordinary new work belongs inside
-`halfborg-skills`; a second *plugin* is only justified by a very different always-on context cost.
+**Adding a skill.** Skills live at `skills/<skill-name>/SKILL.md`, exactly where Claude Code's
+default scan looks, so a new folder is discovered with no registration. `plugin.json` has no `skills`
+array and should not gain one — the array only *adds to* the default scan, so at this depth it is
+duplication that goes stale.
 
-**Skill frontmatter.** `name` plus a long `description` that carries trigger phrases, what the skill
-reads, and explicit `Do NOT use for…` routing to the sibling skill that owns that job. The
-descriptions are the routing table — keep the negative half accurate when responsibilities move.
+**Naming.** A skill that performs work is verb-led: `write-brief`, `build-site`, `generate-video`.
+A skill that carries reference knowledge instead takes a noun, because a verb would advertise an
+action it never performs — `architecture` is the only one, and it is deliberate.
+
+**Plugins.** One per workflow family, slug `halfborg-<family>`, sibling folders under `plugins/` with
+relative `./plugins/<name>` sources, all in the single `halfborg` marketplace. Never split by client
+brand or output type. Ordinary new work belongs inside an existing family; a second *plugin* is only
+justified by a very different always-on context cost. A rename or removal adds an **append-only**
+entry to the catalogue's `renames` map.
+
+**Skill frontmatter.** `name` matching the folder, plus a long `description` that carries trigger
+phrases, what the skill reads, and explicit `Do NOT use for…` routing to the sibling skill that owns
+that job. The descriptions are the routing table — keep the negative half accurate when
+responsibilities move. Write `description` as a `>-` block scalar: a plain scalar breaks on the first
+colon-space in the prose, and broken frontmatter loads as *empty metadata* rather than failing, so
+the skill silently stops routing. Only `claude plugin validate ./plugins/<name>` catches it.
 Agents carry `tools:`, `model: inherit`, and a `color:`.
 
 **Invariants that constrain any edit.** These are the engine's reason for existing; do not weaken one
