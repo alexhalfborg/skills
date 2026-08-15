@@ -8,8 +8,9 @@
   "description": "Halfborg skills for Claude Code, as installable plugins.",
   "plugins": [
     {
-      "name": "halfborg-skills",
-      "source": "./plugins/halfborg-skills",
+      "name": "halfborg-campaign",
+      "displayName": "Halfborg Campaign Engine",
+      "source": "./plugins/halfborg-campaign",
       "description": "Turn a fuzzy marketing goal into a full set of campaign deliverables through a fixed, human-gated pipeline. Brief, message, expansion, QA. Swap the brand pack, get a different brand, same pipeline.",
       "category": "marketing",
       "keywords": [
@@ -21,5 +22,8 @@
         "content"
       ]
     }
-  ]
+  ],
+  "renames": {
+    "halfborg-skills": "halfborg-campaign"
+  }
 }
