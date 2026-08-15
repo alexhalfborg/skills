@@ -60,7 +60,12 @@ supply it. **Never fabricate metrics.**
 ## External skills
 
 The `marketing:*` skills and `xlsx` resolve only where the environment provides them (generally
-claude.ai with a subscription). Every one is referenced from a **subagent**, never from a bundled
+claude.ai with a subscription). Every reference to one sits in an **agent**, never in a bundled
 skill, so the pipeline itself never depends on them. When one is absent the agent does that slice of
-work directly: it structures the brief itself, reviews against the pack's voice and mandatories
-directly, researches with plain web search, or parses the spreadsheet with `Bash`.
+work directly: it structures the brief itself, researches with plain web search, or parses the
+spreadsheet with `Bash`.
+
+Containing those externals is one reason an agent exists here. It is not the only one. An agent is
+also how a job gets a context and a tool set of its own: `qa` runs `run-qa` with no image generation
+available to it, so the compliance pass cannot spend, and it reads the finished artifacts without
+the conversation that produced them. That agent has no external dependency at all.

@@ -128,7 +128,7 @@ by `write-ad-creative`, `write-video-ad-script`, `prepare-reference-kit`, `compo
 `generate-video`. `build-site` keeps the campaign page current, and `architecture` is the reference
 describing how the whole thing fits together.
 
-**Agents** — `strategist`, `researcher`, `content-writer`, `paid-creative`, `analyst`.
+**Agents** — `strategist`, `researcher`, `content-writer`, `paid-creative`, `analyst`, `qa`.
 
 ## How it stays consistent
 

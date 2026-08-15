@@ -115,10 +115,16 @@ brand or campaign files inside it.
 ```
 commands/                     setup-engine, setup-brand, new-campaign
 skills/                       every engine skill, including this one
+agents/                       six specialists the main thread dispatches: strategist, researcher,
+                              content-writer, paid-creative, analyst, qa
 schema/                       the contracts (below), plus preflight.md
 templates/                    seeds copied into a workspace: engine.yaml, claude-md-block.md, design.md
 .mcp.json                     the fal-ai server, authenticated with the plugin's fal_key setting
 ```
+
+An agent is a context of its own, not a fifth kind of skill: it either spans several skills and
+picks between them, or it fences the tools and the reading a job is allowed. Both shapes invoke the
+skills; neither replaces one.
 
 **The workspace** (the working directory, user-owned):
 

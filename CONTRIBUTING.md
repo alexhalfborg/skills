@@ -122,7 +122,18 @@ with **empty metadata** rather than erroring, so it goes quietly unroutable. `cl
 reference knowledge rather than doing anything — that takes a noun, because a verb would advertise
 an action it never performs. `architecture` is the only one today. Do not "fix" it into a verb.
 
-Agents carry `tools:`, `model: inherit` and a `color:`.
+## Adding an agent
+
+Agents live at `agents/<name>.md` with `tools:`, `model: inherit` and a `color:` no other agent
+uses. The bar is a context of its own, and it is met two ways: the agent **spans several skills**
+and chooses between them (`content-writer` picks the right voice skill for the surface), or it
+**fences the tools** a job may use — `qa` runs `run-qa` with no image generation in its tool set,
+so a compliance pass cannot spend, and reads the finished work without the conversation that
+produced it. Do not add an agent that wraps a single skill without constraining it.
+
+Pitch the description an altitude above the skills it invokes: a role noun rather than a verb, and
+few literal trigger sentences where a skill carries many. Keep `Do NOT use for…` naming a sibling
+**agent** — skills name skills, and the layers do not cross.
 
 ## Prose style
 

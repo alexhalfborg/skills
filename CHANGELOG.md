@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4.0
+
+**The final check now has an agent of its own.** `qa` runs the same `run-qa` pass in a separate
+context, with no image generation in its tool set, so a compliance check cannot spend money and
+reads the finished work rather than the conversation that produced it. Nothing changes about how
+the check behaves, and it still runs perfectly well inline.
+
+**Upgrading.** Restart your session after updating — a new agent is not picked up by
+`/reload-plugins`. One thing moves: asking *"review this against the brand"* or *"is this on-brand
+and compliant"* used to reach the Strategist, and now reaches QA. The Strategist sets direction and
+writes the brief; it no longer reviews finished work. It never could open a video to check it, and
+its review path depended on an external skill that only resolves on claude.ai.
+
 ## 0.3.0
 
 Renamed, for room to grow. The marketplace is about to carry more than one family of skills, and

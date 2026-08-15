@@ -135,7 +135,16 @@ that job. The descriptions are the routing table — keep the negative half accu
 responsibilities move. Write `description` as a `>-` block scalar: a plain scalar breaks on the first
 colon-space in the prose, and broken frontmatter loads as *empty metadata* rather than failing, so
 the skill silently stops routing. Only `claude plugin validate ./plugins/<name>` catches it.
-Agents carry `tools:`, `model: inherit`, and a `color:`.
+
+**Agent frontmatter, and when an agent is warranted.** `agents/<name>.md` carries `name`, a `>-`
+block `description`, `tools:`, `model: inherit` and a `color:` no other agent uses. Add one only when
+it earns a context of its own, which happens two ways: it **spans several skills** and chooses
+between them (`content-writer` picks the right voice skill), or it needs a **fenced tool set or a
+cold read** the main thread cannot give it (`qa` runs `run-qa` with no image generation, so the
+compliance pass cannot spend, and reads the finished work without the conversation that made it).
+Pitch the description an altitude above the skills it invokes — a role noun, few literal triggers —
+and keep `Do NOT use for…` pointing at a sibling **agent**; skill descriptions point at skills. Do
+not cross the layers, and do not add an agent that wraps one skill without constraining it.
 
 **Invariants that constrain any edit.** These are the engine's reason for existing; do not weaken one
 to make a skill simpler:

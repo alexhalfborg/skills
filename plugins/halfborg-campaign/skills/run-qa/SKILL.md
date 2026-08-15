@@ -44,6 +44,11 @@ Where the neighbours sit:
   against. Read-only here.
 - `build-site` renders the report: writing `docs/qa-report.md` and rebuilding is the whole
   integration. QA triggers the build; it does not write `site/` itself.
+- `qa` is the agent that runs this pass in a context of its own. It invokes this skill and follows
+  it exactly; it carries no second rubric and changes nothing here. What it adds is separation: no
+  image generation in its tool set, so the pass cannot spend, and a read of the finished artifacts
+  without the conversation that produced them. It is **not** a precondition — this skill runs
+  inline just as well, and does.
 
 Campaign paths and filenames follow `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`; that spec wins over any
 path shorthand here. The concrete rule-by-rule matrix, severity rubric and report skeleton live in
