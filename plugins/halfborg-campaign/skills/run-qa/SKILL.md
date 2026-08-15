@@ -16,17 +16,17 @@ description: >-
   inline CLAIM CHECK / POLICY CHECK flags the expanders leave, and writes a per-artifact PASS/WARN/FAIL
   report with a concrete proposed fix per finding, then rebuilds the site. Runs full-campaign by
   default or scoped to one deliverable. Do NOT use to PRODUCE or fix artifacts (the expander skills do
-  that — QA proposes fixes, it does not apply them), to invent the message or concept (campaign-message),
-  or to build the campaign review site (campaign-site-builder, which QA merely triggers).
+  that — QA proposes fixes, it does not apply them), to invent the message or concept (write-message),
+  or to build the campaign review site (build-site, which QA merely triggers).
 ---
 
-# campaign-qa — the campaign's drift-and-compliance gate
+# run-qa — the campaign's drift-and-compliance gate
 
 Phase 4. After expansion has produced the deliverables, this skill reads every artifact against the
 locked message and the brand pack, and writes `docs/qa-report.md`: a per-artifact **PASS / WARN /
 FAIL** with a concrete proposed fix for each finding, and one overall gate verdict. It is the
 independent check the whole pipeline defers to — the skill that turns the recurring
-*"this is a generated asset, not a cleared one … campaign-qa before it ships"* promise into an
+*"this is a generated asset, not a cleared one … run-qa before it ships"* promise into an
 actual clearance pass.
 
 QA **proposes** fixes; it does not apply them. Remedying a finding is the producing skill's job
@@ -35,14 +35,14 @@ QA **proposes** fixes; it does not apply them. Remedying a finding is the produc
 Where the neighbours sit:
 
 - The **expander skills feed QA; they never invoke it.** `generate-image`, `generate-video`,
-  `landing-page`, `personal-post`, `customer-story`, `email-newsletter`, `video-ad-script`,
-  `visual-ideas`, `compose-lockup` and `ad-creative` each self-check inline, leave `⚠️ CLAIM CHECK` /
-  `⚠️ POLICY CHECK` flags, and (landing-page) write a provenance header, then forward-point to this
+  `build-landing-page`, `write-personal-post`, `write-customer-story`, `write-email`, `write-video-ad-script`,
+  `explore-visual-ideas`, `compose-lockup` and `write-ad-creative` each self-check inline, leave `⚠️ CLAIM CHECK` /
+  `⚠️ POLICY CHECK` flags, and (build-landing-page) write a provenance header, then forward-point to this
   skill. QA is invoked as the phase-4 step or on demand — **never called by a producer.** This is the
   decoupling that keeps the gate independent.
-- `campaign-message` locks the key message, tagline and the text-free master visual QA checks drift
+- `write-message` locks the key message, tagline and the text-free master visual QA checks drift
   against. Read-only here.
-- `campaign-site-builder` renders the report: writing `docs/qa-report.md` and rebuilding is the whole
+- `build-site` renders the report: writing `docs/qa-report.md` and rebuilding is the whole
   integration. QA triggers the build; it does not write `site/` itself.
 
 Campaign paths and filenames follow `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`; that spec wins over any
@@ -58,11 +58,11 @@ conversation — and this skill has more of them than any other, so it needs the
 the whole artifact chain, so it is the skill most exposed to a chain that was never built:
 
 - **No `system/manifest.yaml`** — there is no deliverable list to check against and no
-  `campaign.brand` to resolve. Stop and route: to `campaign-brief` if the campaign folder exists, to
-  `/halfborg-skills:new-campaign` if it does not. Never QA a campaign by inferring what it ought to
+  `campaign.brand` to resolve. Stop and route: to `write-brief` if the campaign folder exists, to
+  `/halfborg-campaign:new-campaign` if it does not. Never QA a campaign by inferring what it ought to
   have contained.
 - **No `brands/<id>/pack.yaml`, or a pack failing the skeleton check** — there is nothing to judge
-  compliance against. Stop and route to `/halfborg-skills:setup-brand`.
+  compliance against. Stop and route to `/halfborg-campaign:setup-brand`.
 - **No `docs/brief.md`** — record it as a structural FAIL and continue; the message and pack still
   support most checks.
 - **No `docs/message.md`** — do not fail. Note it and check against `brief.md` alone, with drift
@@ -104,7 +104,7 @@ Work the matrix in [references/qa-checklist.md](references/qa-checklist.md). In 
   artifact; media on disk with no `generate` line; ghost ids (a log `deliverable` that is not a
   manifest id, `key-visual`, or a registered sub-id); filename-grammar violations; nothing yet
   promoted to `final`. Agree with the site builder's Overview roll-up; if you disagree, re-read the log.
-- **Family 2 — Copy & claims.** Over `content/*.md`, landing-page HTML and ad copy: every product
+- **Family 2 — Copy & claims.** Over `content/*.md`, build-landing-page HTML and ad copy: every product
   claim within that product's `claims_allowed`; `mandatories` honoured and `nogos` absent; register
   vs `voice.summary`; spelling vs `voice.spelling`; no fabricated stat/quote/customer/URL. Read the
   landing page's provenance header rather than parsing claims out of markup. **Reconcile** every
@@ -118,7 +118,7 @@ Work the matrix in [references/qa-checklist.md](references/qa-checklist.md). In 
   `key-visual` anchor is **text-free**. For each `.mp4`: `ffprobe` (stream present, duration ≈ intended,
   width×height match the intended resolution/ratio, audio if requested), then `ffmpeg` extract 1+
   sample frames to the **scratchpad** and `Read` them (right subject, on-brand, not black/garbled).
-  Two traps: do not spelling-check `visual-ideas` `idea` outputs (approximate in-image text by design),
+  Two traps: do not spelling-check `explore-visual-ideas` `idea` outputs (approximate in-image text by design),
   and if `ffmpeg`/`ffprobe` is absent, mark the clip **"unverified" (WARN)** rather than claim a check
   you did not run.
 - **Family 4 — Message drift.** Every deliverable ladders up to the one key message; taglines are the
@@ -150,9 +150,9 @@ or a PASS you did not derive from the artifact — the same "never fabricate" ru
 `docs/qa-report.md` lives in `docs/`, which is **not** filename-versioned — it is edited in place and
 git carries its history, exactly like `brief.md` and `message.md`. Consistent with those gate docs, the
 report needs no `generate` log line to appear; the **QA section is already covered** by
-`campaign-site-builder` and picks up `docs/qa-report.md` directly. Optionally append one `note` event so
-the QA run shows in the chronology (`{"event":"note","skill":"campaign-qa","deliverable":"<scope>","notes":"QA pass: <verdict>"}`).
-Then rebuild the page once — follow `campaign-site-builder` for `campaigns/<slug>`.
+`build-site` and picks up `docs/qa-report.md` directly. Optionally append one `note` event so
+the QA run shows in the chronology (`{"event":"note","skill":"run-qa","deliverable":"<scope>","notes":"QA pass: <verdict>"}`).
+Then rebuild the page once — follow `build-site` for `campaigns/<slug>`.
 
 Then report to the user, per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` sections 5 and 6. The
 report file keeps `PASS` / `WARN` / `FAIL` and the verdict words exactly; **the conversation does

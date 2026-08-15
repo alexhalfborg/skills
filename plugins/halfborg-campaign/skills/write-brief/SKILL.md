@@ -1,7 +1,7 @@
 ---
 name: write-brief
 description: >
-  Run the campaign intake interview and write the brief. Read the brand pack, elicit the campaign-specific decisions one at a time, stress-test them for internal consistency, then synthesise them into brief.md (the strategy the whole campaign hangs off) and manifest.yaml (the machine-readable deliverable list the expanders iterate over). Use this whenever the user is starting, planning, scoping, or kicking off a campaign for a brand, after the /halfborg-skills:new-campaign command, or when they say anything like "plan a campaign", "new campaign for X", "let's scope a launch", "help me brief a campaign", or "write/build the brief" — even if they do not say the word "brief". Assumes a validated brand pack is available; if the skeleton is missing, route to /halfborg-skills:setup-brand rather than interviewing the user for brand facts. This is a human-gated phase: interview, draft, get explicit sign-off, then write the files. It does NOT write the key message, taglines, or master visual (that is campaign-message), and it does not produce any deliverable.
+  Run the campaign intake interview and write the brief. Read the brand pack, elicit the campaign-specific decisions one at a time, stress-test them for internal consistency, then synthesise them into brief.md (the strategy the whole campaign hangs off) and manifest.yaml (the machine-readable deliverable list the expanders iterate over). Use this whenever the user is starting, planning, scoping, or kicking off a campaign for a brand, after the /halfborg-campaign:new-campaign command, or when they say anything like "plan a campaign", "new campaign for X", "let's scope a launch", "help me brief a campaign", or "write/build the brief" — even if they do not say the word "brief". Assumes a validated brand pack is available; if the skeleton is missing, route to /halfborg-campaign:setup-brand rather than interviewing the user for brand facts. This is a human-gated phase: interview, draft, get explicit sign-off, then write the files. It does NOT write the key message, taglines, or master visual (that is write-message), and it does not produce any deliverable.
 ---
 
 # Campaign brief
@@ -19,9 +19,9 @@ conversation.
 
 The brand pack is a dial, not a gate. Read whatever is present and treat it as settled; the more it contains, the fewer questions you ask. The less it contains, the more you fall back to asking during the interview.
 
-- If `/halfborg-skills:new-campaign` invoked you, a pack is already in context. Use it, however thin.
+- If `/halfborg-campaign:new-campaign` invoked you, a pack is already in context. Use it, however thin.
 - If you were invoked cold, resolve the brand per `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` section 1.1: read `campaign.brand` from the campaign's `system/manifest.yaml`, which gives the pack as `brands/<brand-id>/pack.yaml`. Validate it against `${CLAUDE_PLUGIN_ROOT}/schema/brand-pack.schema.json`. You are the phase that *writes* the manifest, so on a cold start it usually does not exist yet — then take the brand id from the campaign folder's `<brand>-` prefix, and confirm it with the user in one line before interviewing.
-- **If the skeleton is missing** (no pack, or no `brand` positioning, no `audience`, no `products`), the brand is not set up. Do not interview the user for brand identity yourself: point them to `/halfborg-skills:setup-brand`, which handles that, then resume. The deep brand facts (voice, richer segments, pre-cleared claims) are the research agent's job, not something to guess.
+- **If the skeleton is missing** (no pack, or no `brand` positioning, no `audience`, no `products`), the brand is not set up. Do not interview the user for brand identity yourself: point them to `/halfborg-campaign:setup-brand`, which handles that, then resume. The deep brand facts (voice, richer segments, pre-cleared claims) are the research agent's job, not something to guess.
 - **If the pack is present but thin**, proceed. Whatever it omits, you ask about during the relevant step below. Note this to the user in a sentence so extra questions are expected, not a surprise.
 
 One safety point: if `mandatories` is absent from the pack, that means *unknown*, not *none*. Ask about compliance and hard rules during step 9 rather than assuming there are none.
@@ -94,7 +94,7 @@ You are done gathering not when you run out of questions but when you could popu
 
 The brief answers one question: **is this the right campaign?** It is the strategy gate — objective,
 audience, message intent, and scope. It is deliberately separate from the creative gate
-(campaign-message), which answers "is this the right creative expression of it." Do not collapse the
+(write-message), which answers "is this the right creative expression of it." Do not collapse the
 two: the user approves strategy here and creative later, not both in one breath.
 
 Synthesise, do not transcribe. The interview gave you raw decisions; the brief is the tightened
@@ -112,21 +112,21 @@ straight from the channels and formats you settled in the interview (decision su
 are two kinds of entry, and choosing the right one is the point.
 
 **Asset entries** (`kind: asset`, the default) are one entry, one artifact, one expander. Use them
-for standalone deliverables: a blog via `personal-post` or `customer-story`, an email or newsletter
-via `email-newsletter`, `landing-page`, `visual-ideas`, or `compose-lockup`. The `skill` field names
+for standalone deliverables: a blog via `write-personal-post` or `write-customer-story`, an email or newsletter
+via `write-email`, `build-landing-page`, `explore-visual-ideas`, or `compose-lockup`. The `skill` field names
 the concrete voice/expander skill (blog and email deliverables name the voice skill directly, exactly
-as a page names `landing-page`). Assign `id`, `skill`, `channel`, `format`, the refs (`funnel_stage`,
+as a page names `build-landing-page`). Assign `id`, `skill`, `channel`, `format`, the refs (`funnel_stage`,
 `audience_ref`, `offer_ref`), and any format fields (`aspect`, `sizes`, `duration_seconds`, `quantity`).
 
 **Pipeline entries** (`kind: pipeline`) are one entry that a multi-step pipeline fans out into many
 artifacts. Paid-social ads are the case that matters: set `pipeline: ads`, `offer_ref` to the
 product, and `channels` / `funnel_stages` for scope. Do not enumerate the individual ads. The ads
-pipeline (`ad-creative`, then `video-ad-script`, then `reference-kit`, then `generate-video`) owns the
+pipeline (`write-ad-creative`, then `write-video-ad-script`, then `prepare-reference-kit`, then `generate-video`) owns the
 Reach / Trust / Sell fan-out and decides the concrete assets beneath the entry. Writing out each
 reel and static here duplicates that pipeline's job and will drift from it.
 
 **Ads imply a destination.** If the manifest carries a `pipeline: ads` entry, it needs a
-`skill: landing-page` asset entry too, sharing the same `offer_ref`. Every ad promises something and
+`skill: build-landing-page` asset entry too, sharing the same `offer_ref`. Every ad promises something and
 the page is where the promise is kept; a funnel with nowhere to land is a scoping error, not a
 creative choice. Propose the pairing at the gate and let the user decline it explicitly (they may
 already have a page). The two never read each other: message-match comes from both binding to the
@@ -202,4 +202,4 @@ Budget / timeline limits: <from the interview>
 
 ## What this phase does not do
 
-It does not write the key message, taglines, or master visual — that is `campaign-message`. It does not create any deliverable. It captures and pressure-tests the campaign decisions, sets strategy and scope, emits the manifest, and hands off. Keep the boundary clean.
+It does not write the key message, taglines, or master visual — that is `write-message`. It does not create any deliverable. It captures and pressure-tests the campaign decisions, sets strategy and scope, emits the manifest, and hands off. Keep the boundary clean.

@@ -55,9 +55,9 @@ a cold start, in a fresh conversation, with nothing carried over in context:
 This is what "the active brand" means anywhere in the engine. Whenever the manifest can answer,
 it does: do not ask the user, and do not read the brand off the folder name.
 
-The one window where the manifest does not yet exist is between `/halfborg-skills:new-campaign` scaffolding the
-folder and `campaign-brief` writing the manifest. In that window the brand comes from the
-`/halfborg-skills:new-campaign` argument, and the folder prefix is the durable record. Once the manifest exists it
+The one window where the manifest does not yet exist is between `/halfborg-campaign:new-campaign` scaffolding the
+folder and `write-brief` writing the manifest. In that window the brand comes from the
+`/halfborg-campaign:new-campaign` argument, and the folder prefix is the durable record. Once the manifest exists it
 is the only source that counts; if the prefix and `campaign.brand` ever disagree, **the field
 wins** and the folder should be renamed to match. The site builder warns on that mismatch.
 
@@ -67,11 +67,11 @@ A `media/` subfolder name **is** a deliverable id. Valid ids are:
 
 1. **Manifest ids** — the `id` of an asset entry in `system/manifest.yaml`. The manifest id is the
    folder name and the filename stem for that deliverable's artifacts.
-2. **`key-visual`** — engine-reserved. Holds `campaign-message`'s candidate directions and the locked
+2. **`key-visual`** — engine-reserved. Holds `write-message`'s candidate directions and the locked
    master-visual anchor lineage.
 3. **Pipeline sub-ids** — ids a pipeline invents when it fans out (e.g. ad ids like `AD-R1-b`, or
    `AD-T1-static` for a static execution). Sub-ids must be **registered** in the generation log by
-   the pipeline step that creates them (for the ads pipeline: `ad-creative`, when concepts
+   the pipeline step that creates them (for the ads pipeline: `write-ad-creative`, when concepts
    lock) via one `register` event per sub-id carrying `parent` = the manifest pipeline id. Every
    later log entry's `deliverable` must be a manifest id, `key-visual`, or a registered sub-id —
    no unregistered ("ghost") ids.
@@ -92,8 +92,8 @@ log's `register` events are the sub-id registry.
   - `candidate` — direction options awaiting a human pick
   - `setup` — a start frame rendered only to animate
   - `clip` — one video segment of a multi-clip deliverable
-  - `idea` — a `visual-ideas` ideation variation
-  - `ref` — an identity reference still (a `reference-kit` artifact) bound as a `#ImageN` reference
+  - `idea` — a `explore-visual-ideas` ideation variation
+  - `ref` — an identity reference still (a `prepare-reference-kit` artifact) bound as a `#ImageN` reference
     and recorded in the consuming render's `refs` (section 4)
 - **seq** — distinguishes siblings of the same role: letters for candidates (`A`, `B`, `C`),
   numbers fused to the role for clips (`clip1`, `clip2`), two-digit numbers for ideas (`idea-01`),
@@ -158,7 +158,7 @@ handle field.
   campaign-relative-only rule would silently drop it.
 - **Optional, and absent means _unknown_, not _none_.** Every entry written before this field
   existed lacks it. Nothing needs backfilling for its own sake.
-- Not yet surfaced on the campaign page — `campaign-site-builder` ignores it for now.
+- Not yet surfaced on the campaign page — `build-site` ignores it for now.
 
 A render that cites `#Image2` in its prompt and has no `refs` is a render nobody can reproduce, which
 is the whole reason the field exists.
@@ -174,7 +174,7 @@ Example lines:
 
 ```json
 {"ts":"2026-07-08T16:26:00+08:00","event":"generate","skill":"generate-video","deliverable":"AD-R1-b","parent":"paid-funnel","role":"clip","file":"media/AD-R1-b/AD-R1-b-clip1-v01.mp4","prompt_ref":"content/AD-R1-b-scripts.md#segment-1","refs":["media/key-visual/key-visual-v02.png","brands/lumen/assets/serum-bottle.jpg"],"model":"bytedance/seedance-2.0/image-to-video","cost_usd":0.62,"status":"iteration"}
-{"ts":"2026-07-09T07:00:00+08:00","event":"status","skill":"campaign-message","deliverable":"key-visual","file":"media/key-visual/key-visual-v02.png","status":"locked","reason":"re-rolled full-bleed, removed inner-border artifact"}
+{"ts":"2026-07-09T07:00:00+08:00","event":"status","skill":"write-message","deliverable":"key-visual","file":"media/key-visual/key-visual-v02.png","status":"locked","reason":"re-rolled full-bleed, removed inner-border artifact"}
 ```
 
 ### 4.1 The log step (canonical append-and-rebuild instruction)
@@ -201,7 +201,7 @@ Add-Content -Path "campaigns/<slug>/system/generation-log.jsonl" -Value @'
 ```
 
 Then, once — after this invocation's last artifact is logged, not after each one — rebuild the
-page: follow the `campaign-site-builder` skill's instructions for `campaigns/<slug>`. It reads the
+page: follow the `build-site` skill's instructions for `campaigns/<slug>`. It reads the
 updated log, manifest, docs, content and media and writes `site/index.html` itself; there is no
 script to run.
 
@@ -209,7 +209,7 @@ Rules:
 
 - Never rewrite, reorder, or delete existing lines.
 - If a batch partially fails, still rebuild once at the end with whatever succeeded logged.
-- If the log file is missing (older campaign), create it empty first; `/halfborg-skills:new-campaign` scaffolds it.
+- If the log file is missing (older campaign), create it empty first; `/halfborg-campaign:new-campaign` scaffolds it.
 - Re-reading the log on every rebuild is itself the log linter: a malformed line is skipped and
   reported as a warning, exactly as before, just by the skill reading it rather than a script.
 
@@ -220,7 +220,7 @@ One `.md` per deliverable:
 - Asset entries: `content/<id>.md` (e.g. `content/launch-blog.md`).
 - Ads pipeline docs: `content/<pipeline-id>-concepts.md`, `content/<pipeline-id>-scripts.md`,
   `content/<pipeline-id>-prompts.md`; per-ad prompt docs `content/<sub-id>-prompts.md`. A video
-  ad's generation prompt is not its own doc: `video-ad-script` appends it to the scripts doc under
+  ad's generation prompt is not its own doc: `write-video-ad-script` appends it to the scripts doc under
   `## Generation prompts`, so a `-prompts.md` holds image prompts.
 - No brand-name prefixes — the campaign folder already scopes them.
 
@@ -232,7 +232,7 @@ section and chronology.
 ## 6. The site
 
 `site/index.html` is a self-contained, offline-viewable page written **only** by the
-`campaign-site-builder` skill, following `${CLAUDE_PLUGIN_ROOT}/skills/campaign/campaign-site-builder/SKILL.md`.
+`build-site` skill, following `${CLAUDE_PLUGIN_ROOT}/skills/build-site/SKILL.md`.
 It renders the docs, content, and the media chronology from the generation log, with media
 relatively linked (`../media/...`). Never hand-edit it; it is overwritten on each rebuild and
 gitignored (`campaigns/*/site/`). The rebuild is authored by Claude, not run by a deterministic
@@ -242,7 +242,7 @@ present in the campaign's own files.
 ## 7. Legacy campaigns
 
 Campaigns created before this spec (an `output/` + `reference/` layout, or an `ads/` layout) are
-read-only history. `campaign-site-builder` will not attempt to build a page for one (no `system/`
+read-only history. `build-site` will not attempt to build a page for one (no `system/`
 folder to read). To bring one forward, follow the migration recipe: move gate docs to `docs/`, text
 deliverables to `content/`, media into `media/<deliverable-id>/` folders with grammar-compliant
 versioned names, manifest and README to `system/`, then backfill `system/generation-log.jsonl` with

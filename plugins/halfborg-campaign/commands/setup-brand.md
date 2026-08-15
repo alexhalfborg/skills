@@ -30,7 +30,7 @@ Just enough to write a working pack:
 
 - Derive an `id` by slugifying the brand name (lowercase, hyphens).
 - Write `brands/<id>/pack.yaml`: `version: "1"`, the brand skeleton, market, one or more products and audiences, voice (a skill reference if they have one, otherwise a prose summary), and `mandatories` — always present, even as an empty list.
-- When the brand wanted a look, also write `brands/<id>/design.md` (see **Look & feel**). When it wanted founder-voice or customer-story content, also write `brands/<id>/voice-profiles.md` (see **Voice profile**). Both are written for the user in the same quiet way as the pack — they never see or edit them.
+- When the brand wanted a look, also write `brands/<id>/design.md` (see **Look & feel**). When it wanted founder-voice or write-customer-story content, also write `brands/<id>/voice-profiles.md` (see **Voice profile**). Both are written for the user in the same quiet way as the pack — they never see or edit them.
 - Validate the pack against `${CLAUDE_PLUGIN_ROOT}/schema/brand-pack.schema.json` yourself. If it fails, fix it silently. Never show the user a validation error. (`design.md` and `voice-profiles.md` are freeform, not schema-validated — just write them well.)
 
 ## Ads (optional)
@@ -127,11 +127,11 @@ If they agree, get the tokens honestly:
 - **If a website is available** (`$ARGUMENTS` or one they mention), read it and lift the real values: the display and body typefaces, and the brand colours as hex — primary, an accent, and the page background / text neutrals.
 - **Otherwise**, propose a small palette and a type pairing from the positioning, category, and voice, and let them confirm or adjust. Mark it as inferred, not measured. Never invent a specific hex and present it as theirs without saying so.
 
-Then write a **core** `brands/<id>/design.md`: YAML frontmatter with `typography.fontStacks` (a `display` and a `body` stack, each ending in a system fallback) and a small `colors` map (`primary`, `accent`, `surface`, `on-surface`, plus `secondary`/neutrals if known), followed by three short prose sections — **Brand & Style** (2-3 sentences on the visual character), **Colors** (the named roles + hexes and when to use them), and **Typography** (display vs body face, weights, character). Keep it to that. Do **not** attempt the full Material-3 token set (the light/dark/fixed role ramps, spacing grid, elevation, component patterns) in `${CLAUDE_PLUGIN_ROOT}/templates/design.md` — that is a richer tier a brand grows into later; `landing-page` supplies tasteful defaults for anything you omit and flags the gap. `compose-lockup` and `visual-ideas` read only the typeface name and the hexes, so those two must be clearly present.
+Then write a **core** `brands/<id>/design.md`: YAML frontmatter with `typography.fontStacks` (a `display` and a `body` stack, each ending in a system fallback) and a small `colors` map (`primary`, `accent`, `surface`, `on-surface`, plus `secondary`/neutrals if known), followed by three short prose sections — **Brand & Style** (2-3 sentences on the visual character), **Colors** (the named roles + hexes and when to use them), and **Typography** (display vs body face, weights, character). Keep it to that. Do **not** attempt the full Material-3 token set (the light/dark/fixed role ramps, spacing grid, elevation, component patterns) in `${CLAUDE_PLUGIN_ROOT}/templates/design.md` — that is a richer tier a brand grows into later; `build-landing-page` supplies tasteful defaults for anything you omit and flags the gap. `compose-lockup` and `explore-visual-ideas` read only the typeface name and the hexes, so those two must be clearly present.
 
 ## Voice profile (optional)
 
-Only when step 7 established the brand wants founder-voice blog posts or customer / transformation stories. This authors `brands/<id>/voice-profiles.md`, the file the `personal-post` and `customer-story` skills require — without it, those skills refuse rather than fake a voice, which is the point.
+Only when step 7 established the brand wants founder-voice blog posts or customer / transformation stories. This authors `brands/<id>/voice-profiles.md`, the file the `write-personal-post` and `write-customer-story` skills require — without it, those skills refuse rather than fake a voice, which is the point.
 
 Write the sections the skills read — **"Personal post voice profile"** and/or **"Customer story voice profile"**, whichever the brand wants. Split the fields by what you can honestly know:
 
@@ -146,8 +146,8 @@ If a website is available, offer to deepen everything from it: "Want me to read 
 
 If they agree, read the site and enrich in place — never overwriting a value the user confirmed, always flagging what you could not find rather than guessing:
 
-- **`products[].claims_allowed`** — the specific things the site actually asserts about each product, which become the only claims downstream copy may make. If the site is vague, leave it empty and say so; `landing-page` and `ad-creative` both sell on the key message alone when it is absent.
-- **`audience[].pains` and `.jobs`** — the real problems and goals the site speaks to, per segment. These are the primary audience read for `ad-creative` and `landing-page`.
+- **`products[].claims_allowed`** — the specific things the site actually asserts about each product, which become the only claims downstream copy may make. If the site is vague, leave it empty and say so; `build-landing-page` and `write-ad-creative` both sell on the key message alone when it is absent.
+- **`audience[].pains` and `.jobs`** — the real problems and goals the site speaks to, per segment. These are the primary audience read for `write-ad-creative` and `build-landing-page`.
 - **`voice-profiles.md` corpus** — pull the **real** opener lines, the founder's characteristic phrasings, and pointers to actual published posts into the profile authored above. This is the one part a conversation genuinely cannot supply.
 - **`design.md`** — confirm or refine the typeface and palette against the site's real CSS, if the look step ran off inference.
 - **The logo** — if no earlier site read already came away with one, take the pass described in **Logo** above now. Once per setup, not once per read.
@@ -156,7 +156,7 @@ If the brand has no published writing, say so plainly: the pack, design, and the
 
 ## Finish
 
-Confirm back in one or two plain sentences what you set up — the pack, and if you wrote them, that you captured their look (colours and fonts) and their voice so ads, pages, and posts come out on-brand. Then tell them they can start a campaign with `/halfborg-skills:new-campaign <id>`. Do not read the file contents back to them.
+Confirm back in one or two plain sentences what you set up — the pack, and if you wrote them, that you captured their look (colours and fonts) and their voice so ads, pages, and posts come out on-brand. Then tell them they can start a campaign with `/halfborg-campaign:new-campaign <id>`. Do not read the file contents back to them.
 
 If you saved a logo, that file is the one thing worth them opening, so give its full path once and
 say plainly that you took it off their site and it is worth a glance. If you looked and came away

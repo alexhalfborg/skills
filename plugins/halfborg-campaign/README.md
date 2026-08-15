@@ -1,4 +1,4 @@
-# halfborg-skills — the campaign engine
+# halfborg-campaign — the campaign engine
 
 A marketing campaign engine for Claude Code. It turns a rough goal into a full set of campaign
 deliverables through a fixed pipeline that stops for your sign-off at every point that matters. It
@@ -24,23 +24,23 @@ everything afterwards good rather than generic.
 
 ```
 /plugin marketplace add alexhalfborg/skills
-/plugin install halfborg-skills@halfborg
+/plugin install halfborg-campaign@halfborg
 ```
 
 The first line adds the catalogue so Claude Code knows where to look; it installs nothing by itself.
 The second installs the engine. If `/plugin` is not available in your environment, the desktop app's
 plugin browser does the same job.
 
-Commands are prefixed with the plugin name, so they read as `/halfborg-skills:setup-engine`,
-`/halfborg-skills:setup-brand` and `/halfborg-skills:new-campaign`. Type `/halfborg` and let it
+Commands are prefixed with the plugin name, so they read as `/halfborg-campaign:setup-engine`,
+`/halfborg-campaign:setup-brand` and `/halfborg-campaign:new-campaign`. Type `/halfborg` and let it
 complete.
 
 ## Your first campaign
 
 ```
-/halfborg-skills:setup-engine            sets your folder up
-/halfborg-skills:setup-brand acme.com    tells it about your brand
-/halfborg-skills:new-campaign acme spring-launch
+/halfborg-campaign:setup-engine            sets your folder up
+/halfborg-campaign:setup-brand acme.com    tells it about your brand
+/halfborg-campaign:new-campaign acme spring-launch
 ```
 
 `setup-engine` reports what it found and what that means for you, then gets out of the way.
@@ -100,7 +100,7 @@ finishing a campaign.
 
 ### Turning on image and video
 
-Open `/plugin`, go to the **Installed** tab and select **halfborg-skills**. Claude Code will ask you
+Open `/plugin`, go to the **Installed** tab and select **Halfborg Campaign Engine**. Claude Code will ask you
 for a fal.ai key — get one at [fal.ai/dashboard/keys](https://fal.ai/dashboard/keys). Then run
 `/reload-plugins`, or restart.
 
@@ -121,11 +121,11 @@ it will tell you what is missing rather than invent a number.
 
 **Commands** — `setup-engine`, `setup-brand`, `new-campaign`.
 
-**Skills** — `campaign-engine` (the architecture reference), `campaign-brief`, `campaign-message`,
-`campaign-qa`, `campaign-site-builder`, `ad-creative`, `video-ad-script`, `reference-kit`,
-`compose-lockup`, `visual-ideas`, `competitor-ads`, `landing-page`, `personal-post`,
-`customer-story`, `email-newsletter`, `generate-image`, `generate-video`,
-`ai-image-video-prompt-builder`.
+**Skills** — `architecture` (the architecture reference), `write-brief`, `write-message`,
+`run-qa`, `build-site`, `write-ad-creative`, `write-video-ad-script`, `prepare-reference-kit`,
+`compose-lockup`, `explore-visual-ideas`, `analyse-competitor-ads`, `build-landing-page`, `write-personal-post`,
+`write-customer-story`, `write-email`, `generate-image`, `generate-video`,
+`write-generation-prompt`.
 
 **Agents** — `strategist`, `researcher`, `content-writer`, `paid-creative`, `analyst`.
 
@@ -147,8 +147,8 @@ itself unstuck.
 **It never claims something it did not do.** No made-up link to an image, no made-up cost, no check
 reported that was not run. If it could not do something, it says so first, not last.
 
-Full architecture, contracts and invariants: run the `campaign-engine` skill, or read
-[skills/campaign/campaign-engine/SKILL.md](skills/campaign/campaign-engine/SKILL.md).
+Full architecture, contracts and invariants: run the `architecture` skill, or read
+[skills/architecture/SKILL.md](skills/architecture/SKILL.md).
 
 Part of the [halfborg](../../README.md) marketplace. Working on the engine itself:
 [CONTRIBUTING.md](../../CONTRIBUTING.md).

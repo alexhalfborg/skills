@@ -8,7 +8,7 @@ description: >-
   a campaign overview page", or to refresh the page after edits; other engine skills also trigger
   this automatically, once per invocation, after logging their artifacts. Produces one
   self-contained offline file at campaigns/<slug>/site/index.html. Do NOT use to build the
-  campaign's own public landing page (that is landing-page, which writes a self-contained HTML page
+  campaign's own public landing page (that is build-landing-page, which writes a self-contained HTML page
   into media/<id>/), to write or edit any campaign content, or for anything outside a
   campaigns/<slug>/ folder.
 ---

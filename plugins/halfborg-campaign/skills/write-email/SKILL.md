@@ -6,19 +6,19 @@ description: >-
   a launch/announcement email under a brand byline. Trigger on phrases like "write the launch email",
   "draft the newsletter", "write an email sequence for [offer]", "the welcome email", "rewrite this
   email in [brand]'s voice", "the abandoned-cart email", "our monthly newsletter". Reads the active
-  brand's founder/team voice from brands/<id>/voice-profiles.md (the same corpus personal-post and
-  customer-story use — no separate email profile is required), brands/<id>/pack.yaml (audience,
+  brand's founder/team voice from brands/<id>/voice-profiles.md (the same corpus write-personal-post and
+  write-customer-story use — no separate email profile is required), brands/<id>/pack.yaml (audience,
   products with price/url/claims_allowed, voice.spelling, mandatories, nogos), and, inside a campaign,
   campaigns/<slug>/docs/message.md (key message + chosen tagline) and brief.md (objective, audience).
   Its own methodology — subject line and preview text, the one-idea section flow, a single primary CTA,
   sequence cadence, and the honesty rules — is brand-agnostic and works fully offline (no external
   marketing skill needed). Output lands in campaigns/<slug>/content/<name>.md, logged and site-rebuilt.
-  Do NOT use for blog posts or articles (personal-post for founder voice, customer-story for
-  testimonials), for paid-ad copy (ad-creative), for organic social captions, or to design an HTML
+  Do NOT use for blog posts or articles (write-personal-post for founder voice, write-customer-story for
+  testimonials), for paid-ad copy (write-ad-creative), for organic social captions, or to design an HTML
   email template (this writes the copy; it does not build markup).
 ---
 
-# email-newsletter — write a brand's emails and newsletters in its own voice
+# write-email — write a brand's emails and newsletters in its own voice
 
 This skill writes email and newsletter **copy** in a brand's voice. The methodology below (how to
 write a subject line, how to structure a broadcast versus a sequence, the single-CTA discipline, the
@@ -26,18 +26,18 @@ honesty rules, the self-review checklist) is brand-agnostic and applies to any b
 brand facts of its own — every persona detail, product, price, URL, and real turn of phrase comes
 from the active brand's profile and pack.
 
-It is the bundled, offline email peer of the voice skills: where `personal-post` writes the founder's
-blog and `customer-story` writes third-person testimonials, this writes the inbox. There is no
+It is the bundled, offline email peer of the voice skills: where `write-personal-post` writes the founder's
+blog and `write-customer-story` writes third-person testimonials, this writes the inbox. There is no
 external dependency — everything it needs is in the brand's own files.
 
 Where the neighbours sit:
 
-- `personal-post` / `customer-story` — the blog voices. This skill reuses the **same** voice profile
+- `write-personal-post` / `write-customer-story` — the blog voices. This skill reuses the **same** voice profile
   they read (founder or team), so a newsletter sounds like the brand's other writing.
 - `content-writer` — the agent that routes a written-content request to the right voice skill; it
   invokes this one for email/newsletter surfaces.
-- `campaign-message` — locks the key message and tagline a campaign email must ladder up to. Read-only.
-- `ad-creative` — paid copy, a different discipline. Email is owned, permissioned, and long-lived; it
+- `write-message` — locks the key message and tagline a campaign email must ladder up to. Read-only.
+- `write-ad-creative` — paid copy, a different discipline. Email is owned, permissioned, and long-lived; it
   is not an ad.
 
 Campaign paths and filenames follow `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`; that spec wins over any
@@ -57,7 +57,7 @@ Then read, in order:
    voice profile"** team byline and framing. Newsletters most often go out in the founder's first
    person; if the request is ambiguous, ask which byline, or default to the founder for a personal
    broadcast and the team for a roundup. If the brand has neither profile, say so, **route the user to
-   `/halfborg-skills:setup-brand`** — which authors `voice-profiles.md` — and stop rather than
+   `/halfborg-campaign:setup-brand`** — which authors `voice-profiles.md` — and stop rather than
    inventing a persona.
 2. **The brand pack.** `brands/<id>/pack.yaml` — `audience` (pains and jobs, the reason to open),
    `products[]` (`name`, `price`, `url` for the CTA, `claims_allowed` — the **only** things an email
@@ -134,7 +134,7 @@ shipped. Honour every `nogo`.
 
 ## Honesty rules — non-negotiable
 
-Email reaches a permissioned audience who act on it. Same discipline as `personal-post`:
+Email reaches a permissioned audience who act on it. Same discipline as `write-personal-post`:
 
 1. **No invented statistic, study, quote, customer, product, mechanism, or URL.** Source it, or leave a
    clearly-marked `[STAT/SOURCE: …]` / `[URL-needed]` placeholder.
@@ -152,7 +152,7 @@ sequence in one doc with each email under an `## Email N —` heading). Paths pe
 `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`. Then follow that spec's §4.1 log step: append one `generate`
 line per deliverable doc (`status: iteration`, `file` pointing at the `.md`, the subject-line options
 or arc in `notes`; no `model`/`cost_usd` — nothing was rendered by a model). Then rebuild the page
-once — follow `campaign-site-builder` for `campaigns/<slug>`.
+once — follow `build-site` for `campaigns/<slug>`.
 
 Outside a campaign, write where the user asks and skip the log step.
 

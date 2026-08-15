@@ -20,8 +20,8 @@ and claims before things ship.
 - **Which brand.** Inside a campaign, the brand is `campaign.brand` in
   `campaigns/<slug>/system/manifest.yaml` — read it rather than asking
   (`${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` section 1.1). Outside one, the invocation names it.
-  If that file is missing the campaign has no manifest yet: route to `campaign-brief` when the campaign
-  folder exists, `/halfborg-skills:new-campaign` when it does not. Never infer the brand from the
+  If that file is missing the campaign has no manifest yet: route to `write-brief` when the campaign
+  folder exists, `/halfborg-campaign:new-campaign` when it does not. Never infer the brand from the
   folder name or from earlier conversation. See `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`.
   Everything you say back follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine
   words belong in the files, not in the conversation.

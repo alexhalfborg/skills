@@ -97,7 +97,7 @@ this plugin, stored in secure storage, and the harness substitutes it into the p
 So there is no file to inspect and no state to detect here. If step 6 shows the tools are not live,
 tell the user in plain language how to set it:
 
-> Open `/plugin`, go to the **Installed** tab and select **halfborg-skills**. Claude Code asks for
+> Open `/plugin`, go to the **Installed** tab and select **Halfborg Campaign Engine**. Claude Code asks for
 > the fal.ai key there, the same as it does the first time the plugin is switched on. Paste one from
 > <https://fal.ai/dashboard/keys>, then run `/reload-plugins`, or restart.
 
@@ -123,8 +123,8 @@ re-running.
 
 Close with one or two plain sentences: what is wired, and what to do next.
 
-- If `brands/` holds no brand, point at `/halfborg-skills:setup-brand`.
-- If it holds brands, list them and point at `/halfborg-skills:new-campaign <id>`.
+- If `brands/` holds no brand, point at `/halfborg-campaign:setup-brand`.
+- If it holds brands, list them and point at `/halfborg-campaign:new-campaign <id>`.
 
 Do not read file contents back to the user beyond the block you drafted in step 3, and never print
 the contents of `.claude/settings.local.json`.

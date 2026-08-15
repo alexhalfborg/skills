@@ -1,6 +1,6 @@
 # Seed: the `## Campaign engine` project-instructions block
 
-`/halfborg-skills:setup-engine` writes this block into the workspace's `CLAUDE.md` (or `AGENTS.md`).
+`/halfborg-campaign:setup-engine` writes this block into the workspace's `CLAUDE.md` (or `AGENTS.md`).
 It is the engine's always-in-context signal: because it loads on every turn, a skill can tell from
 its presence alone that the workspace is set up, and read the layout and the brand list without a
 single tool call. That is why it carries **facts, not just routing**.
@@ -21,7 +21,7 @@ This repo is a campaign workspace. Brand facts live in `brands/<id>/pack.yaml` (
 `design.md` for design tokens and `voice-profiles.md` for the writing corpus). Campaign work lives in
 `campaigns/<brand>-<YYYY-MM-DD>-<slug>/`, with gate artifacts in `docs/`, text deliverables in
 `content/`, generated media in `media/<deliverable-id>/`, and machine state in `system/`. Engine
-defaults are in `engine.yaml`. The engine itself is the `halfborg-skills` plugin and is read-only —
+defaults are in `engine.yaml`. The engine itself is the `halfborg-campaign` plugin and is read-only —
 never edit a brand fact into a skill, and never hand-edit anything under `system/` or `site/`.
 
 ### Pipeline
@@ -36,9 +36,9 @@ The engine's own vocabulary stays in its files. Talk to the user in plain Englis
 
 ### Commands
 
-- `/halfborg-skills:setup-brand [name or website]` — add a brand
-- `/halfborg-skills:new-campaign <brand-id> [campaign name]` — start a campaign
-- `/halfborg-skills:setup-engine` — re-check the workspace and what is wired
+- `/halfborg-campaign:setup-brand [name or website]` — add a brand
+- `/halfborg-campaign:new-campaign <brand-id> [campaign name]` — start a campaign
+- `/halfborg-campaign:setup-engine` — re-check the workspace and what is wired
 
 ### Brands
 
@@ -46,4 +46,4 @@ The engine's own vocabulary stays in its files. Talk to the user in plain Englis
 [- `acme` — Acme Tools. Ads configured (presenter: founder), founder voice + customer stories.]
 [- `beta-co` — Beta Co. No ads block yet.]
 
-Full architecture, contracts and invariants: run the `campaign-engine` skill.
+Full architecture, contracts and invariants: run the `architecture` skill.

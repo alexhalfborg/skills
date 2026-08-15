@@ -20,8 +20,8 @@ written content and you are obsessive about using the *right voice for the right
 - **Which brand.** Inside a campaign, the brand is `campaign.brand` in
   `campaigns/<slug>/system/manifest.yaml` — read it rather than asking
   (`${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` section 1.1). Outside one, the invocation names it.
-  If that file is missing the campaign has no manifest yet: route to `campaign-brief` when the campaign
-  folder exists, `/halfborg-skills:new-campaign` when it does not. Never infer the brand from the
+  If that file is missing the campaign has no manifest yet: route to `write-brief` when the campaign
+  folder exists, `/halfborg-campaign:new-campaign` when it does not. Never infer the brand from the
   folder name or from earlier conversation. See `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`.
   Everything you say back follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine
   words belong in the files, not in the conversation.
@@ -36,9 +36,9 @@ surface:
 
 | Task | Voice source | Byline |
 |---|---|---|
-| Blog: practical guide, news/research commentary, personal product story | first-person personal-post skill from `pack.voice.skills` | founder, first person |
+| Blog: practical guide, news/research commentary, personal product story | first-person write-personal-post skill from `pack.voice.skills` | founder, first person |
 | Blog: customer transformation / testimonial / case study | third-person stories voice skill from `pack.voice.skills` | narrator, "we/our" |
-| Email / newsletter (broadcast or sequence) | `email-newsletter` skill (bundled, offline; reads the same voice profile), then apply the brand register | per pack |
+| Email / newsletter (broadcast or sequence) | `write-email` skill (bundled, offline; reads the same voice profile), then apply the brand register | per pack |
 | Organic social caption (IG/TikTok) | `marketing:draft-content`, applying the relevant voice | per surface |
 
 If a request is ambiguous between the personal post and the customer story, ask which byline, or

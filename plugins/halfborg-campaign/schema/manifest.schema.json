@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://halfborg.com/schema/manifest.schema.json",
   "title": "Deliverable manifest",
-  "description": "The deliverables a campaign will produce, written by campaign-brief and consumed by the expansion phase. An entry is either an ASSET (one entry, one artifact, one expander) or a PIPELINE (one entry that an owning multi-step pipeline fans out into many artifacts, e.g. the ads funnel). campaign-brief must not enumerate the assets a pipeline owns. Author as YAML and validate the parsed object against this schema. Extra keys tolerated.",
+  "description": "The deliverables a campaign will produce, written by write-brief and consumed by the expansion phase. An entry is either an ASSET (one entry, one artifact, one expander) or a PIPELINE (one entry that an owning multi-step pipeline fans out into many artifacts, e.g. the ads funnel). write-brief must not enumerate the assets a pipeline owns. Author as YAML and validate the parsed object against this schema. Extra keys tolerated.",
   "type": "object",
   "required": ["campaign", "deliverables"],
   "properties": {
@@ -34,11 +34,11 @@
           },
           "skill": {
             "type": "string",
-            "description": "Asset entries: the expander skill that produces this, e.g. personal-post, customer-story, email-newsletter, landing-page, visual-ideas, compose-lockup."
+            "description": "Asset entries: the expander skill that produces this, e.g. write-personal-post, write-customer-story, write-email, build-landing-page, explore-visual-ideas, compose-lockup."
           },
           "pipeline": {
             "type": "string",
-            "description": "Pipeline entries: the pipeline that owns the fan-out, e.g. \"ads\" (ad-creative -> video-ad-script -> generate-video)."
+            "description": "Pipeline entries: the pipeline that owns the fan-out, e.g. \"ads\" (write-ad-creative -> write-video-ad-script -> generate-video)."
           },
           "channel": { "type": "string", "description": "Asset entries: channel id from the pack." },
           "format": { "type": "string", "description": "Asset entries: format within the channel." },

@@ -14,7 +14,7 @@ description: >-
   customer-story profile (byline, product table, opener bank, sample
   posts) from brands/<id>/voice-profiles.md; the methodology here (quote
   taxonomy, results-timeline structure, honesty rules) is brand-agnostic. Do
-  NOT use for the founder's first-person posts (use personal-post), or when
+  NOT use for the founder's first-person posts (use write-personal-post), or when
   no brand's customer-story profile exists yet.
 ---
 
@@ -23,7 +23,7 @@ description: >-
 This skill writes a recurring format: a real customer reaches out to the brand, follows a
 recommended product or service, and sees a real result. The post tells that story, shows the
 before/after, and quotes the customer extensively. It runs under the brand's team byline, not the
-founder's, and uses a different voice from personal-post's first-person guides and personal
+founder's, and uses a different voice from write-personal-post's first-person guides and personal
 product stories.
 
 The methodology below (opener patterns, quote taxonomy, structure template, honesty rules, self-
@@ -45,7 +45,7 @@ This skill then needs, in order:
 2. **The brand pack.** `brands/<id>/pack.yaml` for audience, spelling, and mandatories.
 
 If no voice profile exists for the active brand, say so, **route the user to
-`/halfborg-skills:setup-brand`** — which authors `voice-profiles.md` — and stop rather than inventing
+`/halfborg-campaign:setup-brand`** — which authors `voice-profiles.md` — and stop rather than inventing
 a byline, a customer, or a product. This format only works with real source material.
 
 ## The voice in one sentence
@@ -55,7 +55,7 @@ words through the narrative, walking the reader step-by-step through the product
 worked — with respect for the customer's experience, honest about the timeline, and never
 overselling.
 
-## What separates this from personal-post
+## What separates this from write-personal-post
 
 - **Byline:** the brand's team (per the profile), not the founder. The post never says "I" except
   inside customer quotes.
@@ -64,12 +64,12 @@ overselling.
   at all, appears in third person (e.g. "our founder"), per the profile's framing.
 - **Tone:** narrative + product/service walkthrough. Less empathy-as-opener, more
   situation-establishing.
-- **Definitional openings allowed.** Unlike personal-post, an educational lead ("What is X?") is
+- **Definitional openings allowed.** Unlike write-personal-post, an educational lead ("What is X?") is
   fine here, since the post often serves double duty as an educational primer that the customer's
   story then illustrates.
 
 If the user has asked for the founder's own voice, or a post under the founder's byline, route to
-`personal-post` instead.
+`write-personal-post` instead.
 
 ## Voice fundamentals
 
@@ -85,7 +85,7 @@ If the user has asked for the founder's own voice, or a post under the founder's
 
 Pull the brand's real worked examples of both patterns from the profile's opener bank. Never open
 with the founder's first-person voice (a sensory "you" question, or "I") — that belongs to
-personal-post, not this skill.
+write-personal-post, not this skill.
 
 ### Third-person about the customer, but use their real name throughout
 
@@ -300,7 +300,7 @@ Before handing the draft back:
 ## Reference articles
 
 If the brand's profile points to bundled sample posts (typically at
-`brands/<id>/voice-references/customer-story/`), read whichever is closer to the target format
+`brands/<id>/voice-references/write-customer-story/`), read whichever is closer to the target format
 before drafting — they are the concrete, in-voice examples this generic methodology can't supply
 on its own.
 

@@ -1,6 +1,6 @@
 # Section library and page archetypes
 
-The lookup `landing-page` reads before it chooses a stack. Brand-agnostic: every section is described
+The lookup `build-landing-page` reads before it chooses a stack. Brand-agnostic: every section is described
 by what it does and what it needs from the pack, never by a specific brand's facts.
 
 Two rules govern everything below.

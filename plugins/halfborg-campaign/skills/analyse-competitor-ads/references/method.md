@@ -1,6 +1,6 @@
 # Method — the winner heuristic and the caveats to honour
 
-`competitor-ads` reads this before it ranks or writes. The SKILL.md owns the workflow; this file owns
+`analyse-competitor-ads` reads this before it ranks or writes. The SKILL.md owns the workflow; this file owns
 two things it must get right: **how to infer a "winner" honestly**, and **what is and is not
 obtainable** so the artifact never overclaims.
 
@@ -61,7 +61,7 @@ Brief, and not legal advice — flag them in the artifact's Caveats:
 
 ## If an automated backend is added later
 
-The artifact contract (`research/competitor-ads.md`, the evidence table + inferred winners + distilled
+The artifact contract (`research/analyse-competitor-ads.md`, the evidence table + inferred winners + distilled
 priors in `compose-lockup`'s archetype vocabulary) is the stable interface. An automated fetch tier —
 e.g. a ScrapeCreators-backed Ad Library MCP declared in `.mcp.json`, its key in the gitignored
 `.claude/settings.local.json` and its presence tested by `Grep`ping the key name (the `fal-ai`

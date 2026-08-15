@@ -5,7 +5,7 @@ description: >
   concept. Read the brand pack and the approved brief, then write message.md, the single source every
   deliverable expander draws on for what to say and how it should look. Use this after the brief is
   approved, whenever the user says write the key message, come up with taglines, define the visual
-  concept. This is the last human-gated phase: present message, tagline options, and 2-3 rendered visual directions, get the user to pick a tagline and pick one direction, then render and lock the chosen master visual as the campaign's anchor still and write message.md. It renders and locks that master-visual still (a reference anchor), but does NOT produce channel deliverables (no reels, ads, blogs); the expanders do that from message.md and the locked still. Do not use to set strategy or scope (that is campaign-brief).
+  concept. This is the last human-gated phase: present message, tagline options, and 2-3 rendered visual directions, get the user to pick a tagline and pick one direction, then render and lock the chosen master visual as the campaign's anchor still and write message.md. It renders and locks that master-visual still (a reference anchor), but does NOT produce channel deliverables (no reels, ads, blogs); the expanders do that from message.md and the locked still. Do not use to set strategy or scope (that is write-brief).
 ---
 
 # Campaign Message
@@ -28,10 +28,10 @@ files, not in the conversation. The specifics for this phase:
 
 - You need the brand pack and an approved `docs/brief.md`. If they are not already in context (a
   cold start in a fresh conversation), resolve them from files rather than asking: read
-  `campaign.brand` from `campaigns/<slug>/system/manifest.yaml` — which `campaign-brief` has written
+  `campaign.brand` from `campaigns/<slug>/system/manifest.yaml` — which `write-brief` has written
   by the time you run — and load `brands/<brand-id>/pack.yaml`
   (`${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` section 1.1).
-- If the brief is missing or not signed off, do not proceed. Run campaign-brief first.
+- If the brief is missing or not signed off, do not proceed. Run write-brief first.
 - Read both. The brief's "message intent" is your brief for the key message. The pack's voice and
   claims bound what you can say. Do not contradict either.
 - Rendering the candidate visuals needs the `fal-ai` MCP (via `generate-image`). If it is connected,
@@ -107,7 +107,7 @@ direction in the pack.
 Render one representative image per direction so the user chooses from pictures, not prose. There is
 no locked subject yet — this is the phase that mints it — so these are **text-to-image**. Write your
 own deliberately minimal prompt per direction (concept plus the brand colours and the deliverable's
-hero framing), in the same minimal-prompt spirit as `visual-ideas`; do not pin down every placement.
+hero framing), in the same minimal-prompt spirit as `explore-visual-ideas`; do not pin down every placement.
 Name two or three colours at most, each as a name plus a sigil-free hex — `deep plum (hex 7A1F3D)`,
 never `#7A1F3D`, since `#` opens a reference handle in a prompt.
 
@@ -148,7 +148,7 @@ non-chosen candidates stay in `media/key-visual/` as `candidate` files for refer
 
 **Prompt quality — lean default, with a "more" path.** The minimal self-written prompt above is the
 default for both candidates and the lock. For the *chosen* direction only, you may escalate: route it
-through `ai-image-video-prompt-builder` for a higher-fidelity Nano Banana prompt (and optionally a
+through `write-generation-prompt` for a higher-fidelity Nano Banana prompt (and optionally a
 stronger model) before locking, since the paste-able prompt and the anchor still are durable
 artifacts the whole campaign leans on. Spend that extra pass on the one winner, never the losers.
 

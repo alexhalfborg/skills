@@ -3,18 +3,18 @@ name: write-video-ad-script
 description: >-
   Expand a locked video ad concept into a production-ready script, then into the
   video generation prompt that renders it. Use whenever the user has a video ad
-  concept (from ad-creative or written by hand) and asks to script it, write the
+  concept (from write-ad-creative or written by hand) and asks to script it, write the
   script, turn the concept into a script, or draft the shooting/voiceover script.
   Trigger on phrases like "script this video ad", "write the script for [AD-ID]",
   "turn this concept into a shooting script", "draft the AV script", "write the
   script and prompt for [AD-ID]". Produces a timed two-column audio/video script
   with a shot grammar, gates on human approval, prepares the identity reference kit
-  the prompt binds to (delegating any gaps to reference-kit), then appends one
+  the prompt binds to (delegating any gaps to prepare-reference-kit), then appends one
   ready-to-render video generation prompt per segment (authored by
-  ai-image-video-prompt-builder's video track). Reads the brand pack only to route
+  write-generation-prompt's video track). Reads the brand pack only to route
   first-person voice. Do NOT
-  use to invent a concept from scratch (use ad-creative first); to script a static
-  or carousel concept (ad-creative for the copy, visual-ideas for directions,
+  use to invent a concept from scratch (use write-ad-creative first); to script a static
+  or carousel concept (write-ad-creative for the copy, explore-visual-ideas for directions,
   compose-lockup for the finished static); or to RENDER the clip (generate-video).
 ---
 
@@ -27,13 +27,13 @@ note, visual notes). This skill sequences and times that material into the actua
 ad, and hands the render step a prompt built from the script's own shot grammar.
 It does not re-decide strategy, and it does not render.
 
-This is step 2 of the campaign engine's ads pipeline: `ad-creative` →
-**`video-ad-script`** → `generate-video`, with `reference-kit` filling any
+This is step 2 of the campaign engine's ads pipeline: `write-ad-creative` →
+**`write-video-ad-script`** → `generate-video`, with `prepare-reference-kit` filling any
 identity-reference gaps between the approved script and the render.
 
 ## Inputs
 
-- **A video concept block** (the output of `ad-creative`, or an equivalent the
+- **A video concept block** (the output of `write-ad-creative`, or an equivalent the
   user supplies). It tells you the stage, format, the four functions, and whether
   the ad uses the brand voice.
 - **The target model.** The script's segment count depends on the model's
@@ -51,14 +51,14 @@ identity-reference gaps between the approved script and the render.
   Voice is No, you do not need the pack.
 
 If no concept is provided, do not invent one. Ask for it, or point the user to
-`ad-creative`.
+`write-ad-creative`.
 
 ## Video only
 
 Check the concept's format before writing anything. A static or carousel concept
 has no time axis, no shots, and no clip to generate, so it does not belong here.
-Say so in one line and route it: `ad-creative` already wrote its copy,
-`visual-ideas` explores rough visual directions, and `compose-lockup` produces
+Say so in one line and route it: `write-ad-creative` already wrote its copy,
+`explore-visual-ideas` explores rough visual directions, and `compose-lockup` produces
 the finished headline-on-image static. Do not build a timed table for it, and do
 not improvise a copy breakdown.
 
@@ -167,7 +167,7 @@ wardrobe. If the subject shows features the candidate asset lacks, it is **not
 covered** — do not paper over the gap by pointing `#Image1` at the anchor and hoping.
 Two honest outcomes:
 
-- **Route it to `campaign-message`.** If the uncovered subject belongs in the
+- **Route it to `write-message`.** If the uncovered subject belongs in the
   campaign (a faced protagonist a Reach reel wants), say the master visual should be
   re-locked to add that subject and lock its per-subject still
   (`media/key-visual/key-visual-<subject-id>-v01.png`). That still then becomes a
@@ -199,10 +199,10 @@ failure this whole section exists to prevent — treat it as a defect, not a sho
 Do not render anything here, and do not flag a GENERATE gap as a `generate-image`
 "start frame" — that conflates two different things, and `generate-video` forbids a
 start frame for the reference-to-video model. Identity references are produced after
-approval by `reference-kit` (below); step A only declares what the kit must contain.
+approval by `prepare-reference-kit` (below); step A only declares what the kit must contain.
 A GENERATE gap that is a **recurring character** the master visual never locked is
 not the kit's to invent: say the master visual should be re-locked in
-`campaign-message` to add that subject.
+`write-message` to add that subject.
 
 ## Cut variety (3+ shots)
 
@@ -266,17 +266,17 @@ references must exist before you write it. Once the script is approved, resolve 
 reference kit you declared in step A:
 
 - **REUSE** entries need no work — carry their exact paths forward.
-- **GENERATE** gaps: invoke `reference-kit` (via the Skill tool) for the ad. It
+- **GENERATE** gaps: invoke `prepare-reference-kit` (via the Skill tool) for the ad. It
   derives each missing identity still off the locked master visual, critiques it for
   on-model consistency, locks it, and hands back its exact versioned path (e.g.
   `media/<ad-id>/<ad-id>-ref-<slug>-v01.png`). It is reuse-first, so it may report
   that no generation was needed.
 
-`reference-kit` inherits this skill's guardrails: it renders no real, named person's
+`prepare-reference-kit` inherits this skill's guardrails: it renders no real, named person's
 face barred by `ads.presenter`, and it will route a missing **recurring character**
-back to `campaign-message` rather than invent one.
+back to `write-message` rather than invent one.
 
-**Offline:** if the fal MCP is down, `reference-kit` renders nothing and hands back
+**Offline:** if the fal MCP is down, `prepare-reference-kit` renders nothing and hands back
 the reference prompts and reused paths. Write the video prompt against the **planned**
 paths and flag each unrendered reference as a dependency; `generate-video` lists them
 in its own offline hand-back.
@@ -286,7 +286,7 @@ in its own offline hand-back.
 Once the user approves the script and the reference kit is resolved, write one video
 prompt per **segment**, which for a multi-shot model may cover the whole ad.
 
-**Do not author prompt craft here.** Invoke `ai-image-video-prompt-builder` (its
+**Do not author prompt craft here.** Invoke `write-generation-prompt` (its
 video track) via the Skill tool, once per segment. That skill owns the single-take
 versus multi-shot rules, the `#ImageN` reference convention, the `AUDIO:`
 contract, and the output template. Feed it, from the script:
@@ -309,7 +309,7 @@ Two seams break most often, so state both when you hand off:
    reference the prompt uses must be named in the prompt text with its role
    stated, and listed under `REFERENCES (in pass order)`. The **resolved reference
    kit** supplies the exact locked paths — the REUSE paths and the ones
-   `reference-kit` just generated and locked; list them in the order the prompt
+   `prepare-reference-kit` just generated and locked; list them in the order the prompt
    cites them. Only if a gap could not be rendered (offline) do you cite its
    planned path and flag it as a dependency, rather than a path that is not there.
 
@@ -329,7 +329,7 @@ the clip is ready to be made whenever they are, and you will show them what it
 costs before anything is spent. Name no skill.
 
 Image prompts (a reference still, a thumbnail) are a separate artifact. They come
-from `ai-image-video-prompt-builder`'s image track and land in
+from `write-generation-prompt`'s image track and land in
 `content/<pipeline-id>-prompts.md` or per-ad `content/<ad-id>-prompts.md`, logged
 the same way.
 
@@ -343,7 +343,7 @@ direction, or on-screen text:
   into the script; do not silently drop or "fix" it. If your own added detail creates a
   new risk, add a fresh flag.
 
-Carry those flags into the generation prompt and the reference-kit declaration too, and
+Carry those flags into the generation prompt and the prepare-reference-kit declaration too, and
 honour the pack's `mandatories` and `nogos` throughout. Never render a photoreal
 synthetic face as a real, named person — in a clip **or** a reference still: if
 `ads.presenter` is `founder-voice-only`, that person's real voice carries the

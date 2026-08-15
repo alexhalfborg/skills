@@ -1,7 +1,7 @@
 ---
 name: prepare-reference-kit
 description: >-
-  Prepare the identity reference stills a video ad's generation prompt binds to, each one on-model with the campaign's locked master visual. Reference-to-video models (the engine default bytedance/seedance-2.0/reference-to-video, Kling reference) take several uploaded stills that carry IDENTITY — what a character, product, palette or style looks like — while the prompt carries composition; this skill produces the ones that do not already exist. Use whenever a video ad needs an identity reference that the master visual doesn't already supply: "prepare the reference kit for [AD-ID]", "generate the reference stills for the video", "make the identity references", "render the #Image2 product reference", "I need reference images for the video ad". It is the identity twin of compose-lockup: reuse-first (it prefers the locked still, per-subject key-visual stills, a pack product photo, or a prior locked render and generates only genuine gaps), it edits/derives each still off the locked master visual, critiques the render for on-model consistency, rerolls a hard fail, then locks the result and hands its exact path back so the video prompt can cite it. Reads campaigns/<slug>/docs/message.md (master_visual.subjects / locked_still / palette / lighting / motif / constants), brands/<id>/design.md (palette, typeface), brands/<id>/pack.yaml (products, ads.presenter guardrail), and the reference declaration video-ad-script wrote into the script doc. Delegates the render to generate-image with an identity-preserving edit model; writes into campaigns/<slug>/media/<id>/ with a `ref` role token. Do NOT use to invent the campaign CONCEPT or a recurring CHARACTER the master visual never locked (that is campaign-message — this skill fills ad-scoped prop/insert/setting gaps only and routes a missing recurring subject back); to lay a HEADLINE onto an image (compose-lockup); to WRITE the video or image prompt (ai-image-video-prompt-builder / video-ad-script); or to RENDER the clip (generate-video). It produces still reference inputs, not the finished ad.
+  Prepare the identity reference stills a video ad's generation prompt binds to, each one on-model with the campaign's locked master visual. Reference-to-video models (the engine default bytedance/seedance-2.0/reference-to-video, Kling reference) take several uploaded stills that carry IDENTITY — what a character, product, palette or style looks like — while the prompt carries composition; this skill produces the ones that do not already exist. Use whenever a video ad needs an identity reference that the master visual doesn't already supply: "prepare the reference kit for [AD-ID]", "generate the reference stills for the video", "make the identity references", "render the #Image2 product reference", "I need reference images for the video ad". It is the identity twin of compose-lockup: reuse-first (it prefers the locked still, per-subject key-visual stills, a pack product photo, or a prior locked render and generates only genuine gaps), it edits/derives each still off the locked master visual, critiques the render for on-model consistency, rerolls a hard fail, then locks the result and hands its exact path back so the video prompt can cite it. Reads campaigns/<slug>/docs/message.md (master_visual.subjects / locked_still / palette / lighting / motif / constants), brands/<id>/design.md (palette, typeface), brands/<id>/pack.yaml (products, ads.presenter guardrail), and the reference declaration write-video-ad-script wrote into the script doc. Delegates the render to generate-image with an identity-preserving edit model; writes into campaigns/<slug>/media/<id>/ with a `ref` role token. Do NOT use to invent the campaign CONCEPT or a recurring CHARACTER the master visual never locked (that is write-message — this skill fills ad-scoped prop/insert/setting gaps only and routes a missing recurring subject back); to lay a HEADLINE onto an image (compose-lockup); to WRITE the video or image prompt (write-generation-prompt / write-video-ad-script); or to RENDER the clip (generate-video). It produces still reference inputs, not the finished ad.
 ---
 
 # Reference kit — the identity stills a video prompt binds to
@@ -10,7 +10,7 @@ A reference-to-video model does not take a start frame. It takes a small set of 
 references** — stills that tell it what a character, a product, a palette or a style *looks like* —
 and the prompt supplies all composition (shot size, angle, camera, cuts). This skill produces the
 identity references a video ad needs that do not already exist, each one **on-model with the locked
-master visual**, and hands their exact locked paths back so `video-ad-script`'s prompt can cite them
+master visual**, and hands their exact locked paths back so `write-video-ad-script`'s prompt can cite them
 as `#Image1`, `#Image2`, and so on.
 
 It is the **identity twin of `compose-lockup`**. Where compose-lockup reads the locked text-free key
@@ -20,21 +20,21 @@ prop lit to match the campaign look. Both are the same loop: read the locked sti
 prompt, delegate the render to `generate-image`, read the render back, critique, and reroll a hard
 fail before locking.
 
-This is step 1.5 of the ads pipeline's video branch: `ad-creative` → `video-ad-script` (declares the
-kit) → **`reference-kit`** (fills the gaps) → `generate-video` (binds them).
+This is step 1.5 of the ads pipeline's video branch: `write-ad-creative` → `write-video-ad-script` (declares the
+kit) → **`prepare-reference-kit`** (fills the gaps) → `generate-video` (binds them).
 
 Where the neighbours sit:
 
-- `campaign-message` locks the **text-free** master visual and, for a campaign with recurring
+- `write-message` locks the **text-free** master visual and, for a campaign with recurring
   subjects, can lock **one still per subject** (`media/key-visual/key-visual-<subject-id>-v01.png`).
   Read-only here. It is the source of truth for recurring subjects — this skill never re-imagines one.
-- `video-ad-script` **declares** which `#ImageN` references its prompt will need, mapping each to
+- `write-video-ad-script` **declares** which `#ImageN` references its prompt will need, mapping each to
   REUSE or GENERATE. This skill acts on the GENERATE gaps and returns their locked paths.
 - `generate-image` is the render engine this skill delegates to (an identity-preserving edit model).
   This skill does not invent the render; it owns the reference prompt.
 - `generate-video` binds the reference stills at render time and gates on cost. This skill never
   renders the clip and never spends on video.
-- `campaign-qa` is the independent gate. The Layer-3 critique here is a producer-side pre-check, not
+- `run-qa` is the independent gate. The Layer-3 critique here is a producer-side pre-check, not
   a substitute for QA.
 
 Campaign paths and filenames follow `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`; that spec wins over any
@@ -50,9 +50,9 @@ conversation.
 1. **`campaigns/<slug>/docs/message.md`** — the required input. Pull from `master_visual`:
    `subjects[]` (each `id` + `definition`), `locked_still` (the text-free key visual path), `palette`,
    `lighting`, `motif`, and `constants`. If `message.md` is missing, stop and point the user to
-   `campaign-message` — this skill derives references from a locked master visual, it does not invent
+   `write-message` — this skill derives references from a locked master visual, it does not invent
    one. If `locked_still` is set but the file is missing, stop and say so.
-2. **The reference declaration** — the REUSE/GENERATE map `video-ad-script` wrote into the script doc
+2. **The reference declaration** — the REUSE/GENERATE map `write-video-ad-script` wrote into the script doc
    (`content/<pipeline-id>-scripts.md` or `content/<ad-id>-script.md`), listing each `#ImageN` the
    prompt will need with its role, identity definition, and (for a REUSE) its path. If you were
    invoked without one, build the map yourself from the script's subject block and shot grammar.
@@ -72,7 +72,7 @@ For each declared reference, decide **REUSE** or **GENERATE**. Generation is the
 references reuse an asset that already exists. In preference order, REUSE:
 
 - the `master_visual.locked_still` (the primary subject's identity is already in it),
-- a per-subject `media/key-visual/key-visual-<subject-id>-v01.png` locked by `campaign-message`,
+- a per-subject `media/key-visual/key-visual-<subject-id>-v01.png` locked by `write-message`,
 - a **real product photograph** — `products[].photo` in `pack.yaml` — when a hero object must match a
   live SKU (`generate-video` already defaults to this as a second reference — prefer the real photo
   over a render),
@@ -84,7 +84,7 @@ Name the exact path for every REUSE and move on — it needs no work here.
 it.** A generated stand-in for a real product is a picture of something that does not exist, and the
 whole reason the ladder prefers the photograph is that a live SKU has to match itself. Ask plainly for
 the thing ("do you have a photo of the actual bottle? even a phone shot on a plain background works"),
-and if they have one, note the path so `/halfborg-skills:setup-brand` can add it to the pack for next
+and if they have one, note the path so `/halfborg-campaign:setup-brand` can add it to the pack for next
 time. If they genuinely have no photography yet, say what generating one instead would mean — the
 render will look like the product without being it — and let them choose.
 
@@ -97,14 +97,14 @@ supplies. Then apply two boundaries before generating:
   to any recurring subject the locked still does **not already contain**: a faced protagonist in a
   script whose anchor is product-led (hands only) is uncovered, not an ad-scoped prop, so route it
   back rather than isolating a face that is not in the still to isolate. Say the master visual should
-  be re-locked in `campaign-message` to add the subject (and lock its per-subject still), and generate
+  be re-locked in `write-message` to add the subject (and lock its per-subject still), and generate
   an ad-hoc stand-in here only if the user explicitly says to.
 - **Presenter guardrail.** If `ads.presenter` is `founder-voice-only`, never generate that person as a
   photoreal face. Their real voice carries the first-person lines; a face is not synthesised. Honour
   the same rule for any real, named person.
 
 If the gap list is empty after reuse — a common, good outcome — report that no generation was needed,
-list the REUSE paths back to `video-ad-script`, and stop.
+list the REUSE paths back to `write-video-ad-script`, and stop.
 
 ## 3. Write the reference prompt (per gap)
 
@@ -173,8 +173,8 @@ them exactly as if you had rendered them.
 **Offline path (mirrors compose-lockup and generate-image exactly).** If the fal MCP is not connected,
 `generate-image` renders nothing. Do the same here: hand back, per gap, the step-3 prompt, the model,
 the resolved settings, and the local reference path(s) to run by hand at fal.ai; list the REUSE paths;
-mention `/halfborg-skills:setup-engine` once; and **write no file, no log line, and no invented URL or cost.**
-`video-ad-script`'s Step B then cites the planned paths and flags them, and `generate-video` lists
+mention `/halfborg-campaign:setup-engine` once; and **write no file, no log line, and no invented URL or cost.**
+`write-video-ad-script`'s Step B then cites the planned paths and flags them, and `generate-video` lists
 them in its own offline hand-back. Layer 3 cannot run — there is no render to read.
 
 ## 5. Critique the render (Layer 3 — read it back)
@@ -215,11 +215,11 @@ step in `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`: append a `generate
 `ref`, with the prompt or `prompt_ref`, `refs` in handle order, model, seed, source URL, cost), then a **`status: locked`**
 line — the contract defines `locked` precisely as the status for "reference inputs the campaign binds
 to." Optionally append one `note` event capturing the Layer-3 verdict (residual soft flags). Then
-rebuild the page once — follow `campaign-site-builder` for `campaigns/<slug>`.
+rebuild the page once — follow `build-site` for `campaigns/<slug>`.
 
 Then report. Two audiences here, and they get different things.
 
-**For the next step in the pipeline** (kept precise, because `video-ad-script`'s Step B binds each
+**For the next step in the pipeline** (kept precise, because `write-video-ad-script`'s Step B binds each
 one to its `#ImageN`): **the exact locked path of every reference in the kit**, both generated and
 REUSE, in the pass order the video prompt should list them. Keep this as a compact block, introduced
 in a line of plain English ("here is the set the video will be built from, in order") rather than
@@ -247,7 +247,7 @@ say, or the final campaign check.
 - **Derive, never invent the concept.** The look, palette and subjects are locked upstream in
   `message.md`. This skill isolates, re-poses, or style-matches — it does not restyle the campaign.
 - **Ad-scoped props only; recurring characters trace to message.md.** A missing recurring subject is
-  re-locked in `campaign-message`, not invented here.
+  re-locked in `write-message`, not invented here.
 - **References are text-free.** An identity reference carries no headline or logo, just like the anchor.
 - **Honour the presenter guardrail.** Never render a real, named person as a photoreal face when the
   pack bars it.

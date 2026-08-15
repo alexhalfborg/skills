@@ -13,7 +13,7 @@ description: >-
   angle bank, and the voice rationing rule), fans the manifest's `pipeline: ads` entry into Reach /
   Trust / Sell concepts, and registers each ad id in the generation log. Do NOT use for brand films, TV spots, or
   awareness-only work with no funnel (this is a performance framework); to script a locked video
-  concept (video-ad-script); to WRITE image generation prompts (ai-image-video-prompt-builder);
+  concept (write-video-ad-script); to WRITE image generation prompts (write-generation-prompt);
   or to RENDER media (generate-image / generate-video).
 ---
 <!-- Adapted from https://github.com/coreyhaines31/marketingskills -->
@@ -35,10 +35,10 @@ This is step 1 of the ads pipeline.
 and grounded static concept batches. They never touch the manifest or the log.
 
 Either way the skill stops at copy and concepts, and the handoff depends on the format. A **video**
-concept goes to `video-ad-script`, which times it into a shot-by-shot script and writes the video
-generation prompt. A **static or carousel** concept goes to `visual-ideas` for rough directions and
+concept goes to `write-video-ad-script`, which times it into a shot-by-shot script and writes the video
+generation prompt. A **static or carousel** concept goes to `explore-visual-ideas` for rough directions and
 `compose-lockup` for the finished headline-on-image; its prompt, if one is needed, comes from
-`ai-image-video-prompt-builder`'s image track. `generate-image` and `generate-video` do the rendering.
+`write-generation-prompt`'s image track. `generate-image` and `generate-video` do the rendering.
 
 ## Before Starting
 
@@ -100,7 +100,7 @@ Pull performance data → Identify winning patterns → Generate new variations 
 For recurring static ad production at volume (e.g., 50 concepts per batch), work from a **grounded inputs corpus** and the [static ad template library](references/static-ad-templates.md). Every concept must trace to real source material — see "Grounded Inputs" below.
 
 ### Mode 4: Campaign Funnel Concepts (pipeline)
-Step 1 of the campaign engine's ads pipeline. Turns an approved campaign brief into funnel-staged paid-social concepts (Reach / Trust / Sell), registers each ad id, and hands each locked concept on by format: video to `video-ad-script`, static and carousel to `visual-ideas` / `compose-lockup`. See "Campaign Funnel Concepts" below.
+Step 1 of the campaign engine's ads pipeline. Turns an approved campaign brief into funnel-staged paid-social concepts (Reach / Trust / Sell), registers each ad id, and hands each locked concept on by format: video to `write-video-ad-script`, static and carousel to `explore-visual-ideas` / `compose-lockup`. See "Campaign Funnel Concepts" below.
 
 ---
 
@@ -110,7 +110,7 @@ The framework — the funnel, the four-function ad anatomy, variant permutation,
 
 ### Inputs, in order
 
-1. **The campaign brief (primary input).** `campaigns/<slug>/docs/brief.md` sets the theme, the lead persona and awareness-stage focus, the hero SKUs and the funnel role each plays, and the core message and tagline candidates every concept must thread to. Read it first and let it choose the product and the angle. If there is no brief, say the campaign has not been planned out yet and point them at `/halfborg-skills:new-campaign` — or, for a quick one-off, proceed from a named product plus the brand pack.
+1. **The campaign brief (primary input).** `campaigns/<slug>/docs/brief.md` sets the theme, the lead persona and awareness-stage focus, the hero SKUs and the funnel role each plays, and the core message and tagline candidates every concept must thread to. Read it first and let it choose the product and the angle. If there is no brief, say the campaign has not been planned out yet and point them at `/halfborg-campaign:new-campaign` — or, for a quick one-off, proceed from a named product plus the brand pack.
 2. **The brand pack (how to execute).** Resolve `<id>` from `campaign.brand` in `campaigns/<slug>/system/manifest.yaml` rather than asking which brand this is (`${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` section 1.1); outside a campaign, the invocation names the brand. `brands/<id>/pack.yaml` is then the source of truth. Read it fully before planning; do not ask the user anything the pack answers. Everything an ad needs to know about the brand is in it:
 
    | What you need | Where it comes from |
@@ -128,7 +128,7 @@ The framework — the funnel, the four-function ad anatomy, variant permutation,
 
    **A brand with no `ads` block is not ads-ready. That is a hard stop — route, don't guess.** Do not invent a presenter, write the block yourself, guess an audience, or proceed on a product you have not confirmed. The schema requires `ads.presenter` whenever the block exists, so the block's presence is your proof that a human decided who may appear in an ad. Nothing else is.
 
-   Say it as the decision it is, never as a missing field: *"Before I write ads I need one thing from you — whether a person appears in them, and if so who. That is your call, not mine. Run `/halfborg-skills:setup-brand`, answer the couple of questions about ads, and come straight back."*
+   Say it as the decision it is, never as a missing field: *"Before I write ads I need one thing from you — whether a person appears in them, and if so who. That is your call, not mine. Run `/halfborg-campaign:setup-brand`, answer the couple of questions about ads, and come straight back."*
 
    **A thin pack is valid, and the rest of the table degrades.** Only the `ads` block is a gate. If `channels` is missing, take the channel from the brief or the manifest entry and pick formats from [references/platform-specs.md](references/platform-specs.md). If `products[].url`, `.price`, or `.claims_allowed` is missing, say so and leave the destination or figure unresolved: a Sell concept needs a real price and a real URL, so flag the gap rather than inventing one, and confirm against the live store at `brand.url` before anything runs. Never fill a pack gap with a plausible guess.
 
@@ -169,7 +169,7 @@ brands/<id>/references/
 brands/<id>/     brand facts, voice profiles, design tokens (pack.yaml, voice-profiles.md, design.md)
 brands/<id>/assets/
                  the brand's own real files: logo.svg, product photographs. The logo is embedded by
-                 landing-page and by nothing else — it is never a reference image for a render.
+                 build-landing-page and by nothing else — it is never a reference image for a render.
 ```
 
 The corpus lives under the brand, not the campaign: winning ads, reviews, and comments are durable
@@ -208,7 +208,7 @@ For static ad structure, use the 15-template library in [references/static-ad-te
 
 Each concept carries a **visual brief**: a plain-language description of the layout and imagery. That is not a generator prompt, and it is not a rendered image. This skill stops at the brief. To take a chosen concept further:
 
-- To turn a visual brief into a model-ready image or video prompt, hand it to **`ai-image-video-prompt-builder`**.
+- To turn a visual brief into a model-ready image or video prompt, hand it to **`write-generation-prompt`**.
 - To render that prompt into a real asset, use **`generate-image`** (this repo renders through the fal.ai MCP; default `fal-ai/nano-banana-2`) or **`generate-video`** (default `bytedance/seedance-2.0/reference-to-video`). Those skills save into `campaigns/<slug>/media/<deliverable-id>/`, append to the generation log, and rebuild the campaign site.
 
 For placement dimensions and per-platform copy limits, see [references/platform-specs.md](references/platform-specs.md).

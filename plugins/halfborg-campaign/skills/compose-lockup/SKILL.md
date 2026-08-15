@@ -2,7 +2,7 @@
 name: compose-lockup
 description: >-
   Compose a production typographic lockup: read a campaign's locked text-free key visual, art-direct the headline onto it via a named layout archetype, then critique the render against a legibility / safe-area / crop checklist and reroll before exporting the finished laid-out static (ad, banner, poster, key visual). Use whenever the user wants the finished, headline-on-image deliverable rather than a rough idea or a raw generation: "make the Trust static", "compose the banner", "lay the headline onto the key visual", "produce the poster", "build the static for [deliverable]", "add the tagline to the master visual". Reads
-  campaigns/<slug>/docs/message.md (the tagline, master_visual.headline_lockup / composition / palette, and the text-free locked_still), brands/<id>/design.md (typeface name + colour hex), the deliverable id / ratio / headline / channel / format from the manifest entry or a log-registered pipeline sub-id or the invocation, and its own references/art-direction.md (the analysis schema, archetype catalogue, and critique checklist). Delegates the render to generate-image with the fal-ai/nano-banana-pro/edit model — the key visual is the reference image and the headline text, typeface and colour go in the prompt — then reads the rendered PNG back, scores it against the checklist (channel-aware safe area, crop survival, legibility, face clearance) and rerolls on a hard fail before writing the result to campaigns/<slug>/media/<id>/. Do NOT use to invent or vary the visual CONCEPT or tagline (that is campaign-message, read-only here); to explore rough visual directions with approximate in-image text (that is visual-ideas' idea batches); to raw-render a generative image or the key visual itself with no headline (that is generate-image); or to build a working web page (that is landing-page). This lays the real headline onto an existing key visual; it is the production counterpart to visual-ideas' ideation.
+  campaigns/<slug>/docs/message.md (the tagline, master_visual.headline_lockup / composition / palette, and the text-free locked_still), brands/<id>/design.md (typeface name + colour hex), the deliverable id / ratio / headline / channel / format from the manifest entry or a log-registered pipeline sub-id or the invocation, and its own references/art-direction.md (the analysis schema, archetype catalogue, and critique checklist). Delegates the render to generate-image with the fal-ai/nano-banana-pro/edit model — the key visual is the reference image and the headline text, typeface and colour go in the prompt — then reads the rendered PNG back, scores it against the checklist (channel-aware safe area, crop survival, legibility, face clearance) and rerolls on a hard fail before writing the result to campaigns/<slug>/media/<id>/. Do NOT use to invent or vary the visual CONCEPT or tagline (that is write-message, read-only here); to explore rough visual directions with approximate in-image text (that is explore-visual-ideas' idea batches); to raw-render a generative image or the key visual itself with no headline (that is generate-image); or to build a working web page (that is build-landing-page). This lays the real headline onto an existing key visual; it is the production counterpart to explore-visual-ideas' ideation.
 ---
 
 # Compose lockup — headline onto the key visual, as a shippable static
@@ -15,11 +15,11 @@ The render is done by **Nano Banana Pro Edit** (`fal-ai/nano-banana-pro/edit`, v
 
 Where the neighbours sit:
 
-- `campaign-message` locks the **text-free** key visual and writes the `headline_lockup` spec. Read-only here — never re-imagine the concept or reword the tagline.
-- `visual-ideas` makes **rough, non-production** idea variations with approximate in-image text, as `idea` files. That is ideation. This skill is production: the agreed headline, on the locked key visual, as the deliverable's primary artifact.
-- `campaign-qa` is the independent drift-and-compliance gate. Layer 3 here is a **producer-side pre-check** that uses QA's Family-3 vocabulary so it does not hand QA avoidable defects — it does **not** replace QA, which still runs before anything ships.
+- `write-message` locks the **text-free** key visual and writes the `headline_lockup` spec. Read-only here — never re-imagine the concept or reword the tagline.
+- `explore-visual-ideas` makes **rough, non-production** idea variations with approximate in-image text, as `idea` files. That is ideation. This skill is production: the agreed headline, on the locked key visual, as the deliverable's primary artifact.
+- `run-qa` is the independent drift-and-compliance gate. Layer 3 here is a **producer-side pre-check** that uses QA's Family-3 vocabulary so it does not hand QA avoidable defects — it does **not** replace QA, which still runs before anything ships.
 - `generate-image` is the render engine this skill delegates to. This skill does not invent the picture; it composes the headline onto one that already exists, and it owns the lockup prompt.
-- `competitor-ads` (optional, upstream) may leave `campaigns/<slug>/research/competitor-ads.md`; if present, Layer 2 reads its distilled priors to bias the archetype choice.
+- `analyse-competitor-ads` (optional, upstream) may leave `campaigns/<slug>/research/analyse-competitor-ads.md`; if present, Layer 2 reads its distilled priors to bias the archetype choice.
 
 Campaign paths and filenames follow `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`; that spec wins over any path shorthand here.
 
@@ -35,7 +35,7 @@ conversation.
    - from `master_visual`: `headline_lockup` (typeface / weight / case / colour / placement),
      `composition` (where the headline area is meant to sit), `palette`, and
      `locked_still` (the path to the **text-free** key visual).
-   - If `message.md` is missing, stop and point the user to `campaign-message` — this skill lays a
+   - If `message.md` is missing, stop and point the user to `write-message` — this skill lays a
      headline onto a locked key visual, it does not invent one. If `locked_still` is set but the file
      is missing, stop and say so.
 2. **`brands/<id>/design.md`** — resolve `<id>` from `campaign.brand` in
@@ -77,13 +77,13 @@ decides which zone is available; the archetype decides how the type sits in it; 
 whether a scrim is needed for contrast. Record the choice, the target zone, and the one-line rationale
 (why this treatment given the measured backdrop).
 
-**Optional priors.** If `campaigns/<slug>/research/competitor-ads.md` exists, read its distilled
+**Optional priors.** If `campaigns/<slug>/research/analyse-competitor-ads.md` exists, read its distilled
 category archetype priors and let them bias the choice. The priors are a soft nudge — the locked
 composition and the preserve rule still win. Absent the file, proceed on the intrinsic analysis alone;
 this is a presence-checked read with no dependency.
 
 Do not reach for a re-compositing layout (split panel, crop-to-shape, colour column). Those belong
-upstream in `campaign-message` as a new key visual; say so rather than forcing one here.
+upstream in `write-message` as a new key visual; say so rather than forcing one here.
 
 ## 4. Write the lockup prompt
 
@@ -149,7 +149,7 @@ critique you did not do.
 **Offline path (preserved exactly).** If the fal MCP is not connected, `generate-image` renders
 nothing and hands back the prompt, model and settings. Do the same here: hand back the step-4 prompt,
 the chosen archetype and target zone, the resolved settings, and the local `locked_still` path to run
-by hand at fal.ai, mention `/halfborg-skills:setup-engine` once, and **write no file, no log line, and no invented
+by hand at fal.ai, mention `/halfborg-campaign:setup-engine` once, and **write no file, no log line, and no invented
 URL or cost.** Layers 1-4 still ran and inform that hand-off; Layer 3 cannot (there is no render to
 read).
 
@@ -192,7 +192,7 @@ step in `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`: append a `generate
 saved file, and when the user approves it as the shipped static, a `status: final` line. Optionally
 append one concise `note` event capturing the Layer-3 verdict (its residual soft flags) — the `note`
 event is the only contract-legal home for the critique, since the log has no analysis-artifact slot.
-Then rebuild the page once — follow `campaign-site-builder` for `campaigns/<slug>`.
+Then rebuild the page once — follow `build-site` for `campaigns/<slug>`.
 
 Then report per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 5:
 

@@ -16,7 +16,7 @@ description: >-
   model, and cost. Works without a FAL key too: when the fal MCP is not connected it renders nothing
   and hands back the prompt, model, settings, and reference stills to run by hand at fal.ai. Do
   NOT use to
-  WRITE or design the prompt (that is ai-image-video-prompt-builder) or to generate a still image
+  WRITE or design the prompt (that is write-generation-prompt) or to generate a still image
   (that is generate-image) — this skill renders an existing video prompt, it does not invent one.
 ---
 
@@ -24,7 +24,7 @@ description: >-
 
 Take an existing video prompt plus its reference images and produce an actual video file via the
 **fal.ai MCP server**. This is the video counterpart to `generate-image`: it is deliberately literal,
-it does **not** rewrite, "improve", or invent the prompt (that is `ai-image-video-prompt-builder`'s
+it does **not** rewrite, "improve", or invent the prompt (that is `write-generation-prompt`'s
 job), and it **never fabricates** a video URL or a local path. Video is expensive and long-running,
 so this skill always shows the verbatim prompt with a cost estimate and **stops for explicit approval
 before spending** (step 5), letting the user choose between you rendering it and them running it by
@@ -64,7 +64,7 @@ still deliver the clip but say clearly that you could **not** check it — in th
 place ffmpeg is checked at all — nothing upstream checks it for you, so confirm it here, every time.
 
 **The fal MCP.** The fal MCP is a plugin-scoped streamable-HTTP server declared in the
-`halfborg-skills` plugin's `.mcp.json` (`fal-ai` → `https://mcp.fal.ai/mcp`), authenticated with the plugin's `fal_key`
+`halfborg-campaign` plugin's `.mcp.json` (`fal-ai` → `https://mcp.fal.ai/mcp`), authenticated with the plugin's `fal_key`
 setting. Video uses the **async job** tools, not a
 single `run_model` call. When connected the server exposes:
 
@@ -98,7 +98,7 @@ receipt in step 5:
   and that the prompt already refers to them by those handles;
 - where to run it: <https://fal.ai/models>.
 
-Then, once and in a clause: `/halfborg-skills:setup-engine` sets a key up if they would rather these
+Then, once and in a clause: `/halfborg-campaign:setup-engine` sets a key up if they would rather these
 came out here next time.
 
 What does *not* change: **write no file, append no log line, and invent no URL, path, duration, or
@@ -110,7 +110,7 @@ handing back a prompt spends nothing.
 
 Required:
 - **prompt** — the video prompt (the motion / action description). If the user hasn't given one, ask
-  for it (or offer to build one with `ai-image-video-prompt-builder` first). Do not write the
+  for it (or offer to build one with `write-generation-prompt` first). Do not write the
   creative prompt yourself here.
 - **reference images** — up to nine stills that tell the model what things look like, passed as
   `image_urls` and addressed in the prompt as `#Image1`, `#Image2`, and so on. Local paths or URLs.
@@ -120,8 +120,8 @@ Required:
   campaign's canonical subject, and add the real product photograph (`products[].photo` in the pack)
   as a second reference when a hero object must match a live SKU. If that field is empty and the clip
   turns on a real product, **ask for the photo rather than rendering a stand-in** — a synthesised SKU
-  looks like the product without being it. A video prompt from `video-ad-script` may cite further
-  identity references (an ad-scoped prop, a second subject) that `reference-kit` has already rendered
+  looks like the product without being it. A video prompt from `write-video-ad-script` may cite further
+  identity references (an ad-scoped prop, a second subject) that `prepare-reference-kit` has already rendered
   and locked off the master visual — pass those as additional `#ImageN` stills. They are still identity
   references, not start frames, so this does not change the rule below.
 
@@ -338,7 +338,7 @@ status `iteration`, with the prompt or `prompt_ref`, `refs` — the reference st
 handle order, since the fal URLs are re-uploaded every run and a logged URL is a logged untruth —
 model, seed, source URL, and the cost you know
 from step 5). Once every clip from this invocation is logged, rebuild the page **once** — follow
-`campaign-site-builder` for `campaigns/<slug>`; for a batch script (below) that means once for the
+`build-site` for `campaigns/<slug>`; for a batch script (below) that means once for the
 whole batch, never once per clip or segment.
 
 ## 8. Verify the downloaded clip (ffprobe / ffmpeg)
@@ -419,7 +419,7 @@ whether they want to watch it before you carry on, or the next clip in the set.
 ## House rules
 
 - **Render, never invent.** This skill executes an existing prompt; it does not write, embellish, or
-  "fix" the creative. Prompt authoring is `ai-image-video-prompt-builder`.
+  "fix" the creative. Prompt authoring is `write-generation-prompt`.
 - **References carry identity, the prompt carries composition.** Under reference-to-video there is no
   start frame to render, so never route to `generate-image` to manufacture one. Only the
   `image-to-video` override needs a real start frame, and there it needs exactly one.

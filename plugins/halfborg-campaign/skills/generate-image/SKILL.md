@@ -14,7 +14,7 @@ description: >-
   filename, logs the generation, and reports the local path, source URL, model, and cost. Works
   without a FAL key too: when the fal MCP is not connected it renders nothing and hands back the
   prompt, model, and settings to run by hand at fal.ai. Do NOT use to WRITE or design a prompt
-  (that is ai-image-video-prompt-builder) or to generate video — this skill renders an existing
+  (that is write-generation-prompt) or to generate video — this skill renders an existing
   prompt, it does not invent one.
 ---
 
@@ -23,7 +23,7 @@ description: >-
 Take an existing image prompt and produce an actual image file via the **fal.ai MCP server**.
 This is the one place in the workspace that moves past a paste-ready prompt to a rendered asset,
 so it is deliberately literal: it does **not** rewrite, "improve", or invent the prompt (that is
-`ai-image-video-prompt-builder`'s job) and it **never fabricates** an image URL or a local path. If the
+`write-generation-prompt`'s job) and it **never fabricates** an image URL or a local path. If the
 MCP cannot run, it renders nothing and hands the prompt back to run by hand (step 1) — no key is a
 supported way to run this workspace.
 
@@ -43,7 +43,7 @@ artifact. Whether it is "working" or "final" is a status in the generation log, 
 
 ## 1. Preconditions — is the MCP live?
 
-The fal MCP is a plugin-scoped streamable-HTTP server declared in the `halfborg-skills` plugin's
+The fal MCP is a plugin-scoped streamable-HTTP server declared in the `halfborg-campaign` plugin's
 `.mcp.json` (`fal-ai` → `https://mcp.fal.ai/mcp`), authenticated with the plugin's `fal_key`
 setting. When connected it exposes:
 
@@ -71,7 +71,7 @@ call you cannot make), then hand back a paste-ready block — the same shape as 
   and that the prompt already refers to them by those handles;
 - where to run it: <https://fal.ai/models>.
 
-Then, once and in a clause: `/halfborg-skills:setup-engine` sets a key up if they would rather these
+Then, once and in a clause: `/halfborg-campaign:setup-engine` sets a key up if they would rather these
 came out here next time.
 
 What does *not* change: **write no file, append no log line, and invent no URL, path, or cost.** An
@@ -82,7 +82,7 @@ links) — it just no longer means no output.
 
 Required:
 - **prompt** — the image prompt. If the user hasn't given one, ask for it (or offer to build one
-  with `ai-image-video-prompt-builder` first). Do not write the creative prompt yourself here.
+  with `write-generation-prompt` first). Do not write the creative prompt yourself here.
 
 Optional (use sensible defaults, confirm only if ambiguous):
 - **model** — precedence: what the user named for this run, else `media.image_model` in the workspace `engine.yaml`, else `fal-ai/nano-banana-2`. `engine.yaml` is a dial, not a gate: if it is
@@ -166,12 +166,12 @@ Then ask, as three plain choices of equal weight:
    save and log it per steps 6-7, recording what actually happened — the model they used, and no
    cost figure you did not receive.
 3. **Change something first** — adjust the settings (or send the prompt back to
-   `ai-image-video-prompt-builder` for a creative change), then show this gate again. An adjustment
+   `write-generation-prompt` for a creative change), then show this gate again. An adjustment
    is not a yes.
 
 **What a yes covers.** One yes covers the run as shown. A different prompt, a different model, or a
 different number of pictures means a fresh gate. A caller running a bounded reroll loop
-(`compose-lockup`, `reference-kit`) may ask once for the whole loop, but only by saying up front how
+(`compose-lockup`, `prepare-reference-kit`) may ask once for the whole loop, but only by saying up front how
 many tries it will make and the worst-case total; a reroll inside that envelope does not re-gate,
 anything past it does.
 
@@ -230,7 +230,7 @@ curl -L -o "campaigns/<slug>/media/<deliverable-id>/<name>-v01.png" "<fal-image-
 images, the model, seed, source URL, and cost). `refs` is the ordered list of the pictures you passed,
 as **paths** — the fal URLs are ephemeral and re-uploaded every run, so a logged URL is a logged
 untruth. Index order is handle order, so `refs[0]` is what the prompt called `#Image1`.
-Once every image from this call is logged, rebuild the page **once** — follow `campaign-site-builder`
+Once every image from this call is logged, rebuild the page **once** — follow `build-site`
 for `campaigns/<slug>`; never once per image.
 
 ## 7. Report back, and keep the claim posture
@@ -255,7 +255,7 @@ been checked against their must-includes or the things they never say — rather
 The generation-log entry and site rebuild from step 6 are part of the render, not an optional extra.
 
 **End on a next action**, per section 6 of the same spec. What that is depends on why the picture
-exists: inside `campaign-message` it is "pick one and I will lock it in"; on a deliverable it is
+exists: inside `write-message` it is "pick one and I will lock it in"; on a deliverable it is
 "want the headline laid onto it?"; standalone it is "want another go with a change?" One offer, not
 a menu.
 
@@ -266,7 +266,7 @@ a menu.
   The by-hand route is offered alongside rendering it here, at equal weight. No approval, no
   `run_model` — and an earlier "make me some images" is not standing approval for this one.
 - **Render, never invent.** This skill executes an existing prompt; it does not write, embellish,
-  or "fix" the creative. Prompt authoring is `ai-image-video-prompt-builder`.
+  or "fix" the creative. Prompt authoring is `write-generation-prompt`.
 - **Never re-order the references.** Pass order is what binds a picture to `#Image1` / `#Image2`, and
   the caller fixed it when it wrote the prompt. On a mismatch between the handles the prompt cites and
   the files you hold, stop and hand it back — do not shuffle, drop, or pad the list to make it line

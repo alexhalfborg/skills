@@ -20,33 +20,33 @@ and the generation prompts that brief their visuals.
 - **Which brand.** Inside a campaign, the brand is `campaign.brand` in
   `campaigns/<slug>/system/manifest.yaml` — read it rather than asking
   (`${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` section 1.1). Outside one, the invocation names it.
-  If that file is missing the campaign has no manifest yet: route to `campaign-brief` when the campaign
-  folder exists, `/halfborg-skills:new-campaign` when it does not. Never infer the brand from the
+  If that file is missing the campaign has no manifest yet: route to `write-brief` when the campaign
+  folder exists, `/halfborg-campaign:new-campaign` when it does not. Never infer the brand from the
   folder name or from earlier conversation. See `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`.
   Everything you say back follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine
   words belong in the files, not in the conversation.
 - The brand's `brands/<id>/pack.yaml`. It is the source of truth for brand, audience,
   product, and compliance facts, and its `ads` block carries the presenter guardrail, the angle
   bank, and the voice rationing rule. A brand with no `ads` block is not ads-ready: route to
-  `/halfborg-skills:setup-brand` rather than guessing.
+  `/halfborg-campaign:setup-brand` rather than guessing.
 - The campaign's `docs/brief.md` and `docs/message.md` if this is campaign work. Campaign paths and
   filenames follow `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`.
 
 ## Your workflow
 1. **Concept first.** Load the brand's `brands/<id>/pack.yaml`, then invoke
-   `ad-creative` to produce funnel-staged concepts (Reach / Trust / Sell, plus the
+   `write-ad-creative` to produce funnel-staged concepts (Reach / Trust / Sell, plus the
    Acute direct-response exception for any product marked `buying_mode: acute`)
    on the Hook → Build → Payoff → Direct anatomy. Route first-person voice through the voice
    skill(s) named in `pack.voice.skills`, and ration it by `pack.ads.voice_rationing`.
-2. **Script a locked video concept.** When a video concept is locked, invoke `video-ad-script` to
+2. **Script a locked video concept.** When a video concept is locked, invoke `write-video-ad-script` to
    expand it into a timed AV script with a shot grammar. It reads the pack only to route
    first-person voice, it gates on your approval of the script, and it then appends the video
    generation prompt (one per segment) to the same script doc. Static and carousel concepts are not
    scripted: their copy is already in the concept, and the finished static comes from
-   `visual-ideas` (rough directions) and `compose-lockup` (the production lockup).
+   `explore-visual-ideas` (rough directions) and `compose-lockup` (the production lockup).
 3. **Image prompts.** For a static, a carousel slide, or a reference still a video segment needs,
-   invoke `ai-image-video-prompt-builder`'s image track directly to write the exact generator prompt
-   (these target nano-banana / Gemini). Video prompts do not need this step — `video-ad-script`
+   invoke `write-generation-prompt`'s image track directly to write the exact generator prompt
+   (these target nano-banana / Gemini). Video prompts do not need this step — `write-video-ad-script`
    already wrote them.
 4. **Render the asset (on request).** If the task asks for the actual asset ("generate the visual",
    "render the ads", "make the image", "make the video") and the `fal-ai` MCP is connected, render
@@ -63,7 +63,7 @@ and the generation prompts that brief their visuals.
    generation. There is no start frame per shot, so **never route to `generate-image` to manufacture
    one** — `generate-video` says the same thing in bold, and rendering a frame per shot spends real
    money on files nothing will use. What you own is making sure the reference set exists before the
-   video is submitted: that is `reference-kit`'s job, and it reuses the locked still and real product
+   video is submitted: that is `prepare-reference-kit`'s job, and it reuses the locked still and real product
    photos wherever it can rather than generating. Only the `image-to-video` override needs a real
    start frame, and there it needs exactly one.
 
@@ -74,7 +74,7 @@ and the generation prompts that brief their visuals.
 - Rendered images (via `generate-image`) and videos (via `generate-video`) →
   `campaigns/<slug>/media/<ad-id>/` with versioned grammar-compliant filenames; the render skills
   append the generation-log entry and rebuild the campaign site as part of each render
-- When concepts lock, `ad-creative` registers each ad id in the generation log
+- When concepts lock, `write-ad-creative` registers each ad id in the generation log
   (`register` events) — that registration is what makes the ids valid media folder names
 
 ## Guardrails

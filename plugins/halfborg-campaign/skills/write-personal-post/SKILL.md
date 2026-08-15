@@ -14,10 +14,10 @@ description: >-
   patterns, empathy+authority structure, sentence rhythm, content-type
   templates, honesty rules) is brand-agnostic. Do NOT use for third-person
   customer testimonial / transformation-story posts (use
-  customer-story), or when no brand's personal-post profile exists yet.
+  write-customer-story), or when no brand's personal-post profile exists yet.
 ---
 
-# personal-post — write in a brand's first-person founder voice
+# write-personal-post — write in a brand's first-person founder voice
 
 This skill writes first-person blog content as a brand's founder. The methodology below (how to
 open a post, how to blend empathy with authority, how to structure each content type, the honesty
@@ -42,7 +42,7 @@ This skill then needs, in order:
    restated in the profile.
 
 If no voice profile exists for the active brand, say so, **route the user to
-`/halfborg-skills:setup-brand`** — which authors `voice-profiles.md` — and stop rather than inventing
+`/halfborg-campaign:setup-brand`** — which authors `voice-profiles.md` — and stop rather than inventing
 a persona, a product, or a customer. Do not draft in a generic "founder voice" with no source material — the
 whole point of this skill is that the founder's voice is a specific, real thing the profile
 supplies, not something to improvise.
@@ -167,7 +167,7 @@ condition, problem, or topic in the brand's category.
 **Structure:**
 1. **Opener** (pattern 1 or 4): sensory question or community-pattern observation.
 2. **What does [the problem] actually look like?** Sub-types as sub-headings, each with a plain-
-   language cause and, where relevant, a customer-story callout (see below).
+   language cause and, where relevant, a write-customer-story callout (see below).
 3. **Why this is common for the target audience.** Bolded triggers as paragraph leads.
 4. **When to escalate / when you should be worried.** A short, direct red-flag list.
 5. **A step-by-step routine.** Numbered steps, each explaining the *why* before naming a
@@ -200,9 +200,9 @@ Less polished than the practical guide, more diary-like.
 ### Note on customer testimonial posts (handled separately)
 
 Standalone customer story posts run under a different byline and a different voice (third-person,
-"we/our"). That format has its own skill: **`customer-story`**. If the user asks the founder
+"we/our"). That format has its own skill: **`write-customer-story`**. If the user asks the founder
 for a customer testimonial post, either clarify which format they want, or route to
-`customer-story`.
+`write-customer-story`.
 
 ## Product integration rules
 

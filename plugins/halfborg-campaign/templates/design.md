@@ -228,8 +228,8 @@ breakpoints:
 # Ignite Design System
 
 > **This is a worked example, not a live brand.** It shows the shape a `brands/<id>/design.md` takes
-> — the token frontmatter that `compose-lockup` and `visual-ideas` read for typeface and colour, and
-> the prose that `landing-page` reads in full. Copy it to `brands/<id>/design.md` and replace every
+> — the token frontmatter that `compose-lockup` and `explore-visual-ideas` read for typeface and colour, and
+> the prose that `build-landing-page` reads in full. Copy it to `brands/<id>/design.md` and replace every
 > value with the brand's own. Nothing in the engine reads this file.
 
 ## Brand & Style

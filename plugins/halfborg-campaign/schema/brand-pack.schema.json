@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://halfborg.com/schema/brand-pack.schema.json",
   "title": "Brand pack",
-  "description": "Per-client brand context consumed by the campaign engine. This is machine-facing: authored and enriched by the /halfborg-skills:setup-brand command, not hand-written by users. A minimal pack is valid on purpose (graceful degradation): only the brand skeleton is required, and the more that is filled in, the fewer questions intake has to ask. Extra keys are tolerated. Author as YAML (brands/<id>/pack.yaml) and validate the parsed object against this schema.",
+  "description": "Per-client brand context consumed by the campaign engine. This is machine-facing: authored and enriched by the /halfborg-campaign:setup-brand command, not hand-written by users. A minimal pack is valid on purpose (graceful degradation): only the brand skeleton is required, and the more that is filled in, the fewer questions intake has to ask. Extra keys are tolerated. Author as YAML (brands/<id>/pack.yaml) and validate the parsed object against this schema.",
   "type": "object",
   "required": ["brand"],
   "properties": {
@@ -31,7 +31,7 @@
         "url": { "type": "string", "description": "Site URL. Scheme optional; normalised on read." },
         "logo": {
           "type": "object",
-          "description": "Optional. The brand's logo as a real file under the brand folder, written by /halfborg-skills:setup-brand when it reads the brand's website, and only after the downloaded bytes were verified to be an image. Consumed by landing-page, which embeds it in the page rather than linking it. Never passed to an image or video render: the engine's generated visuals stay text-free and logo-free. Absent means no usable logo was found, never that the brand has none.",
+          "description": "Optional. The brand's logo as a real file under the brand folder, written by /halfborg-campaign:setup-brand when it reads the brand's website, and only after the downloaded bytes were verified to be an image. Consumed by build-landing-page, which embeds it in the page rather than linking it. Never passed to an image or video render: the engine's generated visuals stay text-free and logo-free. Absent means no usable logo was found, never that the brand has none.",
           "required": ["path"],
           "properties": {
             "path": {
@@ -90,7 +90,7 @@
       "properties": {
         "skills": {
           "type": "array",
-          "description": "Names of the generic voice skills deliverable expanders invoke, e.g. [\"personal-post\", \"customer-story\"]. Each skill reads this brand's delta from brands/<id>/voice-profiles.md.",
+          "description": "Names of the generic voice skills deliverable expanders invoke, e.g. [\"write-personal-post\", \"write-customer-story\"]. Each skill reads this brand's delta from brands/<id>/voice-profiles.md.",
           "items": { "type": "string", "minLength": 1 },
           "minItems": 1
         },
@@ -116,7 +116,7 @@
           "claims_allowed": { "type": "array", "items": { "type": "string" } },
           "photo": {
             "type": "string",
-            "description": "Optional. Path to a real photograph of this product, relative to the brand folder (e.g. \"assets/serum-bottle.jpg\"). Used as an identity reference image by reference-kit and generate-video whenever a rendered hero object must match the live SKU. Absent is fine and common; a skill that needs it and does not find it asks the user for the photo rather than synthesising the product."
+            "description": "Optional. Path to a real photograph of this product, relative to the brand folder (e.g. \"assets/serum-bottle.jpg\"). Used as an identity reference image by prepare-reference-kit and generate-video whenever a rendered hero object must match the live SKU. Absent is fine and common; a skill that needs it and does not find it asks the user for the photo rather than synthesising the product."
           },
           "buying_mode": {
             "type": "string",
@@ -141,7 +141,7 @@
     },
     "ads": {
       "type": "object",
-      "description": "Optional. Present only for brands that run paid ads; read by ad-creative and video-ad-script, ignored by every other phase. SAFETY-RELEVANT: if this block is present, `presenter` is required, because the ads pipeline treats it as the confirmed answer to who may appear in an ad. A brand with no `ads` block is not ads-ready, and ad-creative routes to /halfborg-skills:setup-brand rather than guessing.",
+      "description": "Optional. Present only for brands that run paid ads; read by write-ad-creative and write-video-ad-script, ignored by every other phase. SAFETY-RELEVANT: if this block is present, `presenter` is required, because the ads pipeline treats it as the confirmed answer to who may appear in an ad. A brand with no `ads` block is not ads-ready, and write-ad-creative routes to /halfborg-campaign:setup-brand rather than guessing.",
       "required": ["presenter"],
       "properties": {
         "presenter": {
@@ -173,7 +173,7 @@
     },
     "mandatories": {
       "type": "array",
-      "description": "Non-negotiable legal / regulatory / brand-safety rules every deliverable must obey. Optional in the schema so a thin pack still validates, but SAFETY-RELEVANT: absence means 'unconfirmed', not 'none'. The /halfborg-skills:setup-brand command always writes this key (even as []), and intake and QA must confirm compliance rather than assuming there are none.",
+      "description": "Non-negotiable legal / regulatory / brand-safety rules every deliverable must obey. Optional in the schema so a thin pack still validates, but SAFETY-RELEVANT: absence means 'unconfirmed', not 'none'. The /halfborg-campaign:setup-brand command always writes this key (even as []), and intake and QA must confirm compliance rather than assuming there are none.",
       "items": { "type": "string" }
     },
     "nogos": { "type": "array", "items": { "type": "string" } },

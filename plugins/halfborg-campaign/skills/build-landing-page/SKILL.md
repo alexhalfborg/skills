@@ -1,22 +1,22 @@
 ---
 name: build-landing-page
 description: >-
-  Build a campaign's landing page: a real, self-contained, offline-viewable HTML page written from the brand pack, the approved brief, and the locked campaign message. Use whenever the user wants the page a campaign's traffic lands on: "build the landing page", "make the landing page for [deliverable]", "write the LP", "the page the ads point at", "we need a page for this offer", "generate the campaign landing page". Reads campaigns/<slug>/docs/brief.md (the page objective, audience, constraints), campaigns/<slug>/docs/message.md (the key message, the chosen tagline as the default hero headline, and master_visual.locked_still as the text-free hero image), campaigns/<slug>/system/manifest.yaml (its own asset entry: id, offer_ref, audience_ref, funnel_stage), brands/<id>/pack.yaml (products with price / url / claims_allowed / buying_mode, audience pains and jobs, voice, mandatories, nogos, and brand.logo, the one skill that embeds it) and the whole of brands/<id>/design.md (typeface, colour hexes, radius, spacing grid, shadows, component patterns). Gates on the section stack in conversation, then writes one versioned .html into campaigns/<slug>/media/<id>/ and logs it. Do NOT use to invent the concept, key message, or tagline (that is campaign-message, read-only here); to generate imagery (that is generate-image); to produce a rough mockup IMAGE of a page rather than a working page (that is visual-ideas); to build the campaign's internal review site (that is campaign-site-builder); or to deploy or host anything, which this engine never does.
+  Build a campaign's landing page: a real, self-contained, offline-viewable HTML page written from the brand pack, the approved brief, and the locked campaign message. Use whenever the user wants the page a campaign's traffic lands on: "build the landing page", "make the landing page for [deliverable]", "write the LP", "the page the ads point at", "we need a page for this offer", "generate the campaign landing page". Reads campaigns/<slug>/docs/brief.md (the page objective, audience, constraints), campaigns/<slug>/docs/message.md (the key message, the chosen tagline as the default hero headline, and master_visual.locked_still as the text-free hero image), campaigns/<slug>/system/manifest.yaml (its own asset entry: id, offer_ref, audience_ref, funnel_stage), brands/<id>/pack.yaml (products with price / url / claims_allowed / buying_mode, audience pains and jobs, voice, mandatories, nogos, and brand.logo, the one skill that embeds it) and the whole of brands/<id>/design.md (typeface, colour hexes, radius, spacing grid, shadows, component patterns). Gates on the section stack in conversation, then writes one versioned .html into campaigns/<slug>/media/<id>/ and logs it. Do NOT use to invent the concept, key message, or tagline (that is write-message, read-only here); to generate imagery (that is generate-image); to produce a rough mockup IMAGE of a page rather than a working page (that is explore-visual-ideas); to build the campaign's internal review site (that is build-site); or to deploy or host anything, which this engine never does.
 ---
 
 # Landing page — the page the campaign's traffic lands on
 
 Turn a campaign's approved strategy and locked message into the **working page** where the promise made by every ad, email, and post is kept. This skill writes one self-contained HTML file: it opens from disk, makes no network request, and hands to a developer as-is.
 
-It is most load-bearing when the campaign runs ads. Reach, Trust, and Sell ads all promise something and all need somewhere to land. This skill never reads the ads, and the ads never read this page: **message-match is structural**, because both bind to the same `docs/message.md` key message and tagline. What guarantees the page exists at all is `campaign-brief`, which pairs a `pipeline: ads` manifest entry with a `landing-page` asset entry.
+It is most load-bearing when the campaign runs ads. Reach, Trust, and Sell ads all promise something and all need somewhere to land. This skill never reads the ads, and the ads never read this page: **message-match is structural**, because both bind to the same `docs/message.md` key message and tagline. What guarantees the page exists at all is `write-brief`, which pairs a `pipeline: ads` manifest entry with a `build-landing-page` asset entry.
 
 Where the neighbours sit:
 
-- `campaign-brief` sets the objective and writes the manifest entry this skill consumes.
-- `campaign-message` locks the key message, the tagline, and the **text-free** key visual. Read-only
+- `write-brief` sets the objective and writes the manifest entry this skill consumes.
+- `write-message` locks the key message, the tagline, and the **text-free** key visual. Read-only
   here. Never re-imagine the concept or reword the tagline.
 - `compose-lockup` bakes the headline **into** an image, for statics. This skill does the opposite: it sets the headline as live `<h1>` text over the clean key visual, which is exactly why the anchor is kept text-free.
-- `visual-ideas` makes a rough mockup **image** of a page. That is ideation. This is the page.
+- `explore-visual-ideas` makes a rough mockup **image** of a page. That is ideation. This is the page.
 
 Campaign paths and filenames follow `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`; that spec wins over any path shorthand here.
 
@@ -44,7 +44,7 @@ conversation.
      `brands/<id>/<path>`. Read the file itself; it gets embedded, not linked (section 4). This is
      the only skill that uses it: a logo never goes near a render.
    - `mandatories` and `nogos`. **Absent `mandatories` means unconfirmed, not none** — confirm with the user rather than assuming the brand has no rules.
-5. **`brands/<id>/design.md`** — read the **whole file**. Typeface, colour hexes, border radius, the spacing grid, shadow rules, and the card / button / imagery component patterns. Unlike  `compose-lockup` and `visual-ideas`, which are restricted to the typeface name and colour hexes, a web build honours the full design system. Freeform prose, not a schema: read what is there and carry on past anything missing.
+5. **`brands/<id>/design.md`** — read the **whole file**. Typeface, colour hexes, border radius, the spacing grid, shadow rules, and the card / button / imagery component patterns. Unlike  `compose-lockup` and `explore-visual-ideas`, which are restricted to the typeface name and colour hexes, a web build honours the full design system. Freeform prose, not a schema: read what is there and carry on past anything missing.
 
 ## 2. Choose the archetype and the section stack
 
@@ -74,7 +74,7 @@ Get an explicit go-ahead. Reordering the sections is cheap now and expensive onc
 
 One self-contained `.html` file. It opens from disk and makes no network request.
 
-- **Provenance header first.** An HTML comment block immediately after the doctype, recording: the deliverable `id`, the campaign slug, the source `message.md` tagline, every product claim used with the `claims_allowed` entry that permits it, the mandatories honoured, any font substitution, and the `brand.logo` `path` embedded (noting `confirmed: false` when it is unconfirmed, or that no logo was available). This is what lets `campaign-qa` check claims without parsing prose out of markup.
+- **Provenance header first.** An HTML comment block immediately after the doctype, recording: the deliverable `id`, the campaign slug, the source `message.md` tagline, every product claim used with the `claims_allowed` entry that permits it, the mandatories honoured, any font substitution, and the `brand.logo` `path` embedded (noting `confirmed: false` when it is unconfirmed, or that no logo was available). This is what lets `run-qa` check claims without parsing prose out of markup.
 - **Styles inline**, in one `<style>` block. Design tokens straight from `design.md`: the colour hexes as CSS custom properties, the radius, the spacing scale, the shadow rule.
 - **No web fonts.** Offline and self-contained forbids `@import` and any CDN. Name the brand typeface first in a local-first stack that degrades to a system face of the same character, e.g. `font-family: 'Source Serif 4', 'Source Serif Pro', Georgia, serif`. Record the substitution in the provenance header.
 - **The hero is the text-free key visual**, referenced relatively from the sibling media folder:
@@ -99,7 +99,7 @@ campaigns/<slug>/media/<id>/<id>-v<NN>.html
 ```
 
 A reroll takes the next `v<NN>`. **Never overwrite.** Then follow the log step in
-`${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` §4.1: append one `generate` line with `status: iteration`, and a `status: final` line when the user approves the page as shipped. The line carries no `model`, `cost_usd`, `seed`, or `source_url` — nothing was rendered by a model. Put the section stack in `notes`. Then rebuild the campaign page once — follow `campaign-site-builder` for `campaigns/<slug>`.
+`${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` §4.1: append one `generate` line with `status: iteration`, and a `status: final` line when the user approves the page as shipped. The line carries no `model`, `cost_usd`, `seed`, or `source_url` — nothing was rendered by a model. Put the section stack in `notes`. Then rebuild the campaign page once — follow `build-site` for `campaigns/<slug>`.
 
 Then report back per `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` section 5: what the page does,
 the sections it ended up with, the picture it leads with, where the buttons go, the claims it makes,
@@ -128,13 +128,13 @@ A thin pack degrades with a flagged gap; it never guesses.
 
 ## House rules
 
-- **The hero is the text-free key visual, never a lockup.** The headline is live `<h1>` text laid over the clean image. This is why `campaign-message` keeps the anchor text-free; do not undo it.
+- **The hero is the text-free key visual, never a lockup.** The headline is live `<h1>` text laid over the clean image. This is why `write-message` keeps the anchor text-free; do not undo it.
 - **Never invent the message.** The key message and tagline are locked upstream in `message.md`. This skill expresses them as a page; it does not reword them.
 - **Only `claims_allowed` may be asserted** about a product. Honour every mandatory and no-go.
 - **Self-contained and offline.** No CDN, no web fonts, no external scripts, no analytics. The hero image, referenced relatively, is the only thing outside the file — the logo is embedded, inline or as a data URI, precisely so it stays inside it.
 - **The logo is for this page only.** It is embedded in markup a person wrote. It is never a reference picture for a render, and no model is ever asked to draw it: the key visual stays text-free and logo-free.
 - **This engine never deploys.** The page has no URL. Do not publish it, and do not tell the user an ad can point at it until a human has hosted it.
 - **Never overwrite a version.** A reroll is `-v02.html` beside `-v01.html`; supersession is a log  event, not a deleted file.
-- **The page lives in `media/<id>/`.** Not `content/` (which is markdown only, and unversioned), and not a `landing-page/` folder (which does not exist).
+- **The page lives in `media/<id>/`.** Not `content/` (which is markdown only, and unversioned), and not a `build-landing-page/` folder (which does not exist).
 - **Speak plainly.** Everything you say out loud follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine words belong in the files, not in the conversation. The provenance header keeps its exact field names; the gate and the report-back do not.
 - British spelling, reduce em dashes, no phrasing that reads as AI-generated. Keep first-person brand-voice copy in the brand voice and product-fact copy plain.

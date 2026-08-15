@@ -1,7 +1,7 @@
 ---
 name: analyse-competitor-ads
 description: >-
-  Distil competitors' paid-social ads into a campaign research artifact that informs creative direction. Manual-only and fully offline: it reads competitor ad material the user supplies (Meta Ad Library screenshots or exports, pasted ad copy, links, run-dates) and synthesises it — it does not fetch, scrape, or call any service itself. Use whenever the user wants to learn from competitors' running ads before building creative: "what are competitors running", "analyse these competitor ads", "competitor ad research", "what ad angles win in our category", "look at these Facebook ads and pull the patterns", "build a swipe-file analysis". Reads the active brand from campaign.brand in campaigns/<slug>/system/manifest.yaml, brands/<id>/pack.yaml (positioning, competitors, audience), and the competitor material the user provides; writes campaigns/<slug>/research/competitor-ads.md with (1) a traceable evidence table of the supplied ads and (2) distilled category layout / archetype priors in compose-lockup's archetype vocabulary, so compose-lockup's Layer-2 art direction can read and be biased by them. Labels "winning" / "top" as INFERRED from ad longevity and active-variant count — never as measured spend, impressions, or ROAS, which are structurally not obtainable for a competitor's commercial ads. Do NOT use to invent competitor ads or fabricate performance data (it only distils supplied material); to write the campaign brief (that is campaign-brief) or final ad copy (that is ad-creative); or for positioning / SEO competitor analysis (that is the researcher's marketing:competitive-brief / marketing:seo-audit).
+  Distil competitors' paid-social ads into a campaign research artifact that informs creative direction. Manual-only and fully offline: it reads competitor ad material the user supplies (Meta Ad Library screenshots or exports, pasted ad copy, links, run-dates) and synthesises it — it does not fetch, scrape, or call any service itself. Use whenever the user wants to learn from competitors' running ads before building creative: "what are competitors running", "analyse these competitor ads", "competitor ad research", "what ad angles win in our category", "look at these Facebook ads and pull the patterns", "build a swipe-file analysis". Reads the active brand from campaign.brand in campaigns/<slug>/system/manifest.yaml, brands/<id>/pack.yaml (positioning, competitors, audience), and the competitor material the user provides; writes campaigns/<slug>/research/analyse-competitor-ads.md with (1) a traceable evidence table of the supplied ads and (2) distilled category layout / archetype priors in compose-lockup's archetype vocabulary, so compose-lockup's Layer-2 art direction can read and be biased by them. Labels "winning" / "top" as INFERRED from ad longevity and active-variant count — never as measured spend, impressions, or ROAS, which are structurally not obtainable for a competitor's commercial ads. Do NOT use to invent competitor ads or fabricate performance data (it only distils supplied material); to write the campaign brief (that is write-brief) or final ad copy (that is write-ad-creative); or for positioning / SEO competitor analysis (that is the researcher's marketing:competitive-brief / marketing:seo-audit).
 ---
 
 # Competitor ads — distil supplied competitor creative into priors
@@ -9,7 +9,7 @@ description: >-
 Turn a pile of competitors' paid-social ads that the user has gathered into a tight research artifact:
 a traceable record of what those competitors are running, an **inferred** read of which ads are
 probably working, and — the point of the exercise — a distilled set of **layout / archetype priors**
-that `compose-lockup` reads to bias its art direction. It is the ad-creative counterpart to the
+that `compose-lockup` reads to bias its art direction. It is the write-ad-creative counterpart to the
 `researcher` agent's positioning work (`marketing:competitive-brief`): that studies what competitors
 *say*; this studies what their ads *look like and how they are built*.
 
@@ -21,7 +21,7 @@ this same artifact without changing what `compose-lockup` reads.
 
 Where it sits:
 
-- Upstream of creative. Run it during or after the brief, before `compose-lockup` / `ad-creative`
+- Upstream of creative. Run it during or after the brief, before `compose-lockup` / `write-ad-creative`
   produce statics, so the priors exist when Layer 2 looks for them. The `researcher` agent invokes it;
   it can also be run directly.
 - Read-only on the brand. Competitors come from `pack.competitors` or the invocation — never
@@ -52,7 +52,7 @@ caveats to honour.
 Resolve the brand per `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md` before anything else. This skill can
 run outside a campaign, so the manifest is optional — but the pack is not, because the priors are
 distilled *against* a positioning. If `brands/<id>/pack.yaml` is missing or fails the skeleton check,
-stop and route to `/halfborg-skills:setup-brand`; never infer a category or a competitor set. If no
+stop and route to `/halfborg-campaign:setup-brand`; never infer a category or a competitor set. If no
 campaign exists to write into, say so and offer to write the artifact once one does, rather than
 inventing a slug.
 
@@ -107,7 +107,7 @@ bias; the campaign's locked composition and message still win.
 
 ## 5. Write the artifact and report
 
-Write `campaigns/<slug>/research/competitor-ads.md` (a `research/` working file — permitted by
+Write `campaigns/<slug>/research/analyse-competitor-ads.md` (a `research/` working file — permitted by
 `campaign-structure.md` section 1, ignored by the site builder, so no log line and no schema change).
 Shape:
 

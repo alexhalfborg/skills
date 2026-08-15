@@ -20,7 +20,7 @@ terms, keep the slash command exact, and do not treat a route as an apology.
 
 ## Tier 1 — context (free, no tool calls)
 
-`/halfborg-skills:setup-engine` writes a `## Campaign engine` block into the workspace's `CLAUDE.md`
+`/halfborg-campaign:setup-engine` writes a `## Campaign engine` block into the workspace's `CLAUDE.md`
 (or `AGENTS.md`). Project instructions load on every turn, so **that block being in your context is
 itself the proof that the workspace is set up** — and it already tells you the layout and which
 brands exist. Use it before you touch the filesystem.
@@ -35,11 +35,11 @@ hears about readiness only when a route below is actually taken.
   situations: a folder that was never set up, and a perfectly good workspace whose owner set it up by
   hand or deleted the block. Fall through to tier 2 and let the filesystem decide. If tier 2's
   workspace check then passes, proceed with the work and mention
-  `/halfborg-skills:setup-engine` once, in a clause, as the thing that would make future sessions
+  `/halfborg-campaign:setup-engine` once, in a clause, as the thing that would make future sessions
   cheaper — never as a blocker. Only stop if tier 2 itself fails.
 
 Two caveats worth keeping straight. The block is a *static* signal: it is refreshed when
-`/halfborg-skills:setup-engine` re-runs, so a brand added five minutes ago may not appear in it yet —
+`/halfborg-campaign:setup-engine` re-runs, so a brand added five minutes ago may not appear in it yet —
 when the brand list matters, verify against `brands/` rather than trusting the block alone. And it
 says nothing about any individual campaign's progress, because that changes within a session. For
 anything on the artifact chain, go to tier 2 regardless of what tier 1 said.
@@ -54,7 +54,7 @@ Four resolution steps. Stop at the first one that fails, take its route, and do 
 
 No `engine.yaml`, no `brands/`, and no `campaigns/` → this directory is not a campaign workspace.
 
-**Route:** `/halfborg-skills:setup-engine`.
+**Route:** `/halfborg-campaign:setup-engine`.
 
 Do not scaffold silently, and do not start a campaign in a directory that was never set up as one. If
 *some* of the three are present, the workspace exists — proceed; a missing `engine.yaml` alone is
@@ -67,12 +67,12 @@ campaign and, in `campaign.brand`, carries the authoritative brand link.
 
 | State | Meaning | Route |
 |---|---|---|
-| No `campaigns/<slug>/` folder | The campaign was never started | `/halfborg-skills:new-campaign <brand-id> [name]` |
-| Folder exists, no `system/manifest.yaml` | `/halfborg-skills:new-campaign` scaffolded it but the brief never completed — the manifest is a phase-1 output | `campaign-brief` |
+| No `campaigns/<slug>/` folder | The campaign was never started | `/halfborg-campaign:new-campaign <brand-id> [name]` |
+| Folder exists, no `system/manifest.yaml` | `/halfborg-campaign:new-campaign` scaffolded it but the brief never completed — the manifest is a phase-1 output | `write-brief` |
 | Folder exists, no `system/` at all | Legacy layout | The migration recipe in `campaign-structure.md` section 7 |
 | More than one campaign folder and no slug given | Ambiguous | List them and ask which. Never assume the most recent. |
 
-Never write a `manifest.yaml` yourself to get unblocked — that is `campaign-brief`'s output and it
+Never write a `manifest.yaml` yourself to get unblocked — that is `write-brief`'s output and it
 requires the human-gated interview behind it.
 
 ### 2.3 Brand
@@ -84,14 +84,14 @@ If prefix and field disagree, the field wins. See `campaign-structure.md` sectio
 
 - **Pack missing**, or present but failing the skeleton check (`brand` with a name and positioning,
   at least one `audience`, at least one `products` entry) → the brand is not set up.
-  **Route:** `/halfborg-skills:setup-brand`. Do not interview the user for brand identity from inside
+  **Route:** `/halfborg-campaign:setup-brand`. Do not interview the user for brand identity from inside
   another skill, and never infer a brand fact you cannot read.
 - **Pack thin but valid** (no voice, no channels, no `mandatories`, sparse claims) → proceed. Richness
   is a dial, not a gate; expect the phase to ask a few more questions. Say that as a plain heads-up
   ("I will ask you a couple of extra things as we go"), never as a complaint about the pack.
 - **`mandatories` absent** means *unconfirmed*, not *none*. Confirm rather than assuming the brand has
   no rules — and ask for it as "anything that has to appear on everything you publish", not by name.
-- **`ads` block absent** and the task is an ad → hard stop, route to `/halfborg-skills:setup-brand`.
+- **`ads` block absent** and the task is an ad → hard stop, route to `/halfborg-campaign:setup-brand`.
   The block's presence is the proof that a human decided who may appear in an ad; never invent a
   presenter or write the block yourself.
 
@@ -100,20 +100,20 @@ If prefix and field disagree, the field wins. See `campaign-structure.md` sectio
 `campaigns/<slug>/docs/message.md` carries the key message, the chosen tagline, and the
 `master_visual` spec with its `locked_still` pointer.
 
-**Route when missing:** `campaign-message`.
+**Route when missing:** `write-message`.
 
 Whether a missing `message.md` stops you or merely degrades you is the individual skill's call, and
 each one states it. Do not override that here. The three shapes in use:
 
 - **Stop and route** — the skill's whole job is to lay something onto the locked visual, so there is
-  nothing to do without it (`compose-lockup`, `reference-kit`).
+  nothing to do without it (`compose-lockup`, `prepare-reference-kit`).
 - **Degrade with consent** — the skill can run off `brief.md` alone, but must say so and get an
-  explicit go-ahead first, never proceed silently (`landing-page`, `visual-ideas`).
+  explicit go-ahead first, never proceed silently (`build-landing-page`, `explore-visual-ideas`).
 - **Degrade and note** — the skill continues against `brief.md` and records the reduced check in its
-  output (`campaign-qa`, where drift checks fall back to brief alignment).
+  output (`run-qa`, where drift checks fall back to brief alignment).
 
 If `locked_still` is set but the file it points at does not exist, say so plainly rather than
-rendering a replacement — a re-lock belongs to `campaign-message`.
+rendering a replacement — a re-lock belongs to `write-message`.
 
 ---
 

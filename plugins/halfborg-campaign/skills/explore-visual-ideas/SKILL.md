@@ -17,9 +17,9 @@ description: >-
   campaign's already-rendered locked subject photo when one exists. If no locked master visual
   exists yet, it does not silently proceed: it tells the user and offers to run off the campaign
   brief.md as looser visual guidance instead. Do NOT use to invent or vary the master visual CONCEPT
-  itself (that is locked in message.md by campaign-message, read-only here); to do
-  paid-social ad concept or funnel ideation (that is ad-creative); to build a production
-  landing page (that is landing-page — output here is a non-production
+  itself (that is locked in message.md by write-message, read-only here); to do
+  paid-social ad concept or funnel ideation (that is write-ad-creative); to build a production
+  landing page (that is build-landing-page — output here is a non-production
   mockup image, never a working page); or when the fal MCP is not connected (this skill depends on
   it every run).
 ---
@@ -27,7 +27,7 @@ description: >-
 # Visual ideas
 
 Turn a campaign's locked `message.md` — the master visual concept plus tagline — into a small batch of
-**rough visual idea variations** for one deliverable type: a banner ad, a poster, a landing-page
+**rough visual idea variations** for one deliverable type: a banner ad, a poster, a build-landing-page
 mockup, a static, whatever the user names. The output is exploratory, not production. AI imagery is
 reliable enough to spark a layout direction but not to ship, so this skill leans into that: it feeds
 the model a deliberately **minimal** prompt and lets it compose, rather than pinning down every
@@ -39,7 +39,7 @@ placement. It provides the concept, the brand's typeface and colours, and the lo
 then generates a handful of variations at one ratio for a human to react to.
 
 This skill reads the tagline and visual concept; it never writes or revises either (that is
-`campaign-message`'s job, upstream). It produces **visual executions** of a concept that is already
+`write-message`'s job, upstream). It produces **visual executions** of a concept that is already
 locked, never a new concept.
 
 ## 1. Read the inputs
@@ -53,7 +53,7 @@ conversation.
    `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`). Pull the chosen tagline and, from the
    `master_visual` block: `concept` (the one-paragraph direction), `subjects` (the locked subject ids
    and definitions, e.g. `HANDS-1`), `palette`, and `locked_still` (the exact versioned path to the
-   rendered anchor image, if `campaign-message` locked one). **If `message.md` does not exist yet**, do not
+   rendered anchor image, if `write-message` locked one). **If `message.md` does not exist yet**, do not
    silently proceed and do not stop dead: say plainly that the campaign has no main picture agreed
    yet, so these will not match anything, and ask whether to go ahead using the brief as the steer.
    Only run off the brief with that explicit go-ahead, and treat it as
@@ -67,11 +67,11 @@ conversation.
    prompt, which is not with the `#`. Do **not** import its composition, whitespace, or "avoid harsh medical
    imagery" house-style rules into the prompt — those belong to production, and pulling them in here
    just reconstitutes the over-detailed prompt this skill exists to avoid.
-3. **The deliverable parameters** — the deliverable **type** (banner ad, poster, landing-page
+3. **The deliverable parameters** — the deliverable **type** (banner ad, poster, build-landing-page
    mockup, static, ...), its **primary ratio**, and the **variation count** N. Take these from the
    manifest entry (`campaigns/<slug>/system/manifest.yaml`) for this deliverable's `id` if one exists,
    otherwise from how the user invoked the skill, otherwise default: a sensible ratio for the
-   deliverable type (banner/static `1x1`, poster/landing-page `4x5` or `9x16`) and **N = 3-4**.
+   deliverable type (banner/static `1x1`, poster/build-landing-page `4x5` or `9x16`) and **N = 3-4**.
 
 There is no `visual-reference` / style-reference step. This skill never reads
 `brands/<id>/references/` or globs example images.
@@ -79,7 +79,7 @@ There is no `visual-reference` / style-reference step. This skill never reads
 ## 2. Resolve the base image — edit mode vs text-to-image
 
 Prefer the explicit `master_visual.locked_still` path from `message.md` when it is set — that is the
-anchor still `campaign-message` rendered and locked. Otherwise look in
+anchor still `write-message` rendered and locked. Otherwise look in
 `campaigns/<slug>/media/key-visual/` for the latest locked still matching the subject id(s) named in
 `master_visual.subjects` (e.g. `key-visual-<subject-id>-v<NN>.png`). In brief-only mode there is no
 locked subject, so this resolves to text-to-image.
@@ -94,7 +94,7 @@ locked subject, so this resolves to text-to-image.
 
 Do not chain into generating and locking a brand-new subject here. If the concept clearly needs a
 subject that does not exist yet, say so and point back to the still-image path
-(`ai-image-video-prompt-builder` + `generate-image`) rather than minting one inside an ideation run.
+(`write-generation-prompt` + `generate-image`) rather than minting one inside an ideation run.
 
 ## 3. Write a minimal prompt
 
@@ -113,7 +113,7 @@ not a spec:
 
 Do **not** write a percentage-zone placement plan, a type-scale rule, or a negative-space checklist.
 Keeping the prompt minimal is the point of this skill. If you delegate wording to
-`ai-image-video-prompt-builder`, pass it only this minimal input and do not let it re-expand into a
+`write-generation-prompt`, pass it only this minimal input and do not let it re-expand into a
 detailed layout spec.
 
 ## 4. Upload the subject photo (edit mode only)
@@ -202,7 +202,7 @@ version. Name no skill.
 - **Never invent or vary the concept.** The master visual concept and tagline are locked in
   `message.md`; this skill reads them and produces visual executions, it does not draft or re-imagine
   the concept. In brief-only mode there is no locked concept yet, so derive rough ideas from the
-  brief, but still do not author a durable concept — that remains `campaign-message`'s job.
+  brief, but still do not author a durable concept — that remains `write-message`'s job.
 - **Keep the prompt minimal.** The value of this skill is giving the model room. No percentage-zone
   layout plans, no type-scale rules, no style-reference images, no house-style checklists in the
   prompt.

@@ -7,7 +7,7 @@ brand-agnostic rubrics the art-director steps run on:
 - **A. Key-visual analysis** — the structured read of the locked still (step 2, before prompting).
 - **B. Archetype catalogue** — the constrained set of headline treatments to choose from (step 3).
 - **C. Critique checklist** — what a rendered candidate is scored against (step 6), in the same
-  vocabulary `campaign-qa` uses in Family 3 of its own checklist.
+  vocabulary `run-qa` uses in Family 3 of its own checklist.
 
 Two rules govern everything here. **Compose, never invent:** the concept, tagline, palette and the
 locked composition are fixed upstream in `message.md`; these rubrics decide *how the agreed headline
@@ -54,7 +54,7 @@ is available; the archetype decides *how the type sits in it*; the analysis deci
 is needed for contrast*. Creativity is the combination (archetype × zone × scrim × on-palette
 colour), not new geometry.
 
-If `campaigns/<slug>/research/competitor-ads.md` exists, its distilled priors may **bias** this
+If `campaigns/<slug>/research/analyse-competitor-ads.md` exists, its distilled priors may **bias** this
 choice (e.g. the category's winners skew lower-third bold-claim). The priors are a soft nudge; the
 locked composition and the preserve rule still win.
 
@@ -69,15 +69,15 @@ locked composition and the preserve rule still win.
 shape, photo bled to one side behind a solid colour column, or any full redraw. These fight the
 "preserve the key visual" invariant and the upstream-locked composition, and an edit model renders
 them unreliably. If a deliverable genuinely needs one, that is a new or alternate **key visual** and
-belongs upstream in `campaign-message`, not in a lockup pass — say so rather than forcing it here.
+belongs upstream in `write-message`, not in a lockup pass — say so rather than forcing it here.
 
 ---
 
 ## C. Art-director critique checklist (Layer 3 — read the render back)
 
 After the render, `Read` each candidate and score it against this matrix. The vocabulary mirrors
-`campaign-qa`'s Family 3 on purpose: this is the **producer-side pre-check** so QA does not receive
-avoidable defects — it does **not** replace `campaign-qa`, the independent gate that still runs before
+`run-qa`'s Family 3 on purpose: this is the **producer-side pre-check** so QA does not receive
+avoidable defects — it does **not** replace `run-qa`, the independent gate that still runs before
 anything ships. For each finding name **what · where · which rule · the fix to try** (the fix feeds
 the reroll in step 7).
 

@@ -7,13 +7,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 The **source** of a Claude Code plugin marketplace — not a campaign workspace. Everything here is
 authored content that gets *installed elsewhere*: `.claude-plugin/marketplace.json` is the catalogue,
 and each plugin is self-contained under `plugins/<name>/`. Today there is one plugin,
-`halfborg-skills` (the campaign engine).
+`halfborg-campaign` (the campaign engine).
 
 Keep the two worlds straight when working here:
 
 - **This repo** holds skills, commands, agents, schemas and templates. Nothing at the repo root is
   loaded by Claude Code except the catalogue, and a plugin's own `CLAUDE.md` is *not* loaded as
-  project context (that is why the engine's architecture doc had to become the `campaign-engine`
+  project context (that is why the engine's architecture doc had to become the `architecture`
   skill rather than a `CLAUDE.md`).
 - **A user's workspace** holds `engine.yaml`, `brands/`, `campaigns/`. Those directories are created
   by the plugin at runtime and never exist in this repo. The installed plugin is read-only and never
@@ -21,7 +21,7 @@ Keep the two worlds straight when working here:
 
 There is no executable code anywhere in this repo — no script, no Node dependency, no
 `package.json`. All "code" here is prose that an LLM executes, including the campaign page itself:
-`campaign-site-builder` reads a campaign's own files and writes `site/index.html` directly, rather
+`build-site` reads a campaign's own files and writes `site/index.html` directly, rather
 than running a build script.
 
 ## Commands
@@ -34,7 +34,7 @@ Test against the local checkout, never the GitHub copy:
 
 ```
 /plugin marketplace add ./           # from this repo's root
-/plugin install halfborg-skills@halfborg
+/plugin install halfborg-campaign@halfborg
 ```
 
 `SKILL.md` edits take effect immediately. Changes to `agents/`, `.mcp.json` or `plugin.json` need
@@ -51,11 +51,11 @@ experience** — keep contributor detail out of both.
 
 ## Architecture of the plugin
 
-Read [skills/campaign/campaign-engine/SKILL.md](plugins/halfborg-skills/skills/campaign/campaign-engine/SKILL.md)
+Read [skills/architecture/SKILL.md](plugins/halfborg-campaign/skills/architecture/SKILL.md)
 first — it is the architecture reference every other skill assumes. The short version:
 
 Four phases, first two human-gated:
-`campaign-brief` → `campaign-message` → expansion (the many expander skills) → `campaign-qa`.
+`write-brief` → `write-message` → expansion (the many expander skills) → `run-qa`.
 The artifact chain between phases is the interface: `docs/brief.md` + `system/manifest.yaml` →
 `docs/message.md` → `content/` + `media/`. Changing one of those shapes means updating the phase that
 writes it *and* every phase that reads it.
@@ -91,7 +91,7 @@ absolute path. Reading these files as plain repo files shows the raw placeholder
 **Adding a skill.** Skills live at `skills/<category>/<skill-name>/SKILL.md` — a level deeper than
 Claude Code's default scan — so each one must also be listed in `plugin.json`'s `skills` array. A new
 area of work is a new category folder alongside `campaign/`. Ordinary new work belongs inside
-`halfborg-skills`; a second *plugin* is only justified by a very different always-on context cost.
+`halfborg-campaign`; a second *plugin* is only justified by a very different always-on context cost.
 
 **Skill frontmatter.** `name` plus a long `description` that carries trigger phrases, what the skill
 reads, and explicit `Do NOT use for…` routing to the sibling skill that owns that job. The

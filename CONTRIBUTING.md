@@ -2,11 +2,11 @@
 
 This repo is the **source** of a Claude Code plugin marketplace. Nothing here runs where it sits:
 `.claude-plugin/marketplace.json` is the catalogue, and each plugin is self-contained under
-`plugins/<name>/`. Today there is one, `halfborg-skills`.
+`plugins/<name>/`. Today there is one, `halfborg-campaign`.
 
 There is no executable code anywhere in this repo — no script, no Node dependency, no
 `package.json`. Almost all "code" here is prose that a model executes, including the campaign page
-itself: `campaign-site-builder` reads a campaign's own files and writes `site/index.html` directly,
+itself: `build-site` reads a campaign's own files and writes `site/index.html` directly,
 rather than running a build script.
 
 ## Repo layout
@@ -14,7 +14,7 @@ rather than running a build script.
 ```
 .claude-plugin/marketplace.json   the catalogue
 plugins/
-  halfborg-skills/                one plugin, self-contained
+  halfborg-campaign/                one plugin, self-contained
     .claude-plugin/plugin.json
     skills/campaign/<18 skills>/  grouped by domain
     commands/ agents/ schema/ templates/ .mcp.json
@@ -27,9 +27,9 @@ listed explicitly in `plugin.json`'s `skills` array — add a skill, add its pat
 
 A second *plugin* is only worth it for something with a very different always-on context cost that
 you would want installable on its own; that is a folder under `plugins/` plus one entry in
-`marketplace.json`. Ordinary new work belongs inside `halfborg-skills`. Nothing at the repo root is
+`marketplace.json`. Ordinary new work belongs inside `halfborg-campaign`. Nothing at the repo root is
 loaded by Claude Code except the catalogue, and a plugin's own `CLAUDE.md` is not loaded as project
-context — which is why the engine's architecture document is the `campaign-engine` skill rather than
+context — which is why the engine's architecture document is the `architecture` skill rather than
 a `CLAUDE.md`.
 
 Everything an installed plugin references internally goes through `${CLAUDE_PLUGIN_ROOT}`, so a
@@ -44,7 +44,7 @@ Install from the checkout rather than GitHub, so you test the code in front of y
 
 ```
 /plugin marketplace add ./                        # from this repo's root
-/plugin install halfborg-skills@halfborg
+/plugin install halfborg-campaign@halfborg
 ```
 
 `SKILL.md` edits take effect immediately. Changes to `agents/`, `.mcp.json` or `plugin.json` need

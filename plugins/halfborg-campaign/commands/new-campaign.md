@@ -14,13 +14,13 @@ Do the plumbing first, then hand off to the brief. Do not start asking campaign 
 Look for the brand pack at `brands/$1/pack.yaml`.
 
 - If `$1` is empty, ask which brand this campaign is for, offering the ones already set up by name. Stop.
-- If the file does not exist, say you have not got that brand set up yet, name the ones you do have, and point them at `/halfborg-skills:setup-brand` to add it. Do not invent a pack or infer brand facts.
+- If the file does not exist, say you have not got that brand set up yet, name the ones you do have, and point them at `/halfborg-campaign:setup-brand` to add it. Do not invent a pack or infer brand facts.
 
 ## 2. Check they are usable
 
 Parse `brands/$1/pack.yaml` and validate it against `${CLAUDE_PLUGIN_ROOT}/schema/brand-pack.schema.json`. Richness is a dial, not a gate: separate blocking from thin. **Never show the user a validation error** — this step is either silent or a route.
 
-- **Blocking (the basics are missing):** if the pack is absent or fails validation on the skeleton (`brand` with name and positioning, at least one `audience`, at least one `products` entry), the brand is not set up. Do not stop dead and do not interview the user for brand identity here. Say what you are missing in their terms — who they sell to, and what they sell — and send them to `/halfborg-skills:setup-brand`, which asks them properly. Then they can re-run this.
+- **Blocking (the basics are missing):** if the pack is absent or fails validation on the skeleton (`brand` with name and positioning, at least one `audience`, at least one `products` entry), the brand is not set up. Do not stop dead and do not interview the user for brand identity here. Say what you are missing in their terms — who they sell to, and what they sell — and send them to `/halfborg-campaign:setup-brand`, which asks them properly. Then they can re-run this.
 - **Non-blocking (thin but usable):** if the basics are there but the rest is sparse (no voice, no channels, no mandatories, thin segments or claims), that is fine. Proceed. Say in one clause that you will ask a couple of extra things as you go. Never characterise their brand setup as thin, incomplete or poor.
 
 Everything brand-specific comes from what they have already told you. The more of it is filled in, the less the brief has to ask.
@@ -44,6 +44,6 @@ Do not narrate any of this. One line — the campaign is set up under this name 
 
 ## 4. Hand off to the brief
 
-Load the validated pack into context and begin by following the `campaign-brief` skill, which runs the intake interview and writes the brief. Pass it the pack and the campaign workspace path. Do not announce the handover or name the skill: from the user's side this is one continuous conversation that has just moved on to the first question about their campaign.
+Load the validated pack into context and begin by following the `write-brief` skill, which runs the intake interview and writes the brief. Pass it the pack and the campaign workspace path. Do not announce the handover or name the skill: from the user's side this is one continuous conversation that has just moved on to the first question about their campaign.
 
 Keep every question to the campaign. Anything the brand's details already answer is not a question.

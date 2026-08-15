@@ -5,8 +5,8 @@ network beyond what the agent already has. Everything below is a dial. None of i
 none of it is an error when absent — the degraded behaviour is the *intended* behaviour, not a
 failure, and should be reported that way.
 
-`/halfborg-skills:setup-engine` does not check any local binary — there is nothing left to check.
-`site/index.html` is authored by the `campaign-site-builder` skill directly, no separate runtime
+`/halfborg-campaign:setup-engine` does not check any local binary — there is nothing left to check.
+`site/index.html` is authored by the `build-site` skill directly, no separate runtime
 required. ffmpeg readiness is checked only by `generate-video` itself, when it is actually used.
 
 ## Local tooling
@@ -26,8 +26,8 @@ so **no skill ever reads the key and no skill ever needs its value**.
 
 To test whether rendering is available, check for live `mcp__fal-ai__*` tools in the session. Never
 test by looking for a file, and never ask the user to paste a key into the conversation. If it is
-not configured, point them at `/plugin` → **Installed** → **halfborg-skills**, where Claude Code asks
-for the key, or at `/halfborg-skills:setup-engine`.
+not configured, point them at `/plugin` → **Installed** → **Halfborg Campaign Engine**, where Claude Code asks
+for the key, or at `/halfborg-campaign:setup-engine`.
 
 Once connected the server exposes generic tools — `search_models`, `get_model_schema`, `run_model`,
 `get_pricing`, and the async job tools for video (surfaced as `mcp__fal-ai__*`). `generate-image` and
@@ -52,7 +52,7 @@ HubSpot, Canva), they need authentication only — there is nothing for this eng
 skill here requires one.** They are conveniences for research and publishing at the edges of the
 pipeline.
 
-Analytics integrations in particular are **not wired**. The `analyst` agent and `ad-creative`'s
+Analytics integrations in particular are **not wired**. The `analyst` agent and `write-ad-creative`'s
 iteration modes work from data the user supplies (a CSV/XLSX dropped into the campaign folder, or
 metrics pasted into chat). If the data is missing, say what is missing and name the export that would
 supply it. **Never fabricate metrics.**

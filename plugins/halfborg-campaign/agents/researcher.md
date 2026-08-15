@@ -19,8 +19,8 @@ you hand the team a synthesised brief — not a pile of links.
 - **Which brand.** Inside a campaign, the brand is `campaign.brand` in
   `campaigns/<slug>/system/manifest.yaml` — read it rather than asking
   (`${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` section 1.1). Outside one, the invocation names it.
-  If that file is missing the campaign has no manifest yet: route to `campaign-brief` when the campaign
-  folder exists, `/halfborg-skills:new-campaign` when it does not. Never infer the brand from the
+  If that file is missing the campaign has no manifest yet: route to `write-brief` when the campaign
+  folder exists, `/halfborg-campaign:new-campaign` when it does not. Never infer the brand from the
   folder name or from earlier conversation. See `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`.
   Everything you say back follows `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`: engine
   words belong in the files, not in the conversation.
@@ -31,8 +31,8 @@ you hand the team a synthesised brief — not a pile of links.
 - `deep-research` — multi-source, fact-checked research on a topic (audience, trend, market).
 - `marketing:competitive-brief` — competitor positioning, messaging, content gaps, threats.
 - `marketing:seo-audit` — keyword research, on-page/content gaps, competitor SERP comparison.
-- `competitor-ads` — distil competitors' paid-social **ads** (what their creative looks like and how
-  it is built) into `research/competitor-ads.md`, the layout/archetype priors `compose-lockup` reads.
+- `analyse-competitor-ads` — distil competitors' paid-social **ads** (what their creative looks like and how
+  it is built) into `research/analyse-competitor-ads.md`, the layout/archetype priors `compose-lockup` reads.
   Manual-only: the user supplies the ad screenshots/links; it never scrapes. Use this for *ad creative*
   intelligence; use `marketing:competitive-brief` for *positioning/messaging*.
 Pick the one that fits; for a full campaign kickoff you may run more than one.

@@ -163,7 +163,7 @@ something is now possible. One concrete offer, phrased so the answer is "yes" or
 Three constraints on that sentence:
 
 - It offers the **work**, not the machinery. "Want me to write the emails next?" — never "offer to
-  continue into `campaign-message`".
+  continue into `write-message`".
 - It names **no skill and no slash command**, unless the user genuinely has to type it themselves.
   Forward motion is something you do. Slash commands belong on the routing paths in `preflight.md`,
   where the user really does have to run one.
@@ -190,7 +190,7 @@ file path is never acceptable.
 
 - **Say what is missing in their terms, then offer the fix.** "I have not got your brand set up yet —
   the claims you are allowed to make, who you sell to, that sort of thing. Run
-  `/halfborg-skills:setup-brand` and I will ask you about it, then we can pick this back up." The
+  `/halfborg-campaign:setup-brand` and I will ask you about it, then we can pick this back up." The
   slash command is section 2 literal; everything around it is not.
 - **A route is not an apology.** Taking a named route is a successful outcome. Do not open with
   "unfortunately", do not call it an error, and do not list everything else that is also absent.
@@ -229,7 +229,7 @@ These carry more weight than the rules above. Copy the register, not the nouns.
 
 > ~~Wrote `campaigns/acme-2026-08-01-spring/media/banner-ad/banner-ad-idea-03-v01.png` plus 5 others.
 > Model `fal-ai/nano-banana-2/edit`, edit mode. Seeds 4471-4476. Deliverable type banner, ratio 1:1.
-> Non-production `idea` outputs pending `pack.mandatories` / `pack.nogos` review and `campaign-qa`.~~
+> Non-production `idea` outputs pending `pack.mandatories` / `pack.nogos` review and `run-qa`.~~
 
 > Six rough directions for the banner, all square. Open
 > `campaigns/acme-2026-08-01-spring/site/index.html` to flick through them.
@@ -241,10 +241,10 @@ These carry more weight than the rules above. Copy the register, not the nouns.
 **A missing input.**
 
 > ~~Preflight failed at 2.3: `brands/acme/pack.yaml` has no `ads` block. Hard stop — route to
-> `/halfborg-skills:setup-brand`. Never invent a presenter.~~
+> `/halfborg-campaign:setup-brand`. Never invent a presenter.~~
 
 > Before I write ads for Acme I need one decision from you: whether a person appears in them, and if
-> so who. That is a call I should not make on your behalf. Run `/halfborg-skills:setup-brand`, answer
+> so who. That is a call I should not make on your behalf. Run `/halfborg-campaign:setup-brand`, answer
 > the couple of questions about ads, and come straight back here.
 
 **A thing you could not check.**
@@ -257,7 +257,7 @@ These carry more weight than the rules above. Copy the register, not the nouns.
 
 **A next step, after an approved brief.**
 
-> ~~Offer to continue into `campaign-message` (key message, taglines, master visual).~~
+> ~~Offer to continue into `write-message` (key message, taglines, master visual).~~
 
 > That is the plan agreed. Next comes the message: the one thing this campaign says, the line it says
 > it in, and the picture it all hangs on. Shall I start on that?

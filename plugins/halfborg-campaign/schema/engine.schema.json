@@ -39,7 +39,7 @@
         },
         "reference_model": {
           "type": "string",
-          "description": "Default model for reference-kit, which derives on-model identity reference stills off the locked master visual for a video ad. Must be an identity-preserving edit-capable model: it takes a reference image (image_urls) plus a prompt, so it is the /edit endpoint, not the base text-to-image one. Skill fallback: fal-ai/nano-banana-2/edit",
+          "description": "Default model for prepare-reference-kit, which derives on-model identity reference stills off the locked master visual for a video ad. Must be an identity-preserving edit-capable model: it takes a reference image (image_urls) plus a prompt, so it is the /edit endpoint, not the base text-to-image one. Skill fallback: fal-ai/nano-banana-2/edit",
           "minLength": 1
         }
       }

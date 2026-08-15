@@ -1,6 +1,6 @@
 # QA checklist — the concrete check matrix
 
-`campaign-qa` reads this before judging. It is the brand-agnostic rubric: the four check families,
+`run-qa` reads this before judging. It is the brand-agnostic rubric: the four check families,
 the exact rule each check tests, the severity it carries, and the shape of a finding. The SKILL.md
 owns the workflow (what to read, scope, how to write the report); this file owns *what a violation
 is*. Where a brand's own `mandatories`, `nogos`, `claims_allowed`, `design.md` tokens or
@@ -101,7 +101,7 @@ against `design.md` tokens.
 | Video technical | `.mp4` deliverables | `ffprobe`: a video stream present, duration ≈ intended, width×height match the intended resolution/ratio, an audio stream if audio was requested, non-trivial file size. | FAIL (wrong spec) |
 | Video content | `.mp4` deliverables | Extract 1+ sample frames to the **scratchpad**, `Read` them: right subject, on-brand, not a black/garbled frame; for multi-shot, the cuts are actually present. | FAIL (garbled) / WARN (soft) |
 
-**Three do-not traps.** (1) `visual-ideas` outputs (role `idea`) carry *approximate* in-image text by
+**Three do-not traps.** (1) `explore-visual-ideas` outputs (role `idea`) carry *approximate* in-image text by
 design — **do not spelling-check them**; they are ideation, not production. Check them only for gross
 subject drift, and only if they are being treated as shippable. (2) If `ffprobe`/`ffmpeg` is absent,
 mark the clip **"unverified" (WARN)** — never claim a video check you did not run. (3) A raw render
