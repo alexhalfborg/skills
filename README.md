@@ -28,6 +28,10 @@ The first line just tells Claude Code where to look — it installs nothing on i
 installs the engine. (If `/plugin` is not available where you are, the desktop app has a plugin
 browser that does the same thing.)
 
+Type the second line exactly as written. The bit after the `@` is the **catalogue's** name,
+`halfborg` — not the repo name, `skills`, which is what the first line uses. They are different on
+purpose, and mixing them up is the usual reason install comes back with "plugin not found".
+
 **3. Point it at a folder and start.** Any folder will do, empty is fine:
 
 ```

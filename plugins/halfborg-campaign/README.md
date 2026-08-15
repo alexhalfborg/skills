@@ -1,4 +1,4 @@
-# halfborg-campaign — the campaign engine
+# Halfborg Campaign Engine
 
 A marketing campaign engine for Claude Code. It turns a rough goal into a full set of campaign
 deliverables through a fixed pipeline that stops for your sign-off at every point that matters. It
@@ -121,11 +121,12 @@ it will tell you what is missing rather than invent a number.
 
 **Commands** — `setup-engine`, `setup-brand`, `new-campaign`.
 
-**Skills** — `architecture` (the architecture reference), `write-brief`, `write-message`,
-`run-qa`, `build-site`, `write-ad-creative`, `write-video-ad-script`, `prepare-reference-kit`,
-`compose-lockup`, `explore-visual-ideas`, `analyse-competitor-ads`, `build-landing-page`, `write-personal-post`,
-`write-customer-story`, `write-email`, `generate-image`, `generate-video`,
-`write-generation-prompt`.
+**Skills** — the four phases are `write-brief`, `write-message` and `run-qa`, with expansion handled
+by `write-ad-creative`, `write-video-ad-script`, `prepare-reference-kit`, `compose-lockup`,
+`explore-visual-ideas`, `analyse-competitor-ads`, `build-landing-page`, `write-personal-post`,
+`write-customer-story`, `write-email`, `write-generation-prompt`, `generate-image` and
+`generate-video`. `build-site` keeps the campaign page current, and `architecture` is the reference
+describing how the whole thing fits together.
 
 **Agents** — `strategist`, `researcher`, `content-writer`, `paid-creative`, `analyst`.
 

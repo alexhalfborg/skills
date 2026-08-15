@@ -177,6 +177,13 @@ Example lines:
 {"ts":"2026-07-09T07:00:00+08:00","event":"status","skill":"write-message","deliverable":"key-visual","file":"media/key-visual/key-visual-v02.png","status":"locked","reason":"re-rolled full-bleed, removed inner-border artifact"}
 ```
 
+**Skill names in old logs.** `skill` records the producing skill's name verbatim, and those names
+changed in 0.3.0 (`campaign-brief` became `write-brief`, `campaign-message` became `write-message`,
+and so on). A campaign started before that upgrade therefore carries both vocabularies in one file.
+That is expected and correct: the log is append-only history and is never rewritten. Nothing reads
+`skill` as a key — it is provenance, rendered as a label on the campaign page — so a mixed log needs
+no migration and no special handling.
+
 ### 4.1 The log step (canonical append-and-rebuild instruction)
 
 Every skill that produces a campaign artifact (media **or** a text deliverable in `content/`) logs
