@@ -1,5 +1,73 @@
 # Changelog
 
+## 0.5.0
+
+**A brand's writing voice is now a folder, split by byline.** What was one
+`brands/<id>/voice-profiles.md` is now `brands/<id>/voice/`: `shared.md` for what is true of
+everything the brand publishes, then one file per byline beside it. The two bylines contradict each
+other on purpose — the founder opens in the first person and never with a definition, the team
+writes third person about a named customer and may open definitionally — so held in one file they
+loaded together and bled. Every voice skill now reads `shared.md` plus exactly one byline file, and
+is told in as many words not to read the other.
+
+**Upgrading.** Re-run `/halfborg-campaign:setup-brand` for each brand that has a voice profile. The
+voice skills read `voice/` only, so an existing `voice-profiles.md` is no longer found and
+`write-personal-post`, `write-customer-story` and `write-email` will route you to setup rather than
+draft without a voice. Setup splits the old file for you and leaves it exactly where it is; nothing
+is deleted. The version is a minor bump despite that, as 0.3.0 was for the rename — this plugin is
+pre-1.0 and says what changed in this file rather than in the number.
+
+### The corpus
+
+```
+brands/<id>/voice/
+  shared.md            reading level, register, mood, rhythm, products, phrases to avoid
+  personal-post.md     the founder's first-person byline
+  customer-story.md    the team's third-person byline
+  references/          whole published pieces, if the brand has any
+```
+
+- `shared.md` exists so that what is true of all the brand's writing is written once instead of
+  twice and drifting: reading level and the jargon rule, regional register and its dose, mood and
+  tense, paragraph rhythm, geography, trusted sources, the regulated-advice boundary, the product
+  table.
+- Each byline file holds only what changes with the byline — persona, point of view, greeting and
+  sign-off, opener bank, sentence tells, and a new **annotated excerpt bank**: short real passages,
+  each with a line saying what it demonstrates. A writing skill can copy a technique from a passage
+  it can see; it cannot copy one from an adjective.
+- `write-email` picks a byline and loads that one, rather than reading both profiles as it did.
+
+### The avoid-list belongs to the brand now
+
+The hardcoded "banned phrases — instant AI tells" list is gone from `write-personal-post` and
+`write-customer-story`. Which words read as machine-written is a voice judgement the brand owns, not
+one the engine should hold, so the list lives under **Phrases to avoid** in `shared.md` and the
+skills treat it as binding. A brand that deletes an entry has decided the phrase is genuinely its
+voice, and that decision stands. Where a brand has no list, the skills fall back to their own
+judgement and say so on hand-back instead of pretending the check happened. `setup-brand` always
+writes a starter list and a pair of rewrite examples, so no brand starts empty.
+
+### Setup asks better questions
+
+- **It takes a document first.** Many people arrive with a style guide, a page of rules, or the
+  prompt they have been pasting into a chatbot, and that is worth more than any interview.
+  `setup-brand` asks for it once, then *maps* it rather than transcribing it: each line goes to a
+  field, to the excerpt bank, to `pack.yaml` if it turns out to be a fact, or nowhere at all if it
+  is generic craft advice the writing skills already carry.
+- **Three questions cover what a document usually misses** — who has to understand it, which English
+  it is written in, and mood and sign-off. Each leads with a proposed answer built from what the
+  brand has already said, so the user confirms or adjusts rather than composes.
+- **It writes a core tier, and marks what it inferred.** No opener, tell, excerpt, commentary,
+  rewrite pair or sign-off is ever invented. A signature under a real person's name is the worst of
+  those, so where nobody has said, it writes "not set" and asks later.
+
+### Templates
+
+New authoring shapes at `templates/voice/` — `shared.md`, `personal-post.md`, `customer-story.md`,
+written as a fictional brand called Meadowlark so the structure is copyable and the content plainly
+is not. `setup-brand` reads the matching one before it writes.
+
+
 ## 0.4.0
 
 **The final check now has an agent of its own.** `qa` runs the same `run-qa` pass in a separate

@@ -6,8 +6,10 @@ description: >-
   a launch/announcement email under a brand byline. Trigger on phrases like "write the launch email",
   "draft the newsletter", "write an email sequence for [offer]", "the welcome email", "rewrite this
   email in [brand]'s voice", "the abandoned-cart email", "our monthly newsletter". Reads the active
-  brand's founder/team voice from brands/<id>/voice-profiles.md (the same corpus write-personal-post and
-  write-customer-story use — no separate email profile is required), brands/<id>/pack.yaml (audience,
+  brand's shared voice rules from brands/<id>/voice/shared.md plus the byline's own profile —
+  brands/<id>/voice/personal-post.md for a founder broadcast or brands/<id>/voice/customer-story.md for a
+  team newsletter (the same corpus write-personal-post and write-customer-story use — no separate email
+  profile is required, and only one byline is ever loaded), brands/<id>/pack.yaml (audience,
   products with price/url/claims_allowed, voice.spelling, mandatories, nogos), and, inside a campaign,
   campaigns/<slug>/docs/message.md (key message + chosen tagline) and brief.md (objective, audience).
   Its own methodology — subject line and preview text, the one-idea section flow, a single primary CTA,
@@ -51,20 +53,25 @@ section 1.1. Outside a campaign, the invocation names the brand.
 
 Then read, in order:
 
-1. **The brand's voice profile.** `brands/<id>/voice-profiles.md`. Decide the byline first: a
-   founder-voice broadcast reads the **"Personal post voice profile"** (persona, voice-in-one-sentence,
-   opener bank, sign-off, sentence-level tells); a team/brand newsletter reads the **"Customer story
-   voice profile"** team byline and framing. Newsletters most often go out in the founder's first
-   person; if the request is ambiguous, ask which byline, or default to the founder for a personal
-   broadcast and the team for a roundup. If the brand has neither profile, say so, **route the user to
-   `/halfborg-campaign:setup-brand`** — which authors `voice-profiles.md` — and stop rather than
-   inventing a persona.
-2. **The brand pack.** `brands/<id>/pack.yaml` — `audience` (pains and jobs, the reason to open),
+1. **The brand's shared voice rules.** `brands/<id>/voice/shared.md` — the reading level and jargon
+   rule, the regional register and its dose, the mood, the tense habits, the paragraph rhythm, the
+   product table, the regulated-advice boundary, the phrases this brand avoids, and its rewrite pairs.
+2. **One byline profile, never both.** Decide the byline first, then read only that file: a
+   founder-voice broadcast reads `brands/<id>/voice/personal-post.md` (persona,
+   voice-in-one-sentence, point of view, greeting and sign-off, opener bank, sentence-level tells);
+   a team/brand newsletter reads `brands/<id>/voice/customer-story.md` (team byline and framing,
+   naming convention, greeting and sign-off, opener bank). The two contradict each other on purpose,
+   so loading both puts opposite rules in front of you. Newsletters most often go out in the
+   founder's first person; if the request is ambiguous, ask which byline, or default to the founder
+   for a personal broadcast and the team for a roundup. If the brand has neither profile, say so,
+   **route the user to `/halfborg-campaign:setup-brand`** — which authors the `voice/` files — and
+   stop rather than inventing a persona.
+3. **The brand pack.** `brands/<id>/pack.yaml` — `audience` (pains and jobs, the reason to open),
    `products[]` (`name`, `price`, `url` for the CTA, `claims_allowed` — the **only** things an email
    may assert about a product), `voice.spelling`, `mandatories` and `nogos`. **Absent `mandatories`
    means unconfirmed, not none** — confirm rather than assuming the brand has no rules (many email
    markets also carry a legal footer / unsubscribe requirement; ask if it is not stated).
-3. **The campaign creative, if this belongs to a campaign.** `docs/message.md` for the key message the
+4. **The campaign creative, if this belongs to a campaign.** `docs/message.md` for the key message the
    email must ladder up to and the chosen tagline; `docs/brief.md` for the objective and audience. The
    email expresses the locked message; it does not invent a new one. If this is campaign work and
    `message.md` is missing, do not silently proceed: say there is no locked message, offer to write
@@ -97,15 +104,20 @@ Pick the type before drafting.
 
 ### Type A — Broadcast / newsletter (one-to-many, no reply expected)
 
-1. **A greeting that sounds like the brand**, not "Dear valued customer". Use the profile's warmth.
-2. **A single lead idea**, opened with one of the profile's opener patterns (a real memory, a reader
-   situation, a news hook) — the same openers the blog voice uses, compressed for the inbox.
+1. **A greeting that sounds like the brand**, not "Dear valued customer". Use the byline profile's
+   **Greeting** verbatim if it has one. If it says none, open straight into the first line. If the
+   field is missing altogether, set the closeness from its warmth line and the shared rules' mood.
+2. **A single lead idea**, opened with a line from the byline profile's **Opener bank** (a real
+   memory, a reader situation, a news hook) — the same openers the blog voice uses, compressed for
+   the inbox. Where the bank is empty, the annotated excerpts show how this byline gets going.
 3. **The body, one idea deep, not many idea shallow.** A newsletter roundup may carry 2–3 short blocks,
    but each is self-contained with its own tiny CTA; a broadcast carries one. Short paragraphs (1–3
-   lines) — inboxes are read on phones.
+   lines by default, or the shared rules' own limit where it is tighter) — inboxes are read on phones.
 4. **One primary call to action**, as a clear text link or button label pointing at a real
    `products[].url` or page. Secondary links are fine; there is only **one primary**.
-5. **A warm sign-off** in the byline's voice (use the profile's real sign-off if it has one).
+5. **A warm sign-off** in the byline's voice, taken verbatim from the profile's **Sign-off** field.
+   If that field says "not set", **ask** — do not sign a name on someone's behalf, and do not invent
+   a closing line for a real person.
 6. **The footer**: whatever `mandatories` require (an unsubscribe line, a physical address, a
    disclaimer). Never omit a required footer; flag it if the pack does not specify one.
 
@@ -140,9 +152,12 @@ Email reaches a permissioned audience who act on it. Same discipline as `write-p
    clearly-marked `[STAT/SOURCE: …]` / `[URL-needed]` placeholder.
 2. **No fabricated scarcity or fake urgency.** A deadline in an email is real or it is not in the email.
    No "only 3 left" unless it is true.
-3. **Honour the regulated-advice boundary** the profile names (e.g. relief/soothing language only, no
-   cure or medical claims) — even when quoting a customer who used stronger words.
-4. **The unsubscribe / legal footer is not optional** where the market requires it. If the pack does not
+3. **Honour the regulated-advice boundary** the shared voice rules name (e.g. relief/soothing language
+   only, no cure or medical claims) — even when quoting a customer who used stronger words.
+4. **Avoid the phrases the brand avoids.** The list is `Phrases to avoid` in the shared voice rules,
+   and it is binding here as it is on the blog. This skill keeps no list of its own. If the brand has
+   none, use your own judgement about what reads as machine-written and say so on hand-back.
+5. **The unsubscribe / legal footer is not optional** where the market requires it. If the pack does not
    state the requirement, flag it rather than guessing the legal text.
 
 ## Where the output goes
@@ -169,7 +184,9 @@ Before handing back:
 7. No fabricated stat, quote, customer, or scarcity?
 8. Regulated-advice boundary honoured where the profile names one?
 9. Required footer (unsubscribe / address / disclaimer) present, or flagged as needed?
-10. Correct spelling convention (`voice.spelling`)? British spelling, reduced em dashes, no AI-tell phrasing?
+10. Correct spelling convention (`voice.spelling`)? Written at the profile's reading level, with any
+    regional register at its stated dose? Paragraphs and em dashes within the shared rules' limits?
+    Nothing from the brand's phrases-to-avoid list?
 11. Inside a campaign: does the email ladder up to the `message.md` key message and use the chosen tagline?
 12. Short paragraphs, phone-readable, scannable?
 

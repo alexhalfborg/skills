@@ -49,8 +49,9 @@ pre-manifest window below, where there is nothing else to read).
 a cold start, in a fresh conversation, with nothing carried over in context:
 
 1. Read `campaign.brand` from `<campaign>/system/manifest.yaml`. That value is the brand id.
-2. The brand's pack is `brands/<brand-id>/pack.yaml`; its voice corpus is
-   `brands/<brand-id>/voice-profiles.md`; its design tokens are `brands/<brand-id>/design.md`.
+2. The brand's pack is `brands/<brand-id>/pack.yaml`; its voice corpus is the
+   `brands/<brand-id>/voice/` folder (`shared.md` plus one file per byline); its design tokens are
+   `brands/<brand-id>/design.md`.
 
 This is what "the active brand" means anywhere in the engine. Whenever the manifest can answer,
 it does: do not ask the user, and do not read the brand off the folder name.

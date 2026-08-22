@@ -90,7 +90,7 @@
       "properties": {
         "skills": {
           "type": "array",
-          "description": "Names of the generic voice skills deliverable expanders invoke, e.g. [\"write-personal-post\", \"write-customer-story\"]. Each skill reads this brand's delta from brands/<id>/voice-profiles.md.",
+          "description": "Names of the generic voice skills deliverable expanders invoke, e.g. [\"write-personal-post\", \"write-customer-story\"]. Each skill reads this brand's delta from brands/<id>/voice/ — shared.md plus the one byline file it owns.",
           "items": { "type": "string", "minLength": 1 },
           "minItems": 1
         },
