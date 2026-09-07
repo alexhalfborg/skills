@@ -48,10 +48,13 @@ Sell inverts it: compressed hook (audience is warm), long payoff of proof and of
 Applying a hook-heavy structure to a Sell ad over-teases and under-closes.
 
 **Static layouts.** Trust and Sell concepts are usually static or carousel, so pick a structure rather
-than inventing one. The 15-template library in [static-ad-templates.md](static-ad-templates.md) supplies
-the layout vocabulary: Review Card and Testimonial Stack for Trust credibility, Us vs. Them and Stat
-Callout and FAQ Card for Sell proof, Before/After and Problem/Solution where the transformation is the
-argument. Name the template in the concept's visual notes.
+than inventing one. The 29-template library in [static-ad-templates.md](static-ad-templates.md) supplies
+the layout vocabulary: Review Card, Testimonial Stack, Handwritten Note, Comparison Table and Editorial
+Hero for Trust credibility; Us vs. Them, Stat Callout, With / Without Chart, FAQ Card, Pain-Point
+Checklist and Printed Object for Sell proof; Before/After, Problem/Solution and Old Way / New Way where
+the transformation is the argument. Reach statics, when a concept calls for one, lean on the format-led
+and people templates (Notes-App List, Everyday UI Metaphor, Profile Card, Billboard Mockup, Kit Flatlay).
+Name the template in the concept's visual notes.
 
 ## Variant generation: permute the brand's angle bank
 

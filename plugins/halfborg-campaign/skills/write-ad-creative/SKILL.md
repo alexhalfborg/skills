@@ -204,7 +204,7 @@ Platforms reject or truncate creative that exceeds their limits, so verify every
 
 ## Static Ad Concepts
 
-For static ad structure, use the 15-template library in [references/static-ad-templates.md](references/static-ad-templates.md) — layout frameworks (Us vs. Them, Stat Callout, Review Card, Before/After, Founder Message, FAQ Card, and more) with copy slots, DTC and SaaS examples, and the per-concept output format. Cycle through all 15 rather than clustering on favourites: template diversity is angle diversity.
+For static ad structure, use the 29-template library in [references/static-ad-templates.md](references/static-ad-templates.md) — layout frameworks (Us vs. Them, Stat Callout, Review Card, Before/After, Comparison Table, Handwritten Note, Printed Object, and more) in six groups, each with copy slots, a recommended ratio, the real asset it needs, DTC and SaaS examples, and the per-concept output format. Cover every group rather than clustering on favourites: template diversity is angle diversity. The library also names the formats it leaves out on purpose (fake chat threads, fake search results, fake notifications and the like) and the honest neighbour to offer instead.
 
 Each concept carries a **visual brief**: a plain-language description of the layout and imagery. That is not a generator prompt, and it is not a rendered image. This skill stops at the brief. To take a chosen concept further:
 

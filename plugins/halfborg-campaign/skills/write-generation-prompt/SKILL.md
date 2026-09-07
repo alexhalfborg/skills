@@ -137,6 +137,16 @@ quotes, the model may read the words as a description rather than a literal stri
 the colour as a name plus a sigil-free hex — `deep plum (hex 7A1F3D)` — never `#7A1F3D`, which reads
 as a reference handle.
 
+**An ad is the creative, not a screenshot of it.** When the image is a static ad, say so and say what
+that excludes: no platform header, sponsored badge, engagement row, reply box or navigation around it.
+Left unsaid, a prompt that mentions a comment, a story or a feed tends to come back as the ad shown
+*in* a feed. Keep every line of text and the focal subject inside roughly the central 84% of the canvas
+(about 8% clear at each edge) so nothing sits under a platform overlay or a crop; compose-lockup's
+`references/art-direction.md` carries the channel-specific margins when the placement is known. Inside
+any body-text block, plain words only: no emoji or unicode glyphs mid-sentence, since they corrupt or
+duplicate, and state the exact count of any repeated element ("exactly two rows", "three sticky notes,
+no more") or the model will add one.
+
 **Editing is conversational, not regenerative.** If the user has a base image and wants to change
 one thing, focus on what changes and what stays the same, and be explicit about preservation:
 "remove the man from the photo, keep the lighting and composition identical." Do not redescribe the
