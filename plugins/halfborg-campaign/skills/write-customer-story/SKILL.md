@@ -10,12 +10,15 @@ description: >-
   transformation story", "case study for [brand]", or any request that
   involves a named customer's outcome as the central subject. Third-person
   about the customer, "we / our" for the brand, customer blockquotes, product
-  walkthrough, before/after photos. Reads the active brand's
-  customer-story profile (byline, product table, opener bank, sample
-  posts) from brands/<id>/voice-profiles.md; the methodology here (quote
-  taxonomy, results-timeline structure, honesty rules) is brand-agnostic. Do
-  NOT use for the founder's first-person posts (use write-personal-post), or when
-  no brand's customer-story profile exists yet.
+  walkthrough, before/after photos. Reads the active brand's shared voice
+  rules (reading level, regional register, mood, paragraph rhythm, product
+  table, phrases to avoid) from brands/<id>/voice/shared.md and its
+  customer-story profile (team byline, naming convention, opener bank,
+  annotated excerpts, sample posts) from brands/<id>/voice/customer-story.md;
+  the methodology here (quote taxonomy, results-timeline structure, honesty
+  rules) is brand-agnostic and carries no phrase list of its own. Do NOT use
+  for the founder's first-person posts (use write-personal-post), or when no
+  brand's customer-story profile exists yet.
 ---
 
 # Customer Story Voice — Third-person customer testimonial and transformation posts
@@ -38,14 +41,23 @@ section 1.1. Outside a campaign, the invocation names the brand.
 
 This skill then needs, in order:
 
-1. **The brand's voice profile.** `brands/<id>/voice-profiles.md` — read the
-   "Customer story voice profile" section fully before drafting. It supplies the team byline and
-   framing, the opener bank, the founder cross-link (if the brand's founder has a relevant story to
-   link to), and pointers to sample posts.
-2. **The brand pack.** `brands/<id>/pack.yaml` for audience, spelling, and mandatories.
+1. **The brand's shared voice rules.** `brands/<id>/voice/shared.md` — true of everything the brand
+   publishes. It supplies the reading level and jargon rule, the regional register and its dose,
+   the mood, the tense habits, the paragraph rhythm, geography and cultural references, trusted
+   sources, the regulated-advice boundary, the product table, the phrases this brand avoids, and
+   its rewrite pairs.
+2. **The brand's customer-story profile.** `brands/<id>/voice/customer-story.md` — read it fully
+   before drafting. It supplies the team byline and framing, the point of view, the customer naming
+   convention, the founder cross-link (if the brand's founder has a relevant story to link to), the
+   greeting and sign-off, the opener bank, the annotated excerpt bank, and pointers to sample posts.
+3. **The brand pack.** `brands/<id>/pack.yaml` for audience, spelling, and mandatories.
+
+**Do not read `voice/personal-post.md`.** It is the founder's first-person byline with deliberately
+opposite rules, including openers this voice is allowed to use and that one forbids. Loading it here
+pulls "I" into a post that must never carry one.
 
 If no voice profile exists for the active brand, say so, **route the user to
-`/halfborg-campaign:setup-brand`** — which authors `voice-profiles.md` — and stop rather than inventing
+`/halfborg-campaign:setup-brand`** — which authors the `voice/` files — and stop rather than inventing
 a byline, a customer, or a product. This format only works with real source material.
 
 ## The voice in one sentence
@@ -210,7 +222,7 @@ H1: [Title — usually framed around the outcome or the named customer's hook]
 
 ## Product integration rules
 
-Use the brand profile's product table for exact names, roles, and canonical URLs — never invent a
+Use the shared rules' product table for exact names, roles, and canonical URLs — never invent a
 product, mechanism, or URL. If a product mentioned in the customer's story isn't in the table, ask
 for the canonical reference rather than guessing.
 
@@ -242,39 +254,40 @@ apply to every draft, no exceptions.
 8. **No mid-article hard-sell interruptions.** Products/services are linked in context within the
    walkthrough; the list at the end is the only "here's where to get it" section.
 
-## Banned phrases — instant AI tells
+## Phrases to avoid
 
-Never use these. If a draft contains any, rewrite that sentence.
+The list belongs to the brand, not to this skill. Read **Phrases to avoid** in the shared voice
+rules and treat it as binding: if a draft contains one, rewrite that sentence. A brand that has
+deleted an entry from its own list has decided the phrase is genuinely its voice, and that decision
+stands.
 
-- "Doing the heavy lifting"
-- "The real question is…"
-- "Here's the thing nobody is talking about"
-- "That's the real story"
-- "The good news is…"
-- "What most people miss"
-- "This is where it gets interesting"
-- "It's not about [X], it's about [Y]"
-- "Delve" / "delve into"
-- "Tapestry", "bustling", "realm", "embark", "virtuoso", "symphony", "testament", "metamorphosis", "indelible", "gossamer", "enigma"
-- "In the world of", "in today's world", "in today's fast-paced [anything]"
-- "Navigating the landscape", "navigating the complexities"
-- "Moreover", "consequently", "thus", "notably"
-- "This is not an exhaustive list"
-- "In summary", "to summarize"
-- "Hustle and bustle", "labyrinthine"
-- "Game changer", "game-changing"
-- "Sights unseen", "sounds unheard"
-- "Unlocking creativity" / "unlocking potential" / "unlock the power of"
-- "Journey" used as a marketing buzzword — a genuine, specific journey noun phrase for a brand
-  where that's real vocabulary is fine; a generic "wellness journey" as vibe-fluff is not.
-- "Lifesaver" *outside* a direct customer quote. Fine inside a blockquote if the customer actually
-  said it; the narrative voice itself should not editorialise that way.
-- "Miracle" / "transformative" / "revolutionary" — let the evidence and timeline do the work.
+Two entries matter more in this format than anywhere else, so check them by hand even if the brand's
+list is short. Superlatives such as "miracle", "transformative" or "revolutionary" do the customer's
+work for them; let the evidence and the timeline carry it. And a word like "lifesaver" is fine
+inside a blockquote where the customer actually said it, but the narrative voice should never
+editorialise that way.
 
-## Em-dash policy
+If the brand has no such list, fall back to your own judgement about what reads as machine-written,
+and say so when you hand the draft back rather than pretending the check happened.
 
-Use sparingly. Prefer commas, semicolons, full stops, parentheses. A single em-dash in a long post
-is fine; more than two and the draft needs another pass.
+## Rhythm and punctuation
+
+The shared rules may name this brand's own limits under paragraph rhythm and punctuation. **Where
+they do, they win over the defaults here.** Keeping to them matters: these posts sit on the same
+blog as the founder's, and a different rhythm reads as a different publication.
+
+- Paragraphs run 1 to 4 sentences by default, or whatever limit the profile sets.
+- Em-dashes sparingly: at most one or two in a long post by default, or none at all where the
+  profile says so. Prefer commas, semicolons, full stops, parentheses.
+
+## Reading level and register
+
+Write at the reading level the shared rules name, explaining any technical term on first use. If
+they name a regional register, apply it at its stated dose and no more, and keep it out of product
+descriptions, safety lines and prices. The full mechanic is in `write-personal-post`; it applies
+here unchanged.
+
+Customer quotes are exempt from all of this. Quote people as they speak.
 
 ## Self-review checklist
 
@@ -293,16 +306,24 @@ Before handing the draft back:
 10. Is the founder (if referenced) in third person only, per the profile — no "I" sneaking in from
     their side?
 11. Correct spelling convention throughout (per `pack.voice.spelling`)?
-12. Banned phrases? Run a check.
-13. Em-dashes used sparingly (max 1–2 in a typical post)?
-14. Final note to user reminding them to confirm the customer's written permission to publish.
+12. Anything from the brand's phrases-to-avoid list, superlatives included? Run a check.
+13. Paragraphs and em-dashes within the profile's own limits, or the defaults if it sets none?
+14. Written at the profile's reading level, with any register applied at its stated dose?
+15. Final note to user reminding them to confirm the customer's written permission to publish.
 
-## Reference articles
+## Reference writing
 
-If the brand's profile points to bundled sample posts (typically at
-`brands/<id>/voice-references/write-customer-story/`), read whichever is closer to the target format
-before drafting — they are the concrete, in-voice examples this generic methodology can't supply
-on its own.
+Two tiers, and the first is the one more likely to exist.
+
+**The annotated excerpt bank** in the customer-story profile: short real passages, each with a note
+saying what it demonstrates. Read it before drafting; the commentary tells you which move to copy.
+
+**Whole sample posts**, if the profile points to any (typically at
+`brands/<id>/voice/references/customer-stories/`). Read whichever is closer to the target format. An
+excerpt shows a move; a whole post shows structure, which no excerpt can.
+
+Use both where both exist. They are the concrete, in-voice examples this generic methodology can't
+supply on its own.
 
 ## When to ask the user before drafting
 

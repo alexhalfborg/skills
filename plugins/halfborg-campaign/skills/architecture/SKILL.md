@@ -78,7 +78,7 @@ scrolling page, chronology included — stays current.
   It validates the pack, scaffolds the workspace, and hands to the brief.
 - If the brand is not set up (no `brands/<id>/pack.yaml`): run `/halfborg-campaign:setup-brand` first.
   It captures the brand by conversation and writes a valid pack — plus, when the brand wants a look
-  and a founder voice, its `design.md` and `voice-profiles.md`; the user never edits YAML.
+  and a founder voice, its `design.md` and its `voice/` files; the user never edits YAML.
 - If the workspace itself is fresh (no `engine.yaml` and no `## Campaign engine` block in
   `CLAUDE.md`, or the user asks about setup, API keys, or why images will not render): run
   `/halfborg-campaign:setup-engine`. It reports what is wired, scaffolds the workspace, writes the
@@ -134,7 +134,12 @@ engine.yaml                   engine-level defaults (model ids, cost). Committed
 brands/<id>/
   pack.yaml                   ALL brand facts, including the `ads` block (validated)
   design.md                   design tokens (typeface, colour hex); written by /halfborg-campaign:setup-brand
-  voice-profiles.md           voice corpus (persona, opener banks); written by /halfborg-campaign:setup-brand
+  voice/                      voice corpus, one file per output type; written by /halfborg-campaign:setup-brand
+    shared.md                 rules true of everything the brand publishes (reading level, register,
+                              mood, rhythm, product table, phrases to avoid)
+    personal-post.md          the founder's first-person byline (persona, opener bank, tells, excerpts)
+    customer-story.md         the team's third-person byline
+    references/               whole published pieces, if the brand has any
   assets/                     the brand's own real files: logo.svg (embedded by build-landing-page only),
                               product photographs referenced by products[].photo. Not versioned.
 campaigns/<brand>-<YYYY-MM-DD>-<slug>/
@@ -179,16 +184,26 @@ Validate against the schema, silently fix failures, and never show a user a vali
   words are for its files; the person reading them is a marketer. The contract carries the
   translation table, the sentence-and-receipt shape every gate uses, and the list of strings that are
   never softened — the verbatim prompt, the model id, the money, a path they can open.
-- `message.md` and `voice-profiles.md` are structured but not schema-validated. They are the
+- `message.md` and the `voice/` files are structured but not schema-validated. They are the
   least-guarded seam; `run-qa` is where pack-to-profile and message-to-asset consistency
   should be checked.
 
 **Why ads facts live in the pack but voice does not.** An ads profile holds brand facts: who fronts
 an ad, which products are impulse buys, which moments and framings a hook can draw on. Facts belong
-in the validated pack, where a schema can guard them. `voice-profiles.md` holds something different:
-a writing corpus (persona, opener banks of the founder's real sentences, sample-post pointers). That
-is prose evidence, not brand data, so it keeps its own markdown file. Both delta files —
-`voice-profiles.md` and `design.md` — are authored by `/halfborg-campaign:setup-brand`: the quick
+in the validated pack, where a schema can guard them. The `voice/` files hold something different:
+a writing corpus (persona, opener banks of the founder's real sentences, annotated excerpts,
+sample-post pointers). That is prose evidence, not brand data, so it keeps its own markdown.
+
+**Why the corpus is split by output type.** The two bylines contradict each other by design: the
+founder opens in the first person and never with a definition, the team writes third person about a
+named customer and may open definitionally. Held in one file they would load together and bleed, so
+each byline gets its own file and every skill reads `shared.md` plus exactly one of them. What is
+true of all the brand's writing — reading level, regional register, mood, rhythm, the product table,
+the phrases it avoids — lives in `shared.md` once rather than being restated twice and drifting.
+A brand's phrase list lives there too rather than in a skill, because which words read as
+machine-written is a voice judgement the brand owns, not one the engine should hold.
+
+Both delta sets — the `voice/` files and `design.md` — are authored by `/halfborg-campaign:setup-brand`: the quick
 interview writes what it can from the conversation, and the optional site-read enrichment tier fills
 the corpus-only parts (the real opener lines, sentence tells, and sample-post pointers) that only a
 brand's published writing can supply. If a would-be delta file's content turns out to be facts the
@@ -276,6 +291,6 @@ track for Nano Banana and a video track for Veo / Gemini Omni etc.). Image promp
 video prompts reach it through `write-video-ad-script`, which feeds it the script's shot grammar and appends
 the result to the script doc. Brand packs reference the generic `write-personal-post` and `write-customer-story`
 skills by name (`pack.voice.skills`), also bundled; each reads its brand's writing corpus from
-`brands/<id>/voice-profiles.md`. The remaining externals are the generic `marketing:*` skills and
+`brands/<id>/voice/`. The remaining externals are the generic `marketing:*` skills and
 `xlsx`, which resolve only on claude.ai and degrade gracefully when absent (the agent does the task
 directly).

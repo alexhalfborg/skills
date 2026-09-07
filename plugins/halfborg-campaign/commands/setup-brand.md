@@ -3,7 +3,7 @@ description: Create a brand's central reference by conversation. Captures the br
 argument-hint: [brand name or website]
 ---
 
-Create a brand's central reference for the user by talking to them. They should never see, edit, or hear about YAML, the schema, or "required fields". Your job is to turn a short conversation into a valid `brands/<id>/pack.yaml`, quietly — and, when the brand wants a look and a founder voice, the two files that sit beside it: `brands/<id>/design.md` (design tokens) and `brands/<id>/voice-profiles.md` (the voice corpus). The pack alone is always a complete, working brand; the other two are optional depth this command can add now or later.
+Create a brand's central reference for the user by talking to them. They should never see, edit, or hear about YAML, the schema, or "required fields". Your job is to turn a short conversation into a valid `brands/<id>/pack.yaml`, quietly — and, when the brand wants a look and a founder voice, the two files that sit beside it: `brands/<id>/design.md` (design tokens) and `brands/<id>/voice/` (the voice corpus, one file per post type). The pack alone is always a complete, working brand; the other two are optional depth this command can add now or later.
 
 ## How to talk
 
@@ -24,14 +24,14 @@ Just enough to write a working pack:
 4. **Who it is for** — at least one type of customer, in their own words.
 5. **Where you sell** — country, main language, currency. Offer sensible defaults from their answers and confirm rather than interrogate.
 6. **Rules you must follow** — "Any claims you must avoid, or rules your industry requires?" Some brands have none; that is fine. Always record the answer, even when it is "none".
-7. **Voice** — ask if they already have a writing style or voice set up. If yes and they name it, reference it. If not, do not push: write a one-paragraph summary of their voice yourself from how they described the brand, and use that. Then ask one more, lightly: "Will you want blog posts in your own founder voice, or customer / transformation stories?" If yes, this brand wants the voice skills — set `voice.skills` accordingly and author a voice profile (see **Voice profile** below). If they only want short-form or product copy, the one-paragraph `voice.summary` is enough and no profile is needed.
+7. **Voice** — ask if they already have anything written down about how they write: a style guide, a voice document, the prompt they paste into a chatbot, or a voice skill someone set up for them. A **document** is worth more than any interview, so take it rather than asking around it — see **Voice profile** below. If they name a third-party voice **skill**, treat that as a document too: read it and map it the same way. Only ever put the engine's own voice skill names in `voice.skills`, because the content agent invokes those by name and a foreign name there breaks routing silently. If they have neither, do not push: write a one-paragraph summary of their voice yourself from how they described the brand, and use that. Then ask one more, lightly: "Will you want blog posts in your own founder voice, or customer / transformation stories?" If yes, this brand wants the voice skills — set `voice.skills` accordingly and author a voice profile (see **Voice profile** below). If they only want short-form or product copy, the one-paragraph `voice.summary` is enough and no profile is needed.
 
 ## What to write
 
 - Derive an `id` by slugifying the brand name (lowercase, hyphens).
 - Write `brands/<id>/pack.yaml`: `version: "1"`, the brand skeleton, market, one or more products and audiences, voice (a skill reference if they have one, otherwise a prose summary), and `mandatories` — always present, even as an empty list.
-- When the brand wanted a look, also write `brands/<id>/design.md` (see **Look & feel**). When it wanted founder-voice or write-customer-story content, also write `brands/<id>/voice-profiles.md` (see **Voice profile**). Both are written for the user in the same quiet way as the pack — they never see or edit them.
-- Validate the pack against `${CLAUDE_PLUGIN_ROOT}/schema/brand-pack.schema.json` yourself. If it fails, fix it silently. Never show the user a validation error. (`design.md` and `voice-profiles.md` are freeform, not schema-validated — just write them well.)
+- When the brand wanted a look, also write `brands/<id>/design.md` (see **Look & feel**). When it wanted founder-voice or write-customer-story content, also write the `brands/<id>/voice/` files (see **Voice profile**). Both are written for the user in the same quiet way as the pack — they never see or edit them.
+- Validate the pack against `${CLAUDE_PLUGIN_ROOT}/schema/brand-pack.schema.json` yourself. If it fails, fix it silently. Never show the user a validation error. (`design.md` and the `voice/` files are freeform, not schema-validated — just write them well.)
 
 ## Ads (optional)
 
@@ -131,14 +131,56 @@ Then write a **core** `brands/<id>/design.md`: YAML frontmatter with `typography
 
 ## Voice profile (optional)
 
-Only when step 7 established the brand wants founder-voice blog posts or customer / transformation stories. This authors `brands/<id>/voice-profiles.md`, the file the `write-personal-post` and `write-customer-story` skills require — without it, those skills refuse rather than fake a voice, which is the point.
+Only when step 7 established the brand wants founder-voice blog posts or customer / transformation stories. This authors the `brands/<id>/voice/` files the `write-personal-post`, `write-customer-story` and `write-email` skills require — without them, those skills refuse rather than fake a voice, which is the point.
 
-Write the sections the skills read — **"Personal post voice profile"** and/or **"Customer story voice profile"**, whichever the brand wants. Split the fields by what you can honestly know:
+There are three files, and the split is deliberate: the two bylines contradict each other on purpose, so no skill should ever load both.
 
-- **Author from the conversation** (fill these confidently): the founder persona and bio, the voice-in-one-sentence line, the team byline and framing for customer stories, the customer naming convention, geography and cultural references, the regulated-advice boundary, and the product table (derive it from the products already captured — exact names, roles, canonical URLs).
-- **Corpus-only — needs the brand's real published writing** (the opener banks of real usable lines, the founder's sentence-level tells, and pointers to sample posts under `brands/<id>/voice-references/…`): fill these **only** from a site read (see **Enrich** below) or from examples the user gives you. When there is no corpus, leave them explicitly empty with a short note (e.g. "No opener bank captured yet — add real published lines here, or re-run enrichment against the site"). **Never fabricate an opener line, a tell, or a sample post.** The skills tolerate an empty tells/opener list; they do not tolerate an invented voice.
+```
+brands/<id>/voice/
+  shared.md            rules true of everything the brand publishes
+  personal-post.md     the founder's first-person voice
+  customer-story.md    the team's third-person voice
+  references/          whole published pieces, if there are any
+```
+
+Reference shapes for all three are at `${CLAUDE_PLUGIN_ROOT}/templates/voice/`. Read the matching one before writing.
+
+### If they already have a voice document
+
+Do this first, before asking anything. Many people arrive with something written down: a style guide, a page of rules, or the prompt they have been pasting into a chatbot. It is worth more than any interview.
+
+Ask once, plainly: "If you already have anything written down about how you write, even just the prompt you paste into a chatbot, paste it here or point me at the file and I'll work from that instead of asking you a pile of questions."
+
+Read it whole, then **map it, do not transcribe it.** Sort every line into one of four piles:
+
+1. **A field in one of the three files.** Most of it. Persona, reading level, register, mood, sign-off, tense, paragraph rhythm, the phrases they will not use. Write it into the matching field, in their words wherever their words are better than yours.
+2. **Real published writing.** Any excerpt, sample line, or "here is a good example of me" passage. That is corpus, and it goes into the annotated excerpt bank **only if it is real**. If an excerpt arrives with no commentary, write the commentary yourself — saying what a real passage demonstrates is analysis, not invention. If you cannot tell whether a passage is real or illustrative, ask.
+3. **Already in the writing skills.** Generic craft advice — vary your sentences, use active voice, avoid hype, link your sources — is methodology every brand gets for free. Do not copy it in. A field that restates a skill is a field that will contradict it later. The one exception is a phrase to avoid that the starter list misses; add that.
+4. **A pack fact, not a voice fact.** Spelling, product names and URLs, claims, must-include lines, things they may never say. Those belong in `pack.yaml`. Put them there instead.
+
+Then say back three or four plain lines of what you took, with no field names in them, and ask what is missing. Skip any question below that their document already answered. Never read their document back to them in full.
+
+### Three questions, if the document did not answer them
+
+Each one leads with a proposed answer drawn from what they have already said, so they confirm or adjust rather than compose.
+
+1. **Who has to understand it.** Propose a level from the customers they described at step 4 rather than a fixed one, then offer the other end so they can move it. For a brand selling to the public: "I'd write these so someone with no background in this could follow them, and explain any technical word the first time it comes up. Does that sound right, or are you writing for people who already know the subject?" For a brand selling to specialists, propose the reverse. If they answer with a specific reader in mind, record their words, not yours.
+2. **The English it is written in.** Lead with an example built from the market they gave you at step 5, so the question answers itself: some brands write plain standard English, others let a little of how people actually speak locally come through, in small doses. Give one concrete construction from *their* region, then ask which they are. Do not offer a region they did not name. If they say yes, one follow-up only: "How much? I'd keep it to one moment a piece, so it reads as natural rather than laid on." Anything past a dose is mimicry and it will not sound like them.
+3. **Mood, and how they sign off.** "I'd read your writing as encouraging: honest about what goes wrong, but ending somewhere hopeful. And I'd sign posts off simply, with your first name. Does that match, or is there a line you actually sign with?"
+
+### Writing the files
+
+Write a **core** tier, the same way the look step writes a core `design.md`. Fill every field the template marks *Ask* or *Infer*, always write the starter list under **Phrases to avoid** and the starter **Rewrite pairs**, and leave every *Corpus* field in the template's empty-with-a-note form unless you genuinely have the material. Do **not** attempt the rich tier the templates show — six annotated excerpts, a full literary-device inventory, a sample-post library. That is depth a brand grows into once it has published writing to draw on.
+
+Mark anything you inferred as inferred, inside the field. Somebody later needs to know nobody confirmed it.
+
+**Never fabricate an opener line, a tell, a sample post, an excerpt, a commentary, a rewrite pair, or a sign-off.** The skills tolerate an empty corpus section; they do not tolerate an invented voice. A signature under a real person's name is the worst of these, so where nobody has said, write "not set".
 
 Set `pack.voice.skills` to the matching skill name(s) so the pack points at the profile you wrote.
+
+### If the brand has an older single voice file
+
+A brand set up before the split has one `brands/<id>/voice-profiles.md` instead of the folder. Split it: everything about the founder into `personal-post.md`, everything about the team byline and customers into `customer-story.md`, and anything true of both — products, geography, the regulated boundary, phrases to avoid — up into `shared.md`. Add the starter avoid-list and rewrite pairs, which the old file did not carry. **Leave the old file where it is**; do not delete it. Then say it in one sentence, that their voice notes are now organised by post type. No path list, and no explanation of the old shape.
 
 ## Enrich from your site (optional)
 
@@ -148,7 +190,7 @@ If they agree, read the site and enrich in place — never overwriting a value t
 
 - **`products[].claims_allowed`** — the specific things the site actually asserts about each product, which become the only claims downstream copy may make. If the site is vague, leave it empty and say so; `build-landing-page` and `write-ad-creative` both sell on the key message alone when it is absent.
 - **`audience[].pains` and `.jobs`** — the real problems and goals the site speaks to, per segment. These are the primary audience read for `write-ad-creative` and `build-landing-page`.
-- **`voice-profiles.md` corpus** — pull the **real** opener lines, the founder's characteristic phrasings, and pointers to actual published posts into the profile authored above. This is the one part a conversation genuinely cannot supply.
+- **The voice corpus** — pull the **real** opener lines, the founder's characteristic phrasings, and pointers to actual published posts into the files authored above. Fill the annotated excerpt bank too: for each of three to six short passages, quote it verbatim with the post it came from, then write one or two sentences naming the technique it demonstrates. Cover different moves rather than different topics. The commentary is the point, since a writing skill can copy a technique from a passage it can see and cannot copy one from an adjective. This is the one part a conversation genuinely cannot supply.
 - **`design.md`** — confirm or refine the typeface and palette against the site's real CSS, if the look step ran off inference.
 - **The logo** — if no earlier site read already came away with one, take the pass described in **Logo** above now. Once per setup, not once per read.
 

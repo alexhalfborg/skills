@@ -18,7 +18,7 @@ Rules for writing it:
 ## Campaign engine
 
 This repo is a campaign workspace. Brand facts live in `brands/<id>/pack.yaml` (plus optional
-`design.md` for design tokens and `voice-profiles.md` for the writing corpus). Campaign work lives in
+`design.md` for design tokens and `voice/` for the writing corpus). Campaign work lives in
 `campaigns/<brand>-<YYYY-MM-DD>-<slug>/`, with gate artifacts in `docs/`, text deliverables in
 `content/`, generated media in `media/<deliverable-id>/`, and machine state in `system/`. Engine
 defaults are in `engine.yaml`. The engine itself is the `halfborg-campaign` plugin and is read-only —

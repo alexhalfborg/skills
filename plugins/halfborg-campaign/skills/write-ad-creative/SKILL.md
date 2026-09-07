@@ -166,7 +166,7 @@ brands/<id>/references/
   winning-ads/   10-20 screenshots of the highest-performing ads from the last 90 days
   reviews/       50-100 customer reviews (Trustpilot, G2, Amazon, App Store) as .md/.txt
   comments/      Top comments from existing ad campaigns — objections, unprompted praise, customer-raised angles
-brands/<id>/     brand facts, voice profiles, design tokens (pack.yaml, voice-profiles.md, design.md)
+brands/<id>/     brand facts, voice profiles, design tokens (pack.yaml, voice/, design.md)
 brands/<id>/assets/
                  the brand's own real files: logo.svg, product photographs. The logo is embedded by
                  build-landing-page and by nothing else — it is never a reference image for a render.

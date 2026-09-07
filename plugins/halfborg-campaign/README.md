@@ -75,7 +75,7 @@ engine.yaml               defaults you can ignore. No secrets, ever.
 brands/<id>/
   pack.yaml               everything it knows about your brand
   design.md               your typeface and colours              (optional)
-  voice-profiles.md       samples of how you actually write      (optional)
+  voice/                  samples of how you actually write      (optional)
   assets/                 your logo and product photos           (optional)
 campaigns/<brand>-<YYYY-MM-DD>-<name>/
   docs/                   the plan, the message, the final check

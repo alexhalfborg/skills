@@ -9,12 +9,15 @@ description: >-
   any content request that names a founder or brand blog by name. Covers
   news/research commentary, practical how-to guides, and personal product
   stories tied to the founder's own experience. Reads the active brand's
-  personal-post profile (persona, bio, product table, opener bank, sample
-  posts) from brands/<id>/voice-profiles.md; the methodology here (opener
-  patterns, empathy+authority structure, sentence rhythm, content-type
-  templates, honesty rules) is brand-agnostic. Do NOT use for third-person
-  customer testimonial / transformation-story posts (use
-  write-customer-story), or when no brand's personal-post profile exists yet.
+  shared voice rules (reading level, regional register, mood, paragraph
+  rhythm, product table, phrases to avoid) from brands/<id>/voice/shared.md
+  and its personal-post profile (persona, bio, opener bank, tells, annotated
+  excerpts, sample posts) from brands/<id>/voice/personal-post.md; the
+  methodology here (opener patterns, empathy+authority structure, sentence
+  rhythm, content-type templates, honesty rules) is brand-agnostic and carries
+  no phrase list of its own. Do NOT use for third-person customer testimonial
+  / transformation-story posts (use write-customer-story), or when no brand's
+  personal-post profile exists yet.
 ---
 
 # write-personal-post — write in a brand's first-person founder voice
@@ -33,16 +36,24 @@ section 1.1. Outside a campaign, the invocation names the brand.
 
 This skill then needs, in order:
 
-1. **The brand's voice profile.** `brands/<id>/voice-profiles.md` — read the
-   "Personal post voice profile" section fully before drafting. It supplies the founder's persona and
-   bio, the voice-in-one-sentence description, any voice-era boundary, the opener bank (real,
-   usable lines), geography/cultural references, trusted sources for citations, the regulated-
-   advice boundary, sentence-level tells, and pointers to sample posts.
-2. **The brand pack.** `brands/<id>/pack.yaml` for audience, spelling, and mandatories not
+1. **The brand's shared voice rules.** `brands/<id>/voice/shared.md` — true of everything the brand
+   publishes. It supplies the reading level and jargon rule, the regional register and its dose,
+   the mood, the tense habits, the paragraph rhythm, geography and cultural references, trusted
+   sources for citations, the regulated-advice boundary, the product table, the phrases this brand
+   avoids, and its rewrite pairs.
+2. **The brand's personal-post profile.** `brands/<id>/voice/personal-post.md` — read it fully
+   before drafting. It supplies the founder's persona and bio, the voice-in-one-sentence
+   description, any voice-era boundary, the point of view, the greeting and sign-off, the opener
+   bank (real, usable lines), sentence-level tells, the literary devices this founder actually
+   uses, the annotated excerpt bank, a worked customer-story callout, and pointers to sample posts.
+3. **The brand pack.** `brands/<id>/pack.yaml` for audience, spelling, and mandatories not
    restated in the profile.
 
+**Do not read `voice/customer-story.md`.** It is a different byline with deliberately opposite
+rules, and loading it here bleeds third-person habits into a first-person post.
+
 If no voice profile exists for the active brand, say so, **route the user to
-`/halfborg-campaign:setup-brand`** — which authors `voice-profiles.md` — and stop rather than inventing
+`/halfborg-campaign:setup-brand`** — which authors the `voice/` files — and stop rather than inventing
 a persona, a product, or a customer. Do not draft in a generic "founder voice" with no source material — the
 whole point of this skill is that the founder's voice is a specific, real thing the profile
 supplies, not something to improvise.
@@ -122,19 +133,76 @@ see the Honesty rules below.
 
 ### Spelling and cultural context
 
-Use the spelling convention from `pack.voice.spelling` (UK or US). If the profile lists geography
+Use the spelling convention from `pack.voice.spelling` (UK or US). If the shared rules list geography
 or cultural references specific to the brand's market (local institutions, media sources, currency
 conventions, regional idiom to avoid), draw on those to make the advice feel local and concrete. If
-the profile has no such section, don't invent one — write in neutral, geography-agnostic terms.
+they have no such section, don't invent one — write in neutral, geography-agnostic terms.
+
+### Reading level and jargon
+
+Write to the reading level the shared rules name, and honour the jargon rule beside it: where a
+brand says technical terms get introduced and explained on first use, do that every time, not just
+when it feels necessary.
+
+A reading level is a floor on clarity, not a ceiling on the ideas. Simplify the sentence and keep
+the argument. If the shared rules name no reading level, write for an intelligent general reader.
+
+### Regional register, in doses
+
+Some brands write in a local variety of English rather than a standard one. This section is the
+single home for how that is applied; the sibling voice skills defer to it.
+
+If the shared rules name a register, apply it exactly as they dose it: the stated number of
+instances per piece, drawn only from the features the profile lists, never improvised from a general
+sense of the accent. One well-placed construction reads as a real person. Three read as mimicry, and
+mimicry of a variety the writer does not own is the failure mode here.
+
+Keep the register out of anything that has to be precise: a product description, a dosage or safety
+line, a price, anything the reader might act on. Slang takes its own, lower setting, because it ages
+faster and shuts out readers who did not grow up with it.
+
+If the shared rules name no register, write standard English and reach for nothing.
+
+### Mood and time
+
+Land the emotional register the shared rules name, and follow their tense habits. A brand that
+reflects in past tense and instructs in present tense should not blur the two inside a paragraph.
 
 ### Sentence rhythm and punctuation
 
-- Paragraphs are short: 1 to 4 sentences. Even long posts feel airy because of paragraph breaks.
-- Sentences vary. Mix tight declaratives with longer explanatory ones.
-- Em-dashes exist but are used **sparingly**. Prefer commas, full stops, semicolons, parentheses.
-  If a sentence has more than one em-dash, rewrite it.
+The shared rules may name this brand's own limits under paragraph rhythm and punctuation. **Where
+they do, they win over the defaults below.**
+
+- Paragraphs are short: 1 to 4 sentences by default, or whatever limit the profile sets. Even long
+  posts feel airy because of paragraph breaks.
+- Sentences vary. Mix tight declaratives with longer explanatory ones. Prefer active voice.
+- Em-dashes exist but are used **sparingly**: at most one or two in a long post by default, or none
+  at all where the profile says so. Prefer commas, full stops, semicolons, parentheses.
 - Parenthetical asides work well for tone or honesty.
 - Single-sentence paragraphs are allowed for emphasis, used deliberately, not every other line.
+
+### Literary devices
+
+Four moves suit a founder voice. Reach for them where they earn their place, never as decoration.
+
+- **Analogy or metaphor**, usually domestic, to explain a mechanism the reader has no vocabulary for.
+- **Personification** of a system, a body, or an object, which makes an abstract process feel like
+  something with intent.
+- **A rhetorical question mid-post**, not only in the opener, to hand the reader a decision.
+- **A personal anecdote**, which is the one device that also builds trust.
+
+If the profile lists the devices this founder actually uses, with real examples, prefer those and
+stay inside that set. Never invent a signature metaphor for a real person.
+
+### Rewrite pairs
+
+Two habits are worth fixing by example. Both are generic; the profile may add the brand's own, which
+take precedence.
+
+- **Hype into plain statement.** "This revolutionary product will transform your life" becomes
+  "this product can help you".
+- **Filler into the sentence underneath it.** "It's important to note that the deadline is
+  approaching" becomes "the deadline is approaching".
 
 ## Content types and routing
 
@@ -208,7 +276,7 @@ for a customer testimonial post, either clarify which format they want, or route
 
 Link products in context, not as a stuffed list. The pattern is always: **the reader has a
 specific problem → here's the product that solves it → here's the mechanism in one sentence →
-linked product name.** Use the profile's product table for exact names, roles, and canonical URLs
+linked product name.** Use the shared rules' product table for exact names, roles, and canonical URLs
 — never invent a product, mechanism, or URL. If a URL isn't certain, leave a placeholder like
 `[Product Name](URL-needed)` rather than guessing.
 
@@ -218,7 +286,7 @@ genuinely has none, name a *use limit* instead (e.g. "a little goes a long way")
 ## Customer-story callouts inside guides
 
 Practical guides can feature a short blockquoted customer story to make abstract advice concrete —
-see the profile for a worked example. Rules:
+see the personal-post profile's worked customer-story callout. Rules:
 
 - Use the customer's first name only (or honorific + surname where appropriate).
 - Link the descriptive phrase to the actual testimonial post if one exists.
@@ -241,7 +309,7 @@ every draft, no exceptions.
    only; placeholders otherwise.
 3. **Do not invent statistics, study citations, or news quotes.** Every number or claim attributed
    to a source must be sourced — find one through web search, or leave
-   `[STAT/SOURCE: specific figure with citation needed]`. Use the profile's trusted-sources list
+   `[STAT/SOURCE: specific figure with citation needed]`. Use the shared rules' trusted-sources list
    if it has one.
 4. **Include an escalation qualifier** ("consult a professional if…") in any post that discusses
    severity, where the category has a safety dimension. Not optional if the brand's category
@@ -252,37 +320,19 @@ every draft, no exceptions.
    table and the user hasn't supplied source material, ask first.
 7. **Never invent a URL.** Every link is either real and verifiable, or a clearly marked
    placeholder.
-8. **Honour the profile's regulated-advice boundary, if it names one** (e.g. no personalised
+8. **Honour the shared rules' regulated-advice boundary, if it names one** (e.g. no personalised
    medical/diet/legal advice on the blog) — redirect to the paid service or professional channel
    it names instead.
 
-## Banned phrases — instant AI tells
+## Phrases to avoid
 
-Never use these. If a draft contains any, rewrite that sentence.
+The list belongs to the brand, not to this skill. Read **Phrases to avoid** in the shared voice
+rules and treat it as binding: if a draft contains one, rewrite that sentence. A brand that has
+deleted an entry from its own list has decided the phrase is genuinely its voice, and that decision
+stands.
 
-- "Doing the heavy lifting"
-- "The real question is…"
-- "Here's the thing nobody is talking about"
-- "That's the real story"
-- "The good news is…"
-- "What most people miss"
-- "This is where it gets interesting"
-- "It's not about [X], it's about [Y]"
-- "Delve" / "delve into"
-- "Tapestry", "bustling", "realm", "embark", "virtuoso", "symphony", "testament", "metamorphosis", "indelible", "gossamer", "enigma"
-- "In the world of", "in today's world", "in today's fast-paced [anything]"
-- "Navigating the landscape", "navigating the complexities"
-- "Moreover", "consequently", "thus", "notably"
-- "This is not an exhaustive list"
-- "In summary", "to summarize"
-- "Hustle and bustle", "labyrinthine"
-- "Game changer", "game-changing"
-- "Sights unseen", "sounds unheard"
-- "Unlocking creativity" / "unlocking potential" / "unlock the power of"
-- "At the end of the day"
-- "Journey" used as a marketing buzzword (a genuine, specific journey noun phrase like "TSW
-  journey" for a brand where that's real vocabulary is fine; "wellness journey" as vibe-fluff is not)
-- "Holistic" as filler — only if naming an actual holistic system, never as a vibe word
+If the brand has no such list, fall back to your own judgement about what reads as machine-written,
+and say so when you hand the draft back rather than pretending the check happened.
 
 **Nuance on cliché:** a sentence-starting "But", "And", or "So" is fine and can be characteristic.
 Single-word punctuation paragraphs are fine if used sparingly for emphasis.
@@ -314,19 +364,31 @@ Before handing the draft back, work down this list:
 9. Is there at least one internal cross-link to another post or product page?
 10. Correct spelling convention throughout (per `pack.voice.spelling`)?
 11. Local/cultural context applied where the profile supplies one?
-12. Paragraphs mostly 1–4 sentences? Plenty of white space?
-13. Em-dashes used sparingly (max 1–2 in a typical post)?
-14. Banned phrases? Run a check.
-15. Does the closing match the post type?
-16. Would the reader feel met and informed, not lectured? If not, soften the expert sections with
+12. Paragraphs within the profile's own limit, or 1–4 sentences if it sets none? Plenty of white
+    space?
+13. Em-dashes within the profile's own limit, or used sparingly (max 1–2 in a typical post) if it
+    sets none?
+14. Anything from the brand's phrases-to-avoid list? Run a check.
+15. Written at the profile's reading level, with every technical term explained on first use?
+16. Regional register applied at its stated dose and no more, and kept out of the precise lines?
+17. Does the closing match the post type?
+18. Would the reader feel met and informed, not lectured? If not, soften the expert sections with
     more validation.
 
-## Reference articles
+## Reference writing
 
-If the brand's profile points to bundled sample posts (typically at
-`brands/<id>/voice-references/founder/`), read whichever is closest to the content type being
-requested before drafting — they are the concrete, in-voice examples this generic methodology
-can't supply on its own.
+Two tiers, and the first is the one more likely to exist.
+
+**The annotated excerpt bank** in the personal-post profile: short real passages, each with a note
+saying what it demonstrates. Read it before drafting. It is the closest thing to watching this
+founder write, and the commentary tells you which move to copy.
+
+**Whole sample posts**, if the profile points to any (typically at
+`brands/<id>/voice/references/founder/`). Read whichever is closest to the content type being
+requested. An excerpt shows a move; a whole post shows structure, which no excerpt can.
+
+Use both where both exist. They are the concrete, in-voice examples this generic methodology can't
+supply on its own.
 
 ## When to ask the user before drafting
 
@@ -336,7 +398,7 @@ Ask before writing if any of these are true:
   by the user.
 - The post needs a customer story and the user hasn't supplied the source testimonial or a link.
 - The post cites a specific news article, study, or statement the user hasn't linked.
-- The post recommends a product not listed in the profile's product table.
+- The post recommends a product not listed in the shared rules' product table.
 - The request is ambiguous about post type (guide? personal story? news commentary? — ask).
 
 For everything else, go ahead and draft. Always honest, always linked, always grounded.
