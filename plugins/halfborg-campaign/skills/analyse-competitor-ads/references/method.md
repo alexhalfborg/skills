@@ -63,8 +63,8 @@ Brief, and not legal advice — flag them in the artifact's Caveats:
 
 The artifact contract (`research/analyse-competitor-ads.md`, the evidence table + inferred winners + distilled
 priors in `compose-lockup`'s archetype vocabulary) is the stable interface. An automated fetch tier —
-e.g. a ScrapeCreators-backed Ad Library MCP declared in `.mcp.json`, its key in the gitignored
-`.claude/settings.local.json` and its presence tested by `Grep`ping the key name (the `fal-ai`
-pattern) — would replace **step 2's manual ingest only**, still produce this same artifact, and still
+e.g. a ScrapeCreators-backed Ad Library MCP declared in the plugin's `.mcp.json`, signed in to
+through `/mcp` where the service supports it, and its presence tested by checking for its live tools
+(the `fal-ai` pattern) — would replace **step 2's manual ingest only**, still produce this same artifact, and still
 label winners as inferred. Nothing downstream (`compose-lockup`) changes. Until then, manual is the
 supported path, not a degraded one.

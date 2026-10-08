@@ -80,9 +80,9 @@ scrolling page, chronology included — stays current.
   It captures the brand by conversation and writes a valid pack — plus, when the brand wants a look
   and a founder voice, its `design.md` and its `voice/` files; the user never edits YAML.
 - If the workspace itself is fresh (no `engine.yaml` and no `## Campaign engine` block in
-  `CLAUDE.md`, or the user asks about setup, API keys, or why images will not render): run
+  `CLAUDE.md`, or the user asks about setup, connecting fal, or why images will not render): run
   `/halfborg-campaign:setup-engine`. It reports what is wired, scaffolds the workspace, writes the
-  engine defaults and the project instructions block, and points at the fal key setting. It is
+  engine defaults and the project instructions block, and says how to sign in to fal. It is
   optional and gates nothing — never make it a prerequisite for anything.
 - Move one phase at a time and respect the gates. After each gated phase, get sign-off, write the
   artifact, and offer the next phase rather than running ahead.
@@ -119,7 +119,7 @@ agents/                       six specialists the main thread dispatches: strate
                               content-writer, paid-creative, analyst, qa
 schema/                       the contracts (below), plus preflight.md
 templates/                    seeds copied into a workspace: engine.yaml, claude-md-block.md, design.md
-.mcp.json                     the fal-ai server, authenticated with the plugin's fal_key setting
+.mcp.json                     the fal-ai server: fal's OAuth relay, signed in to through /mcp
 ```
 
 An agent is a context of its own, not a fifth kind of skill: it either spans several skills and
@@ -167,7 +167,7 @@ Validate against the schema, silently fix failures, and never show a user a vali
   `engine` is required; a file with just `engine: {version: 1}` is valid. Like the pack, it is a
   dial, not a gate: a missing or invalid file is not an error, because every value it holds has a
   literal fallback in the skill that reads it (precedence: invocation argument -> `engine.yaml` ->
-  skill default). It is committed and holds **no secrets** — the fal key is a plugin setting.
+  skill default). It is committed and holds **no secrets** — fal is connected by signing in, not by a key.
 - `brands/<id>/pack.yaml` against `${CLAUDE_PLUGIN_ROOT}/schema/brand-pack.schema.json`. Only the
   brand skeleton (id, name, positioning) is required; everything else is optional. A thin pack is
   valid: the more it holds, the fewer questions the brief phase asks. Pack richness is a dial, not a
@@ -243,16 +243,14 @@ the phase that writes it and the phases that read it.
   reads the whole file.
 - Voice is a reference, not a redraft. `pack.voice.skills` names the voice skill(s) expanders
   invoke; the pack does not restate the voice.
-- **The fal key is a plugin setting, never a file in the workspace.** It is declared as the plugin's
-  `fal_key` user config, stored in secure storage, and substituted into the plugin's `.mcp.json`
-  `Authorization` header by the harness — so no skill ever reads it and no skill ever needs the
-  value. To test whether rendering is available, check for live `mcp__fal-ai__*` tools, not for a
-  file. Secrets never go in `engine.yaml`, a brand pack, a campaign, or the conversation. Never ask
-  the user to paste a key into chat; point them at `/plugin` → **Installed** → **Halfborg Campaign Engine**,
-  where Claude Code asks for it, or at
-  `/halfborg-campaign:setup-engine`. (A workspace running the engine unpackaged may instead set a
-  `FAL_KEY` env var in the gitignored `.claude/settings.local.json`; that file must never be read.)
-- No key is a supported way to run this workspace, not a degraded one. `generate-image` and
+- **fal is a sign-in, not a key.** The plugin's `.mcp.json` declares one server, `fal-ai`, pointed at
+  fal's OAuth relay (`https://mcp.fal.ai/mcp-relay`). The user connects it once by running `/mcp`,
+  choosing the `fal-ai` server and signing in to fal in the browser; Claude Code keeps the token. There
+  is no API key anywhere in the engine, so no skill asks for one, reads one or stores one. To test
+  whether rendering is available, check for live `mcp__fal-ai__*` tools, not for a file. Secrets never
+  go in `engine.yaml`, a brand pack, a campaign, or the conversation. Never ask the user for a key or
+  credentials in chat; point them at `/mcp` or at `/halfborg-campaign:setup-engine`.
+- Not connecting fal is a supported way to run this workspace, not a degraded one. `generate-image` and
   `generate-video` render when the fal MCP is live and otherwise hand back the prompt, model id, and
   settings to run by hand at fal.ai — writing no file, no log line, and no invented URL or cost.
   This is the same "never fabricate a generated-image link" rule seen from the offline side.

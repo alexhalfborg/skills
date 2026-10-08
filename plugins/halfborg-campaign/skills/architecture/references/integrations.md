@@ -20,22 +20,24 @@ commands for a specific package manager unless the user asks — this engine run
 
 ## Image and video generation (the fal MCP)
 
-The plugin declares one MCP server, `fal-ai`, in its own `.mcp.json`, authenticated with the
-plugin's `fal_key` user setting. The harness substitutes that value into the `Authorization` header,
-so **no skill ever reads the key and no skill ever needs its value**.
+The plugin declares one MCP server, `fal-ai`, in its own `.mcp.json`, pointed at fal's OAuth relay
+(`https://mcp.fal.ai/mcp-relay`). The user signs in once: `/mcp`, choose the `fal-ai` server, sign in
+to fal in the browser. Claude Code keeps the token, so **there is no key for any skill to read, ask
+for or store**. The relay takes no `Authorization` header; adding one switches OAuth off.
 
 To test whether rendering is available, check for live `mcp__fal-ai__*` tools in the session. Never
-test by looking for a file, and never ask the user to paste a key into the conversation. If it is
-not configured, point them at `/plugin` → **Installed** → **Halfborg Campaign Engine**, where Claude Code asks
-for the key, or at `/halfborg-campaign:setup-engine`.
+test by looking for a file, and never ask the user for a key or credentials in the conversation. If
+fal is not connected, point them at `/mcp` or at `/halfborg-campaign:setup-engine`. A fal connector
+the user added to claude.ai is a separate connection with its own tool names; the engine uses only
+its own `fal-ai` server.
 
 Once connected the server exposes generic tools — `search_models`, `get_model_schema`, `run_model`,
-`get_pricing`, and the async job tools for video (surfaced as `mcp__fal-ai__*`). `generate-image` and
+`get_pricing`, `upload_file`, and the async job tools for video (surfaced as `mcp__fal-ai__*`). `generate-image` and
 `generate-video` drive them: verify the model schema, gate on explicit human approval with a cost
 estimate, run the model, download into `campaigns/<slug>/media/<deliverable-id>/` under the versioned
 filename grammar, append a line to the generation log, and report the real path, URL and cost.
 
-**Without a key**, both skills hand back the prompt, the model id and the resolved settings to run by
+**With fal not connected**, both skills hand back the prompt, the model id and the resolved settings to run by
 hand at <https://fal.ai/models>, and write nothing — no file, no log line, no invented URL or cost.
 
 > **Never invent a generated-media URL, path, or cost.** This is the same rule as the render gate,

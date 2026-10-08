@@ -1,14 +1,14 @@
 ---
-description: Prepare the workspace. Reports what is wired, scaffolds the campaign workspace, writes the engine defaults and the project-instructions block, and points at the image-generation key. Nothing here is required — the pipeline runs either way.
+description: Prepare the workspace. Reports what is wired, scaffolds the campaign workspace, writes the engine defaults and the project-instructions block, and says how to connect fal for image generation. Nothing here is required — the pipeline runs either way.
 ---
 
 Turn the current working directory into a campaign workspace, and tell the user plainly where they
 stand.
 
 This command **asks, and never enforces**. Nothing in it blocks. There is no failure state: a
-workspace with no key is a working workspace. Your job is to report honestly, scaffold what is
+workspace without fal connected is a working workspace. Your job is to report honestly, scaffold what is
 missing, offer to fix what is worth fixing, and hand off. Re-running is normal and expected — it is
-how the user confirms a key after a restart, and how the brand list in the project-instructions
+how the user confirms fal is connected after signing in, and how the brand list in the project-instructions
 block gets refreshed — so **every step must be safe to repeat**.
 
 This is very often the first thing a user ever runs, and they are a marketer, not a developer.
@@ -29,7 +29,7 @@ Then look before you write. Read the current state of the working directory: is 
 does either already carry a `## Campaign engine` block? a `.gitignore`? Is this a git repo at all?
 
 Then say the thing that stops the rest of this reading as a list of problems: everything here is
-optional, and the pipeline runs without any of it. A key changes **how** media is produced — rendered
+optional, and the pipeline runs without any of it. Connecting fal changes **how** media is produced — rendered
 here, or handed back as a prompt to run at fal.ai — not **whether** the campaign can run. Keep it to
 a sentence.
 
@@ -87,31 +87,30 @@ campaigns/*/site/
 rewrite or reorder what is there. If it does not exist, create it with just these lines. If this is
 not a git repo, skip the step silently — it is not worth a sentence.
 
-## 5. Point at the image-generation key
+## 5. Point at fal sign-in
 
-Explain to user that you can also help to render images. This requires an account at fal.ai and an api key. **Never ask the user to type or paste a key into the
-chat, and never ask to see its value.** You do not need it and must never hold it: it is a setting on
-this plugin, stored in secure storage, and the harness substitutes it into the plugin's `.mcp.json`
-`Authorization` header itself. All you ever touch is the `mcp__fal-ai__*` tools.
+Explain to the user that you can also render images and video here. That needs a fal.ai account, and
+nothing else: the plugin connects to fal's own server, which the user signs in to once in the
+browser. There is no API key to create or paste. **Never ask the user to type or paste a key, a
+password or any credential into the chat.** All you ever touch is the `mcp__fal-ai__*` tools.
 
 So there is no file to inspect and no state to detect here. If step 6 shows the tools are not live,
-tell the user in plain language how to set it:
+tell the user in plain language how to connect it:
 
-> Open `/plugin`, go to the **Installed** tab and select **Halfborg Campaign Engine**. Claude Code asks for
-> the fal.ai key there, the same as it does the first time the plugin is switched on. Paste one from
-> <https://fal.ai/dashboard/keys>, then run `/reload-plugins`, or restart.
+> Type `/mcp`, choose **fal-ai** (listed under the Halfborg Campaign Engine plugin), and pick
+> **Authenticate**. A browser window opens; sign in to fal.ai (or create an account) and approve.
+> Come back here and it is connected.
+
+If they already connected fal to claude.ai as a connector, say in one line that the engine uses its
+own connection, so it needs this sign-in too; it is the same fal account and costs nothing extra.
 
 If they would rather not, that is a finished setup, not an abandoned one. Say so and carry on.
 
-(Only if the user says they are running this engine unpackaged rather than as a plugin: the fallback
-is a `FAL_KEY` env var in the gitignored `.claude/settings.local.json`. Mention it in one line if it
-comes up, and never read that file.)
-
 ## 6. Report where fal stands
 
-The real answer is whether the `mcp__fal-ai__*` tools are live in **this** session. A key set a moment
-ago does not take effect until `/reload-plugins` or a restart, which is why this command is worth
-re-running.
+The real answer is whether the `mcp__fal-ai__*` tools are live in **this** session. A sign-in
+through `/mcp` takes effect straight away; if the tools still are not there, re-running this command
+is the way to check again.
 
 - **Tools live:** say image and video generation are ready, and that renders cost real money per
   image (video considerably more, and it always asks first).

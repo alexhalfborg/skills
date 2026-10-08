@@ -156,11 +156,13 @@ to make a skill simpler:
 - The two human gates and the pre-render approval gate are unconditional — no `engine.yaml` value
   relaxes them, and no expander may bypass `generate-image` / `generate-video`, the only skills that
   touch fal.
-- Never fabricate a generated-media link, cost or log line. Without a fal key the render skills hand
-  back the prompt/model/settings and write nothing — a supported mode, not a degraded one.
-- The fal key is the plugin's `fal_key` userConfig, substituted into `.mcp.json` by the harness. No
-  skill reads it; test for rendering by checking for live `mcp__fal-ai__*` tools, not for a file.
-  Never instruct a user to paste a key into chat.
+- Never fabricate a generated-media link, cost or log line. With fal not connected the render skills
+  hand back the prompt/model/settings and write nothing — a supported mode, not a degraded one.
+- fal is the plugin's `fal-ai` server in `.mcp.json`, pointed at fal's OAuth relay
+  (`https://mcp.fal.ai/mcp-relay`). The user signs in once through `/mcp`; there is no API key, no
+  `userConfig` and no `Authorization` header (setting one disables OAuth). Test for rendering by
+  checking for live `mcp__fal-ai__*` tools, not for a file. Never ask a user for a key or credentials
+  in chat.
 - Media is versioned and never overwritten; candidate / locked / final / superseded is a *status in
   the generation log*, not a folder.
 

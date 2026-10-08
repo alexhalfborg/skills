@@ -63,7 +63,7 @@ Four stages, and you have a say at every one.
 tells you what it is about to make and what it will cost, and shows you exactly what is being sent.
 You can always take the prompt and run it yourself instead. No setting turns that off.
 
-**It works with no image-generation key at all.** Without one it hands you the finished prompt to run
+**It works without image generation connected at all.** Without it, it hands you the finished prompt to run
 wherever you like, and everything else is identical. That is a supported way to use it, not a
 crippled one.
 

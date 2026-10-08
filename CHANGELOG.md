@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.6.0
+
+**fal is now a sign-in, not a key.** The plugin's `fal-ai` server points at fal's own OAuth relay,
+`https://mcp.fal.ai/mcp-relay`, instead of `https://mcp.fal.ai/mcp` with a `Bearer` header. fal's
+relay takes no API key: the user runs `/mcp`, chooses **fal-ai** and signs in in the browser. The
+`fal_key` plugin setting is gone, and so is every instruction to paste a key into `/plugin`. The
+server keeps its name, so the tools are still `mcp__fal-ai__*` and no render logic changed.
+
+**Upgrading.** Run `/mcp` once and authenticate **fal-ai**. A key stored under the old setting is
+simply no longer used. A fal connector added to claude.ai is a separate connection; the engine uses
+its own and needs its own sign-in.
+
+- `.mcp.json`: relay URL, no `headers` (an `Authorization` header switches OAuth off).
+- `plugin.json`: `userConfig.fal_key` removed.
+- `setup-engine` step 5 now walks through the `/mcp` sign-in; the architecture invariant, the
+  integrations reference, `generate-image`, `generate-video`, both READMEs, the `engine.yaml`
+  template and the engine schema say "connect fal" where they said "set a key".
+
 ## 0.5.0
 
 **A brand's writing voice is now a folder, split by byline.** What was one

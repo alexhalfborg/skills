@@ -12,7 +12,7 @@ description: >-
   choice to render it here or by hand — then saves the
   returned image(s) to campaigns/<slug>/media/<deliverable-id>/ with a versioned grammar-compliant
   filename, logs the generation, and reports the local path, source URL, model, and cost. Works
-  without a FAL key too: when the fal MCP is not connected it renders nothing and hands back the
+  without fal connected too: when the fal MCP is not connected it renders nothing and hands back the
   prompt, model, and settings to run by hand at fal.ai. Do NOT use to WRITE or design a prompt
   (that is write-generation-prompt) or to generate video — this skill renders an existing
   prompt, it does not invent one.
@@ -24,7 +24,7 @@ Take an existing image prompt and produce an actual image file via the **fal.ai 
 This is the one place in the workspace that moves past a paste-ready prompt to a rendered asset,
 so it is deliberately literal: it does **not** rewrite, "improve", or invent the prompt (that is
 `write-generation-prompt`'s job) and it **never fabricates** an image URL or a local path. If the
-MCP cannot run, it renders nothing and hands the prompt back to run by hand (step 1) — no key is a
+MCP cannot run, it renders nothing and hands the prompt back to run by hand (step 1) — not connecting fal is a
 supported way to run this workspace.
 
 **It also never renders unasked.** Step 4 is an unconditional human gate: the prompt, model, settings
@@ -44,8 +44,8 @@ artifact. Whether it is "working" or "final" is a status in the generation log, 
 ## 1. Preconditions — is the MCP live?
 
 The fal MCP is a plugin-scoped streamable-HTTP server declared in the `halfborg-campaign` plugin's
-`.mcp.json` (`fal-ai` → `https://mcp.fal.ai/mcp`), authenticated with the plugin's `fal_key`
-setting. When connected it exposes:
+`.mcp.json` (`fal-ai` → `https://mcp.fal.ai/mcp-relay`, fal's OAuth relay), which the user signs in
+to once through `/mcp`. There is no key. When connected it exposes:
 
 - `mcp__fal-ai__search_models` — find models by keyword
 - `mcp__fal-ai__get_model_schema` — the exact input parameters for a model
@@ -54,7 +54,7 @@ setting. When connected it exposes:
 
 Before doing anything, confirm those `mcp__fal-ai__*` tools are actually available.
 
-**If they are not, stop rendering — but do not stop.** No key is a supported way to run this
+**If they are not, stop rendering — but do not stop.** Not connecting fal is a supported way to run this
 workspace, not a failure. Say that plainly: image generation is not connected here, so you will hand
 them the picture to make at fal.ai instead. Never call it an error and never apologise for it.
 
@@ -71,7 +71,7 @@ call you cannot make), then hand back a paste-ready block — the same shape as 
   and that the prompt already refers to them by those handles;
 - where to run it: <https://fal.ai/models>.
 
-Then, once and in a clause: `/halfborg-campaign:setup-engine` sets a key up if they would rather these
+Then, once and in a clause: signing in to fal with `/mcp` (or `/halfborg-campaign:setup-engine` for a walkthrough) is all it takes if they would rather these
 came out here next time.
 
 What does *not* change: **write no file, append no log line, and invent no URL, path, or cost.** An

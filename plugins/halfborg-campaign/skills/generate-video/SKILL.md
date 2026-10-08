@@ -13,7 +13,7 @@ description: >-
   prompt, settings and estimate first and offering the choice to render it here or by hand — saves the returned .mp4 to
   campaigns/<slug>/media/<deliverable-id>/ with a versioned filename, logs the generation, verifies it
   with ffprobe/ffmpeg (duration, resolution, a sample frame), and reports the local path, source URL,
-  model, and cost. Works without a FAL key too: when the fal MCP is not connected it renders nothing
+  model, and cost. Works without fal connected too: when the fal MCP is not connected it renders nothing
   and hands back the prompt, model, settings, and reference stills to run by hand at fal.ai. Do
   NOT use to
   WRITE or design the prompt (that is write-generation-prompt) or to generate a still image
@@ -64,8 +64,8 @@ still deliver the clip but say clearly that you could **not** check it — in th
 place ffmpeg is checked at all — nothing upstream checks it for you, so confirm it here, every time.
 
 **The fal MCP.** The fal MCP is a plugin-scoped streamable-HTTP server declared in the
-`halfborg-campaign` plugin's `.mcp.json` (`fal-ai` → `https://mcp.fal.ai/mcp`), authenticated with the plugin's `fal_key`
-setting. Video uses the **async job** tools, not a
+`halfborg-campaign` plugin's `.mcp.json` (`fal-ai` → `https://mcp.fal.ai/mcp-relay`, fal's OAuth
+relay), which the user signs in to once through `/mcp`. There is no key. Video uses the **async job** tools, not a
 single `run_model` call. When connected the server exposes:
 
 - `mcp__fal-ai__search_models` — find models by keyword / category
@@ -79,7 +79,7 @@ single `run_model` call. When connected the server exposes:
 
 Before doing anything, confirm those `mcp__fal-ai__*` tools are actually available.
 
-**If they are not, stop rendering — but do not stop.** No key is a supported way to run this
+**If they are not, stop rendering — but do not stop.** Not connecting fal is a supported way to run this
 workspace, not a failure. Say that plainly: video generation is not connected here, so you will hand
 them everything needed to make the clip at fal.ai instead. Never call it an error and never
 apologise for it.
@@ -98,7 +98,7 @@ receipt in step 5:
   and that the prompt already refers to them by those handles;
 - where to run it: <https://fal.ai/models>.
 
-Then, once and in a clause: `/halfborg-campaign:setup-engine` sets a key up if they would rather these
+Then, once and in a clause: signing in to fal with `/mcp` (or `/halfborg-campaign:setup-engine` for a walkthrough) is all it takes if they would rather these
 came out here next time.
 
 What does *not* change: **write no file, append no log line, and invent no URL, path, duration, or

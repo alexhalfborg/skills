@@ -96,19 +96,20 @@ finishing a campaign.
 | | Gives you | Without it |
 |---|---|---|
 | **ffmpeg** | checking a video after it is made | You still get the clip. It just says it could not open the file to check it. |
-| **a fal.ai key** | images and video made here | It hands you the finished prompt and settings to run yourself at fal.ai, and writes nothing. |
+| **a fal.ai account, signed in** | images and video made here | It hands you the finished prompt and settings to run yourself at fal.ai, and writes nothing. |
 
 ### Turning on image and video
 
-Open `/plugin`, go to the **Installed** tab and select **Halfborg Campaign Engine**. Claude Code will ask you
-for a fal.ai key — get one at [fal.ai/dashboard/keys](https://fal.ai/dashboard/keys). Then run
-`/reload-plugins`, or restart.
+Type `/mcp`, choose **fal-ai** (it sits under Halfborg Campaign Engine) and pick **Authenticate**. A
+browser window opens: sign in to [fal.ai](https://fal.ai), or make an account, and approve. That is
+it. There is no key to copy, and you should never paste a password or key into a conversation with
+anyone, including this one.
 
-The key goes into secure storage and is wired up for you. No part of the engine ever reads it, and
-you should never paste a key into a conversation with anyone, including this one.
+If you have already added fal to claude.ai, the engine still wants its own sign-in. Same account,
+nothing extra to pay.
 
-**Running without a key is a supported way to use this engine, not a lesser one.** What you get back
-offline is the same block you get when you choose "I'll make it myself" with a key set.
+**Running without fal connected is a supported way to use this engine, not a lesser one.** What you
+get back is the same block you get when you choose "I'll make it myself" with fal connected.
 
 ### A note on extras
 

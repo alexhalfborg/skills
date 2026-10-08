@@ -1,7 +1,7 @@
 {
   "name": "halfborg-campaign",
   "displayName": "Halfborg Campaign Engine",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A brand-agnostic, human-gated campaign engine for Claude Code. Turns a fuzzy marketing goal into a full set of campaign deliverables, reading everything brand-specific from a per-brand pack.",
   "author": {
     "name": "Alex",
@@ -18,13 +18,5 @@
     "paid-social",
     "image-generation",
     "content"
-  ],
-  "userConfig": {
-    "fal_key": {
-      "type": "string",
-      "title": "fal.ai API key",
-      "description": "Optional. Enables real image and video rendering via fal.ai. Without it the engine still runs end to end and hands back the prompt, model id and settings to render by hand at fal.ai. Get a key at https://fal.ai/dashboard/keys",
-      "sensitive": true
-    }
-  }
+  ]
 }
