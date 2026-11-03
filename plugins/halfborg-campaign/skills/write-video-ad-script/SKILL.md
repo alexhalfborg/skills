@@ -15,7 +15,8 @@ description: >-
   first-person voice. Do NOT
   use to invent a concept from scratch (use write-ad-creative first); to script a static
   or carousel concept (write-ad-creative for the copy, explore-visual-ideas for directions,
-  compose-lockup for the finished static); or to RENDER the clip (generate-video).
+  compose-lockup for the finished static); to RENDER the clip (generate-video); or to cut,
+  caption or add b-roll to a talking-head take someone has already filmed (edit-talking-head).
 ---
 
 # Video Ad Script

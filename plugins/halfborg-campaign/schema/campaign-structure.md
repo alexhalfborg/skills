@@ -96,10 +96,16 @@ log's `register` events are the sub-id registry.
   - `idea` — a `explore-visual-ideas` ideation variation
   - `ref` — an identity reference still (a `prepare-reference-kit` artifact) bound as a `#ImageN` reference
     and recorded in the consuming render's `refs` (section 4)
+  - `aroll` — recorded footage a person supplied (a talking-head take), copied in by
+    `edit-talking-head`. The `-v<NN>` counts takes: a re-record is `v02`
+  - `broll` — a cutaway laid over the A-roll: stock footage fetched by `edit-talking-head`, or a
+    clip `generate-video` rendered for that beat
+  - `edit` — the edit project folder `edit-talking-head` works in (section 3.1). A folder, not a
+    media file
 - **seq** — distinguishes siblings of the same role: letters for candidates (`A`, `B`, `C`),
-  numbers fused to the role for clips (`clip1`, `clip2`), two-digit numbers for ideas (`idea-01`),
-  and a short descriptive slug for setup frames (`setup-guilt-receipts`) and reference stills
-  (`ref-serum-bottle`).
+  numbers fused to the role for clips and cutaways (`clip1`, `clip2`, `broll3`), two-digit numbers
+  for ideas (`idea-01`), and a short descriptive slug for setup frames (`setup-guilt-receipts`) and
+  reference stills (`ref-serum-bottle`).
 - **ratio** — `1x1`, `9x16`, `16x9`… only when a deliverable ships multiple ratios.
 - **v\<NN\>** — mandatory on every media file. Two digits, starting `v01`. Increment when
   regenerating the **same logical artifact** (a re-roll, a fix, a re-lock). A different concept,
@@ -120,7 +126,32 @@ media/AD-R1-b/AD-R1-b-setup-guilt-receipts-v01.png
 media/AD-R1-b/AD-R1-b-ref-serum-bottle-v01.png
 media/AD-R1-b/AD-R1-b-clip2-v01.mp4
 media/banner-ad/banner-ad-idea-03-v01.png
+media/short-03/short-03-aroll-v01.mp4
+media/short-03/short-03-broll2-v01.mp4
+media/short-03/short-03-v02.mp4
 ```
+
+### 3.1 The edit project folder
+
+`edit-talking-head` assembles a short in a HyperFrames project folder beside the footage it cuts:
+`media/<id>/<id>-edit/`. The folder is a working space, not a media file, so the grammar above
+governs only the versioned files inside it that record an edit:
+
+```
+media/short-03/short-03-edit/
+  short-03-edit-v01.html          the edit: which parts of the take are kept, where each cutaway sits
+  short-03-edit-v02.html          a re-edit is a new file, never a rewrite of v01
+  compositions/
+    short-03-captions-v01.html    the captions for edit v01
+  transcript-aroll-v01.json       word timings for take v01
+  options/                        option thumbnails shown on the campaign page while picking cutaways
+```
+
+The rest of the folder (`hyperframes.json`, `package.json`, `compositions/components/`) is
+HyperFrames' own scaffolding. An edit file reaches the footage as `../<id>-aroll-v01.mp4`, so the
+take and the cutaways stay where every other media file lives and are never copied. The rendered
+short is not in the folder: it is `media/<id>/<id>-v<NN>.mp4`, and its version matches the edit file
+that produced it.
 
 ## 4. The generation log
 
@@ -139,7 +170,7 @@ and 5.
 
 | event | meaning | additional fields |
 |---|---|---|
-| `generate` | an artifact was created | `file` (campaign-root-relative, forward slashes — required), `status` (`candidate` or `iteration` — required), `role`, `parent` (pipeline id, for sub-ids), `prompt` (full text, newlines as `\n`) or `prompt_ref` (path#anchor of a prompt doc), `refs` (the reference images this render bound to — see below), `model`, `seed`, `source_url`, `cost_usd`, `notes` |
+| `generate` | an artifact was created | `file` (campaign-root-relative, forward slashes — required), `status` (`candidate` or `iteration` — required), `role`, `parent` (pipeline id, for sub-ids), `prompt` (full text, newlines as `\n`) or `prompt_ref` (path#anchor of a prompt doc), `refs` (the reference images this render bound to — see below), `model`, `seed`, `source_url`, `cost_usd`, `source`, `credit`, `notes` |
 | `register` | a pipeline sub-id now exists | `parent` (required), `title`, `format`, `channel`, `funnel_stage` |
 | `status` | promotion/demotion of an existing file | `file` (required), `status` ∈ `locked` / `final` / `superseded` / `rejected` (required), `reason` |
 | `note` | free-form annotation | `notes` (required), `file` optional |
@@ -164,6 +195,20 @@ handle field.
 A render that cites `#Image2` in its prompt and has no `refs` is a render nobody can reproduce, which
 is the whole reason the field exists.
 
+**`source` and `credit` — media nobody generated.** Not every file in `media/` came out of a model.
+A take the user recorded and a stock clip fetched from a library are logged with a `generate` event
+like anything else, so they appear on the campaign page and QA can trace them, but with no `model`
+and no `prompt`:
+
+- `source` names where the file came from: `user` for footage a person supplied, `pexels` for
+  Pexels stock. Absent means generated, which is every entry written before this field existed.
+- `credit` is the creator's name exactly as the library gave it (`"Jane Doe on Pexels"`). Required
+  whenever `source` is a stock library. Pexels does not demand attribution, but its API terms ask
+  for credit where possible, and a stock clip with no recorded creator is one nobody can credit
+  later.
+- `source_url` is the library's page for the clip, not the file link, so a person can open it and
+  check the licence. `cost_usd` is `0`.
+
 **Status model.** A file is born `candidate` (options awaiting a pick, ideation) or `iteration`
 (a working generation). Promotion is a `status` event: `locked` for anchors/reference inputs the
 campaign binds to, `final` for a shippable deliverable. Demotion: `superseded`, `rejected`. The
@@ -176,6 +221,7 @@ Example lines:
 ```json
 {"ts":"2026-07-08T16:26:00+08:00","event":"generate","skill":"generate-video","deliverable":"AD-R1-b","parent":"paid-funnel","role":"clip","file":"media/AD-R1-b/AD-R1-b-clip1-v01.mp4","prompt_ref":"content/AD-R1-b-scripts.md#segment-1","refs":["media/key-visual/key-visual-v02.png","brands/lumen/assets/serum-bottle.jpg"],"model":"bytedance/seedance-2.0/image-to-video","cost_usd":0.62,"status":"iteration"}
 {"ts":"2026-07-09T07:00:00+08:00","event":"status","skill":"write-message","deliverable":"key-visual","file":"media/key-visual/key-visual-v02.png","status":"locked","reason":"re-rolled full-bleed, removed inner-border artifact"}
+{"ts":"2026-11-04T10:12:00+08:00","event":"generate","skill":"edit-talking-head","deliverable":"short-03","role":"broll","file":"media/short-03/short-03-broll2-v01.mp4","source":"pexels","source_url":"https://www.pexels.com/video/1234567/","credit":"Jane Doe on Pexels","cost_usd":0,"status":"iteration","notes":"beat 2, over \"the dashboard you check every morning\""}
 ```
 
 **Skill names in old logs.** `skill` records the producing skill's name verbatim, and those names
@@ -233,6 +279,8 @@ One `.md` per deliverable:
 - Hook options: `content/<id>-hooks.md`, written by a direct `write-hook` run on deliverable `<id>`
   and logged against that same id. Not a deliverable of its own, so it never needs a manifest entry.
   Re-runs add a round below the last rather than replacing it.
+- Cut and cutaway plan: `content/<id>-broll-plan.md`, written by `edit-talking-head` at its
+  approval stop and logged against `<id>`. A re-edit adds a round below the last.
 - No brand-name prefixes — the campaign folder already scopes them.
 
 Text files are **not** filename-versioned; they are edited in place and git carries their history.

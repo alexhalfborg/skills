@@ -3,6 +3,14 @@
     "fal-ai": {
       "type": "http",
       "url": "https://mcp.fal.ai/mcp-relay"
+    },
+    "pexels": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@hanoak/pexels-mcp-server@1.0.2"],
+      "env": {
+        "PEXELS_API_KEY": "${user_config.pexels_key}"
+      }
     }
   }
 }

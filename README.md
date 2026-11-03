@@ -53,8 +53,9 @@ Four stages, and you have a say at every one.
    pictures it could hang on. You pick the line and the picture. Again, nothing is locked until you
    do.
 3. **Making things.** Ads, landing pages, emails, blog posts in your own voice, customer stories,
-   video scripts and the clips themselves. Everything builds on the picture you chose, so it all
-   looks like one campaign.
+   video scripts and the clips themselves. It also edits the talking-head videos you film yourself
+   into finished shorts, with b-roll and captions. Everything builds on the picture you chose, so it
+   all looks like one campaign.
 4. **The check.** It goes back over the lot against your brand rules — the claims you are allowed to
    make, the things you never say, the small print that has to appear — and tells you what needs
    fixing. It reports; it does not quietly edit.

@@ -16,8 +16,10 @@ description: >-
   model, and cost. Works without fal connected too: when the fal MCP is not connected it renders nothing
   and hands back the prompt, model, settings, and reference stills to run by hand at fal.ai. Do
   NOT use to
-  WRITE or design the prompt (that is write-generation-prompt) or to generate a still image
-  (that is generate-image) — this skill renders an existing video prompt, it does not invent one.
+  WRITE or design the prompt (that is write-generation-prompt), to generate a still image
+  (that is generate-image), or to cut, caption or add b-roll to footage someone recorded (that is
+  edit-talking-head, which calls this skill only for a generated cutaway) — this skill renders an
+  existing video prompt, it does not invent one.
 ---
 
 # generate-video — render a video prompt into a real clip
@@ -303,8 +305,10 @@ deliverable on its own.
   `campaigns/<slug>/`), save to **`campaigns/<slug>/media/<deliverable-id>/`** where the deliverable
   id is a registered ad/sub-id or manifest id (per the structure spec). Name the file by the grammar:
   a clip of a multi-clip ad is `<deliverable-id>-clip<N>-v<NN>.mp4` (e.g. `AD-R1-b-clip2-v01.mp4`);
-  a single-video deliverable is `<deliverable-id>-v<NN>.mp4`. **Never overwrite** — a re-render of
-  the same clip takes the next `v<NN>`.
+  a single-video deliverable is `<deliverable-id>-v<NN>.mp4`; a cutaway made for a talking-head
+  edit is `<deliverable-id>-broll<N>-v<NN>.mp4` with role `broll`, where `edit-talking-head` gives
+  you the beat number `<N>`. **Never overwrite** — a re-render of the same clip takes the next
+  `v<NN>`.
 - Otherwise (not campaign work), ask the user for a destination folder before downloading. Do not dump
   files at the repo root.
 

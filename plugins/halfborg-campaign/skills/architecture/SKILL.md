@@ -94,9 +94,12 @@ The manifest distinguishes these, and picking the right one matters.
 - **Asset entries** (`kind: asset`): one entry, one artifact, one expander. Used for standalone
   deliverables via the voice skills `write-personal-post` / `write-customer-story` (blog copy) and
   `write-email` (emails and newsletters), plus `build-landing-page` (a self-contained HTML page,
-  written into `media/<id>/`), `explore-visual-ideas` (rough visual idea variations for a deliverable), and
+  written into `media/<id>/`), `explore-visual-ideas` (rough visual idea variations for a deliverable),
   `compose-lockup` (production typographic lockup: headline set onto the clean key visual for a
-  static/banner/poster). Written deliverables name the concrete voice skill in the manifest `skill:`
+  static/banner/poster), and `edit-talking-head` (a recorded talking-head take cut into a finished
+  vertical short: pauses out, stock cutaways in, captions burned on, rendered locally with
+  HyperFrames). A running series of shorts lives in one long-running campaign, one asset entry per
+  short. Written deliverables name the concrete voice skill in the manifest `skill:`
   field; `content-writer` is the agent that routes such a request to the right voice skill.
 - **Pipeline entries** (`kind: pipeline`): one entry a multi-step pipeline fans out into many
   artifacts. Paid-social ads is the case: `pipeline: ads` runs `write-ad-creative` (campaign mode), then
@@ -126,7 +129,8 @@ agents/                       six specialists the main thread dispatches: strate
                               content-writer, paid-creative, analyst, qa
 schema/                       the contracts (below), plus preflight.md
 templates/                    seeds copied into a workspace: engine.yaml, claude-md-block.md, design.md
-.mcp.json                     the fal-ai server: fal's OAuth relay, signed in to through /mcp
+.mcp.json                     the fal-ai server (fal's OAuth relay, signed in to through /mcp) and
+                              the pexels stock-footage server (pexels_key setting)
 ```
 
 An agent is a context of its own, not a fifth kind of skill: it either spans several skills and
@@ -253,10 +257,14 @@ the phase that writes it and the phases that read it.
 - **fal is a sign-in, not a key.** The plugin's `.mcp.json` declares one server, `fal-ai`, pointed at
   fal's OAuth relay (`https://mcp.fal.ai/mcp-relay`). The user connects it once by running `/mcp`,
   choosing the `fal-ai` server and signing in to fal in the browser; Claude Code keeps the token. There
-  is no API key anywhere in the engine, so no skill asks for one, reads one or stores one. To test
+  is no fal key anywhere in the engine, so no skill asks for one, reads one or stores one. To test
   whether rendering is available, check for live `mcp__fal-ai__*` tools, not for a file. Secrets never
   go in `engine.yaml`, a brand pack, a campaign, or the conversation. Never ask the user for a key or
   credentials in chat; point them at `/mcp` or at `/halfborg-campaign:setup-engine`.
+- **Pexels is the one key, and it is a plugin setting.** Pexels has no sign-in, so its key is the
+  plugin's `pexels_key` user config, stored in secure storage and substituted into the `pexels`
+  server's environment by the harness. No skill reads it. Test for a live `pexels_search_videos`, not
+  for a key, and point the user at `/plugin` → **Installed** → **Halfborg Campaign Engine**.
 - Not connecting fal is a supported way to run this workspace, not a degraded one. `generate-image` and
   `generate-video` render when the fal MCP is live and otherwise hand back the prompt, model id, and
   settings to run by hand at fal.ai — writing no file, no log line, and no invented URL or cost.
@@ -287,9 +295,10 @@ is the contract, and every skill defers to it.
 
 ## Local tooling and external skills
 
-See `references/integrations.md` beside this file for what ffmpeg and the fal MCP each unlock, and
-exactly how the engine behaves when either is absent. The short version: both are optional and
-neither blocks a phase.
+See `references/integrations.md` beside this file for what ffmpeg, Node with HyperFrames, the fal
+MCP and the Pexels MCP each unlock, and exactly how the engine behaves when any is absent. The short
+version: all are optional and none blocks a phase. `edit-talking-head` needs ffmpeg to cut at all
+and HyperFrames to render, and hands back a cut list when it cannot render.
 
 Generation prompts are written by `write-generation-prompt`, bundled here (one skill, an image
 track for Nano Banana and a video track for Veo / Gemini Omni etc.). Image prompts call it directly;

@@ -4,11 +4,11 @@ description: >-
   Paid-social and creative specialist. Use to create paid-ad concepts for
   Facebook, Instagram and TikTok (Reach/Trust/Sell funnel concepts on the four-function
   anatomy) and to turn locked concepts into ready-to-paste image and video generation
-  prompts. Trigger on "create/plan/draft ad
-  concepts", "make ad creative", "UGC video", "carousel/static ad", or "image/video prompt
-  for [product]". Do NOT use for blog/email/organic copy (use content-writer),
-  research, or analytics.
-tools: Read, Write, Edit, Glob, Grep, Skill, Bash, mcp__fal-ai__search_models, mcp__fal-ai__get_model_schema, mcp__fal-ai__run_model, mcp__fal-ai__get_pricing, mcp__fal-ai__upload_file, mcp__fal-ai__submit_job, mcp__fal-ai__check_job, mcp__fal-ai__get_job_result, mcp__fal-ai__cancel_job
+  prompts, and to edit a recorded talking-head ad into a finished vertical video. Trigger on
+  "create/plan/draft ad concepts", "make ad creative", "UGC video", "carousel/static ad",
+  "image/video prompt for [product]", or "edit this talking-head ad". Do NOT use for
+  blog/email/organic copy or organic shorts (use content-writer), research, or analytics.
+tools: Read, Write, Edit, Glob, Grep, Skill, Bash, mcp__fal-ai__search_models, mcp__fal-ai__get_model_schema, mcp__fal-ai__run_model, mcp__fal-ai__get_pricing, mcp__fal-ai__upload_file, mcp__fal-ai__submit_job, mcp__fal-ai__check_job, mcp__fal-ai__get_job_result, mcp__fal-ai__cancel_job, mcp__pexels__pexels_search_videos, mcp__pexels__pexels_get_video
 model: inherit
 color: orange
 ---
@@ -66,6 +66,11 @@ and the generation prompts that brief their visuals.
    video is submitted: that is `prepare-reference-kit`'s job, and it reuses the locked still and real product
    photos wherever it can rather than generating. Only the `image-to-video` override needs a real
    start frame, and there it needs exactly one.
+
+5. **Edit a recorded talking-head ad.** When the presenter has filmed themselves and the task is
+   to cut it into a finished vertical ad, invoke `edit-talking-head`. Its cutaways follow the
+   paid-media rule: no recognisable person in stock footage. A generated cutaway still goes through
+   `generate-video` and its cost question.
 
 ## Where your output goes (per `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md`)
 - Concepts → `campaigns/<slug>/content/<pipeline-id>-concepts.md`; scripts and their video prompts →

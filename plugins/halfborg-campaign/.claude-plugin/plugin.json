@@ -1,7 +1,7 @@
 {
   "name": "halfborg-campaign",
   "displayName": "Halfborg Campaign Engine",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "A brand-agnostic, human-gated campaign engine for Claude Code. Turns a fuzzy marketing goal into a full set of campaign deliverables, reading everything brand-specific from a per-brand pack.",
   "author": {
     "name": "Alex",
@@ -17,6 +17,15 @@
     "copywriting",
     "paid-social",
     "image-generation",
+    "video-editing",
     "content"
-  ]
+  ],
+  "userConfig": {
+    "pexels_key": {
+      "type": "string",
+      "title": "Pexels API key",
+      "description": "Optional. Lets the engine search free Pexels stock footage for b-roll when it edits a talking-head short. Without it the engine still plans the cutaways and gives you search links to pick clips yourself. Free key at https://www.pexels.com/api/",
+      "sensitive": true
+    }
+  }
 }

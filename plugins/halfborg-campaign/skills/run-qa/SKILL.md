@@ -34,7 +34,7 @@ QA **proposes** fixes; it does not apply them. Remedying a finding is the produc
 
 Where the neighbours sit:
 
-- The **expander skills feed QA; they never invoke it.** `generate-image`, `generate-video`,
+- The **expander skills feed QA; they never invoke it.** `generate-image`, `generate-video`, `edit-talking-head`,
   `build-landing-page`, `write-personal-post`, `write-customer-story`, `write-email`, `write-video-ad-script`,
   `explore-visual-ideas`, `compose-lockup` and `write-ad-creative` each self-check inline, leave `⚠️ CLAIM CHECK` /
   `⚠️ POLICY CHECK` flags, and (build-landing-page) write a provenance header, then forward-point to this
@@ -108,7 +108,9 @@ Work the matrix in [references/qa-checklist.md](references/qa-checklist.md). In 
 - **Family 1 — Structure & completeness.** Manifest ids and registered pipeline sub-ids that have no
   artifact; media on disk with no `generate` line; ghost ids (a log `deliverable` that is not a
   manifest id, `key-visual`, or a registered sub-id); filename-grammar violations; nothing yet
-  promoted to `final`. Agree with the site builder's Overview roll-up; if you disagree, re-read the log.
+  promoted to `final`; a stock cutaway (`"source":"pexels"`) logged without `credit` or
+  `source_url` (FAIL: nobody can credit or licence-check it later). Agree with the site builder's
+  Overview roll-up; if you disagree, re-read the log.
 - **Family 2 — Copy & claims.** Over `content/*.md`, build-landing-page HTML and ad copy: every product
   claim within that product's `claims_allowed`; `mandatories` honoured and `nogos` absent; register
   vs `voice.summary`; spelling vs `voice.spelling`; no fabricated stat/quote/customer/URL. Read the
@@ -125,7 +127,11 @@ Work the matrix in [references/qa-checklist.md](references/qa-checklist.md). In 
   sample frames to the **scratchpad** and `Read` them (right subject, on-brand, not black/garbled).
   Two traps: do not spelling-check `explore-visual-ideas` `idea` outputs (approximate in-image text by design),
   and if `ffmpeg`/`ffprobe` is absent, mark the clip **"unverified" (WARN)** rather than claim a check
-  you did not run.
+  you did not run. For a talking-head short (`edit-talking-head`), also sample a frame inside each
+  `broll` cutaway's beat: a **recognisable person in stock footage on a paid deliverable** is a FAIL
+  (the Pexels licence forbids implied endorsement and model releases are not guaranteed), and on an
+  organic one it is a WARN only when the words under it make a claim. Spell-check the burned-in
+  captions against the pack's brand and product names.
 - **Family 4 — Message drift.** Every deliverable ladders up to the one key message; taglines are the
   chosen one (or a declared `tagline_variant`); the subject reads the same across assets; no two
   deliverables make incompatible promises; nothing contradicts the brief.

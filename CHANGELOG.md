@@ -1,5 +1,47 @@
 # Changelog
 
+## 0.8.0
+
+**New skill: `edit-talking-head`.** Hand it a vertical talking-head take filmed on a phone and it
+turns the take into a short that is ready to post:
+
+- the pauses, ums and false starts are cut out
+- stock b-roll is placed over the jump cuts and the concrete moments
+- captions in the brand's typeface and accent colour light up word by word
+- the 1080×1920 MP4 is rendered locally
+
+It stops once, before anything is downloaded or rendered, to show the cut and every cutaway
+(thumbnails on the campaign page). The hook, the turn and the call to action stay on the speaker's
+face.
+
+- **Free and local.** It transcribes on the user's own machine (Parakeet, a one-time download it
+  asks about first) and renders with HeyGen's open-source HyperFrames, pinned to `0.9.6` and
+  fetched by `npx`. Nothing is billed. HyperFrames' own paid cloud services are never used.
+- **Stock from Pexels**, through a new optional `pexels_key` setting (the engine's only key, since fal is now a sign-in) and a `pexels` MCP server
+  (`@hanoak/pexels-mcp-server@1.0.2`). Without a key, each cutaway comes with a search link to pick
+  by hand. A stock clip is never used without its creator on record. Paid shorts never use stock
+  footage of a recognisable person.
+- **AI-generated cutaways** are offered only where stock cannot show the idea. They go through
+  `generate-video` and its cost question, as before.
+- **Without Node** it plans and fetches as normal, then hands back the cut list and the clips to
+  assemble in any editor.
+
+**The campaign record learns about media nobody generated.**
+
+- New filename roles: `aroll` (a recorded take), `broll` (a cutaway) and `edit` (the HyperFrames
+  project folder, which is a working folder and not a media file).
+- Two optional log fields: `source` (`user`, `pexels`) and `credit`.
+- `run-qa` now fails a stock clip logged without a creator or link, fails a recognisable stock face
+  on a paid short, and checks brand names in burned-in captions.
+- `build-site` shows the stock creator where a model name would go.
+
+`content-writer` and `paid-creative` can both call the new skill. `content-writer` gains `Bash` to
+do so.
+
+No upgrade steps. To use stock b-roll, add a free Pexels key under `/plugin` → **Installed** →
+**Halfborg Campaign Engine**. Until one is set, `/mcp` lists the stock-footage server as failed;
+nothing else is affected.
+
 ## 0.7.0
 
 **New skill: `write-hook`.** Hand it any organic piece and it suggests up to five ranked hooks for
