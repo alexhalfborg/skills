@@ -10,9 +10,12 @@ description: >-
   brands/<id>/pack.yaml (mandatories, nogos, products[].claims_allowed, voice), brands/<id>/design.md
   (typeface, colour hexes), campaigns/<slug>/docs/message.md (key message, tagline, master_visual
   constants and locked_still), docs/brief.md, system/manifest.yaml and system/generation-log.jsonl,
-  plus content/*.md and every file under media/<id>/. Checks four families — structure & completeness,
-  copy & claims, VISUAL compliance (reads each PNG against design tokens + master_visual constants;
-  ffprobe + an extracted frame for video; no paid fal calls), and message drift — reconciles the
+  plus content/*.md and every file under media/<id>/, and schema/social-platforms.md for any social
+  post. Checks four families — structure & completeness,
+  copy & claims (including a social post's caption, hashtag and @mention limits and the pack's
+  social.hashtags.never), VISUAL compliance (reads each PNG against design tokens + master_visual
+  constants; a social post's JPEGs against the platform's shape, format and size; ffprobe + an
+  extracted frame for video; no paid fal calls), and message drift — reconciles the
   inline CLAIM CHECK / POLICY CHECK flags the expanders leave, and writes a per-artifact PASS/WARN/FAIL
   report with a concrete proposed fix per finding, then rebuilds the site. Runs full-campaign by
   default or scoped to one deliverable. Do NOT use to PRODUCE or fix artifacts (the expander skills do
@@ -35,7 +38,7 @@ QA **proposes** fixes; it does not apply them. Remedying a finding is the produc
 Where the neighbours sit:
 
 - The **expander skills feed QA; they never invoke it.** `generate-image`, `generate-video`, `edit-talking-head`,
-  `build-landing-page`, `write-personal-post`, `write-customer-story`, `write-email`, `write-video-ad-script`,
+  `build-landing-page`, `write-personal-post`, `write-customer-story`, `write-email`, `write-instagram-post`, `write-threads-post`, `write-video-ad-script`,
   `explore-visual-ideas`, `compose-lockup` and `write-ad-creative` each self-check inline, leave `⚠️ CLAIM CHECK` /
   `⚠️ POLICY CHECK` flags, and (build-landing-page) write a provenance header, then forward-point to this
   skill. QA is invoked as the phase-4 step or on demand — **never called by a producer.** This is the
@@ -44,6 +47,10 @@ Where the neighbours sit:
   against. Read-only here.
 - `build-site` renders the report: writing `docs/qa-report.md` and rebuilding is the whole
   integration. QA triggers the build; it does not write `site/` itself.
+- `publish-social` reads the report before it posts: any FAIL on a social post blocks that post from
+  going out, and a post the report does not cover is flagged as unchecked at its gate. So a social
+  post's findings must name its `content/<id>.md` or its picture paths, exactly, for the block to
+  find them. QA still never posts and never calls publishing.
 - `qa` is the agent that runs this pass in a context of its own. It invokes this skill and follows
   it exactly; it carries no second rubric and changes nothing here. What it adds is separation: no
   image generation in its tool set, so the pass cannot spend, and a read of the finished artifacts
@@ -116,6 +123,12 @@ Work the matrix in [references/qa-checklist.md](references/qa-checklist.md). In 
   vs `voice.summary`; spelling vs `voice.spelling`; no fabricated stat/quote/customer/URL. Read the
   landing page's provenance header rather than parsing claims out of markup. **Reconcile** every
   inline `⚠️ CLAIM CHECK` / `⚠️ POLICY CHECK` — clear it or escalate it, never duplicate or drop it.
+  For a **social post** (a `content/<id>.md` with a `platform:` in its frontmatter), also run the
+  platform rows against `${CLAUDE_PLUGIN_ROOT}/schema/social-platforms.md`: the fenced caption's
+  length (characters on Instagram, UTF-8 bytes on Threads), hashtag, link and @mention counts measured
+  with a tool; on Instagram no `social.hashtags.never` tag and every `always` tag present; on Threads
+  no `#word` in the text and at most one valid `topic_tag`, not a `never` tag; no unfilled placeholder
+  inside the caption, and alt text on every picture.
 - **Family 3 — Visual compliance** (no paid fal calls; all local reads). `Read` each shippable PNG.
   Judge the **photo** against `master_visual` (subject, palette description, lighting, composition,
   `constants`) and the **applied layers** (lockup headline, graphics, page chrome) against `design.md`
@@ -131,7 +144,10 @@ Work the matrix in [references/qa-checklist.md](references/qa-checklist.md). In 
   `broll` cutaway's beat: a **recognisable person in stock footage on a paid deliverable** is a FAIL
   (neither stock licence allows implied endorsement and model releases are not guaranteed), and on an
   organic one it is a WARN only when the words under it make a claim. Spell-check the burned-in
-  captions against the pack's brand and product names.
+  captions against the pack's brand and product names. For a **social post**, check each picture its
+  frontmatter lists, as posted: it exists, it is the platform's format (JPEG for Instagram), within
+  the size and width limits, inside the feed aspect range, and every carousel slide shares one shape
+  (`ffprobe`, per `social-platforms.md`). Then `Read` each one as you would any shippable static.
 - **Family 4 — Message drift.** Every deliverable ladders up to the one key message; taglines are the
   chosen one (or a declared `tagline_variant`); the subject reads the same across assets; no two
   deliverables make incompatible promises; nothing contradicts the brief.

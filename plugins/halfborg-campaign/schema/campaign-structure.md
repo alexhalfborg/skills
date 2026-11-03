@@ -102,14 +102,21 @@ log's `register` events are the sub-id registry.
     clip `generate-video` rendered for that beat
   - `edit` — the edit project folder `edit-talking-head` works in (section 3.1). A folder, not a
     media file
+  - `slide` — one picture of a carousel social post, in posting order. A single-image post has no
+    role token: its one picture is the deliverable's primary artifact
 - **seq** — distinguishes siblings of the same role: letters for candidates (`A`, `B`, `C`),
-  numbers fused to the role for clips and cutaways (`clip1`, `clip2`, `broll3`), two-digit numbers
+  numbers fused to the role for clips, cutaways and slides (`clip1`, `clip2`, `broll3`, `slide2`), two-digit numbers
   for ideas (`idea-01`), and a short descriptive slug for setup frames (`setup-guilt-receipts`) and
   reference stills (`ref-serum-bottle`).
-- **ratio** — `1x1`, `9x16`, `16x9`… only when a deliverable ships multiple ratios.
+- **ratio** — `1x1`, `4x5`, `9x16`, `16x9`… only when a deliverable ships multiple ratios.
 - **v\<NN\>** — mandatory on every media file. Two digits, starting `v01`. Increment when
   regenerating the **same logical artifact** (a re-roll, a fix, a re-lock). A different concept,
   angle, or clip is a new role/seq at `v01`, not a version bump.
+- **ext** — the file's real format. A **format derivative** of an existing file (a JPEG made from a
+  PNG render, because a platform accepts only JPEG) keeps the source's stem and version and changes
+  only the extension: `post-v02.png` → `post-v02.jpg`. It is a new file, never a replacement, and is
+  logged with `"source":"derived"` (section 4). A changed picture is a new version of the render,
+  never a re-made derivative.
 
 **Never overwrite, never delete.** A new generation is always a new file; supersession is recorded
 in the log (section 4), not by removing files. This is what lets a marketing manager and art
@@ -129,6 +136,9 @@ media/banner-ad/banner-ad-idea-03-v01.png
 media/short-03/short-03-aroll-v01.mp4
 media/short-03/short-03-broll2-v01.mp4
 media/short-03/short-03-v02.mp4
+media/ig-launch/ig-launch-slide1-v01.png
+media/ig-launch/ig-launch-slide1-v01.jpg
+media/ig-launch/ig-launch-slide2-v02.png
 ```
 
 ### 3.1 The edit project folder
@@ -173,6 +183,7 @@ and 5.
 | `generate` | an artifact was created | `file` (campaign-root-relative, forward slashes — required), `status` (`candidate` or `iteration` — required), `role`, `parent` (pipeline id, for sub-ids), `prompt` (full text, newlines as `\n`) or `prompt_ref` (path#anchor of a prompt doc), `refs` (the reference images this render bound to — see below), `model`, `seed`, `source_url`, `cost_usd`, `source`, `credit`, `notes` |
 | `register` | a pipeline sub-id now exists | `parent` (required), `title`, `format`, `channel`, `funnel_stage` |
 | `status` | promotion/demotion of an existing file | `file` (required), `status` ∈ `locked` / `final` / `superseded` / `rejected` (required), `reason` |
+| `publish` | a post went live on a platform | `platform` (`instagram`, `threads` — required), `account` (the handle it went out on, as the platform returned it — required), `files` (the posted pictures, in posting order, `[]` for a text-only post — required), `post_id` and `permalink` (exactly as the platform returned them — required), `caption_ref` (the `content/<id>.md` the caption came from — required), `ai_label` (whether the AI-info label was applied), `notes` |
 | `note` | free-form annotation | `notes` (required), `file` optional |
 
 Entries reconstructed after the fact (migrations) add `"backfilled": true`.
@@ -200,9 +211,11 @@ A take the user recorded and a stock clip fetched from a library are logged with
 like anything else, so they appear on the campaign page and QA can trace them, but with no `model`
 and no `prompt`:
 
-- `source` names where the file came from: `user` for footage a person supplied, or the stock
-  library it came from, `pexels` or `pixabay`. Absent means generated, which is every entry written
-  before this field existed.
+- `source` names where the file came from: `user` for footage a person supplied, the stock
+  library it came from, `pexels` or `pixabay`, or `derived` for a format derivative (section 3)
+  made from another file in the campaign, which is named in `refs[0]`. Absent means generated, which
+  is every entry written before this field existed. A `derived` entry has no `credit`, and
+  `cost_usd` is `0`.
 - `credit` is the creator's name exactly as the library gave it, followed by the library
   (`"Jane Doe on Pexels"`, `"Sam Lee on Pixabay"`). Required whenever `source` is a stock library.
   Neither library demands attribution, but Pexels' API terms ask for credit where possible, and a
@@ -217,12 +230,22 @@ current status of a file is its most recent log event; a new `locked` event for 
 implicitly supersedes the previous lock. **No `latest`/`final` file copies** — pointers in docs
 (e.g. `message.md` `master_visual.locked_still`) name the exact versioned path.
 
+**A published post.** Publishing is recorded twice, because it is two facts: one `publish` event for
+the post (where it went and the link to it), then one `status` → `final` line per posted file, so the
+file's own status says it shipped. `post_id` and `permalink` are what the platform returned, never
+composed from a pattern; a post whose link did not come back is logged with the `post_id` alone and
+says so in `notes`. A post taken down afterwards is not un-logged: each of its files gets a `status`
+→ `superseded` line whose `reason` says it was removed from the platform and by whom.
+
 Example lines:
 
 ```json
 {"ts":"2026-07-08T16:26:00+08:00","event":"generate","skill":"generate-video","deliverable":"AD-R1-b","parent":"paid-funnel","role":"clip","file":"media/AD-R1-b/AD-R1-b-clip1-v01.mp4","prompt_ref":"content/AD-R1-b-scripts.md#segment-1","refs":["media/key-visual/key-visual-v02.png","brands/lumen/assets/serum-bottle.jpg"],"model":"bytedance/seedance-2.0/image-to-video","cost_usd":0.62,"status":"iteration"}
 {"ts":"2026-07-09T07:00:00+08:00","event":"status","skill":"write-message","deliverable":"key-visual","file":"media/key-visual/key-visual-v02.png","status":"locked","reason":"re-rolled full-bleed, removed inner-border artifact"}
 {"ts":"2026-11-04T10:12:00+08:00","event":"generate","skill":"edit-talking-head","deliverable":"short-03","role":"broll","file":"media/short-03/short-03-broll2-v01.mp4","source":"pexels","source_url":"https://www.pexels.com/video/1234567/","credit":"Jane Doe on Pexels","cost_usd":0,"status":"iteration","notes":"beat 2, over \"the dashboard you check every morning\""}
+{"ts":"2026-11-12T09:40:00+08:00","event":"generate","skill":"write-instagram-post","deliverable":"ig-launch","role":"slide","file":"media/ig-launch/ig-launch-slide1-v01.jpg","source":"derived","refs":["media/ig-launch/ig-launch-slide1-v01.png"],"cost_usd":0,"status":"iteration","notes":"publish-ready JPEG, 1080x1350"}
+{"ts":"2026-11-12T10:05:00+08:00","event":"publish","skill":"publish-social","deliverable":"ig-launch","platform":"instagram","account":"acmeskin","files":["media/ig-launch/ig-launch-slide1-v01.jpg","media/ig-launch/ig-launch-slide2-v02.jpg"],"post_id":"17890000000000000","permalink":"https://www.instagram.com/p/AbC123xYz/","caption_ref":"content/ig-launch.md","ai_label":true}
+{"ts":"2026-11-12T10:05:01+08:00","event":"status","skill":"publish-social","deliverable":"ig-launch","file":"media/ig-launch/ig-launch-slide1-v01.jpg","status":"final","reason":"published to Instagram"}
 ```
 
 **Skill names in old logs.** `skill` records the producing skill's name verbatim, and those names
@@ -282,6 +305,13 @@ One `.md` per deliverable:
   Re-runs add a round below the last rather than replacing it.
 - Cut and cutaway plan: `content/<id>-broll-plan.md`, written by `edit-talking-head` at its
   approval stop and logged against `<id>`. A re-edit adds a round below the last.
+- Social posts: `content/<id>.md` like any asset entry, but with YAML frontmatter that
+  `publish-social` reads without the conversation that wrote it (the platform, the format, the
+  pictures in posting order with their alt text) and the caption in a fenced block under
+  `## Caption`, exactly as it will be posted. The fence is load-bearing: a caption line opening on a
+  hashtag would otherwise render as a heading. The shape is owned by `write-instagram-post` (and its
+  `write-threads-post`, and later siblings for other platforms); the limits it is drafted to are
+  `${CLAUDE_PLUGIN_ROOT}/schema/social-platforms.md`.
 - No brand-name prefixes — the campaign folder already scopes them.
 
 Text files are **not** filename-versioned; they are edited in place and git carries their history.

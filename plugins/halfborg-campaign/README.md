@@ -99,6 +99,7 @@ finishing a campaign.
 | **a fal.ai account, signed in** | images and video made here | It hands you the finished prompt and settings to run yourself at fal.ai, and writes nothing. |
 | **Node.js 22 or newer** | your talking-head shorts edited and rendered on your own computer | It still plans the cuts and finds the b-roll, then gives you the list to put together in CapCut or any editor. |
 | **a Pixabay key** (free) | stock b-roll found and downloaded for your shorts | It plans where the b-roll goes and gives you search links to pick the clips yourself. |
+| **an Instagram or Threads token** (free, renewed every 60 days) | finished Instagram and Threads posts put live for you, after you say yes to each one | It writes the post and makes the pictures, then gives you the text and pictures in order to post from the app. |
 
 ### Editing talking-head shorts
 
@@ -120,6 +121,39 @@ secure storage, never into a conversation.
 
 If you already have a Pexels key, you can enter it in the same place and it searches both. Pexels
 is not giving out new keys at the moment, so you don't need one.
+
+### Instagram posts
+
+Ask for an Instagram post and it writes the caption in your voice, plans the slides for a carousel,
+makes the pictures at the shape Instagram shows best (portrait, 4:5), writes the description every
+picture needs for people who cannot see it, and keeps it all inside Instagram's limits. Any picture it
+has to make stops and shows you the price first, like any other.
+
+It can also post it for you. Before every single post it stops and shows you exactly what goes out:
+the caption word for word, the pictures in order, and the account. Nothing goes live until you say
+yes to that post, and saying yes to one never covers the next. It only ever posts to the account you
+gave as your brand's handle, and it will not post something the final check flagged as needing a fix.
+
+To turn posting on you need a professional Instagram account (Business or Creator, free to switch)
+linked to a Facebook Page, and a token from Meta's developer site. Run
+`/halfborg-campaign:setup-engine` and it walks you through getting one; it takes about twenty
+minutes, once. The token goes under `/plugin` → **Installed** → **Halfborg Campaign Engine**, never
+into a conversation, and it needs renewing every 60 days (the engine tells you when). Posting also
+needs fal signed in (below), because Instagram collects each picture from a web address fal provides.
+That part costs nothing.
+
+Without a token, you get the finished post ready to put up from the Instagram app yourself.
+
+### Threads posts
+
+Threads works the same way. Ask for a Threads post and it writes it to Threads' own rules: shorter,
+more like talking, with links that work and a single topic tag instead of a line of hashtags. It can
+be text on its own, one picture, or a run of pictures, and it can reuse the pictures it made for
+your Instagram post. Posting it live is a separate yes, even when you have just said yes to the
+Instagram one.
+
+Threads needs its own token, from the same Meta developer app; `/halfborg-campaign:setup-engine` walks
+you through that too. A Threads post with no pictures does not need fal at all.
 
 ### Turning on image and video
 
@@ -148,9 +182,10 @@ it will tell you what is missing rather than invent a number.
 **Skills** — the four phases are `write-brief`, `write-message` and `run-qa`, with expansion handled
 by `write-ad-creative`, `write-video-ad-script`, `prepare-reference-kit`, `compose-lockup`,
 `explore-visual-ideas`, `analyse-competitor-ads`, `build-landing-page`, `write-personal-post`,
-`write-customer-story`, `write-email`, `write-generation-prompt`, `generate-image`,
+`write-customer-story`, `write-email`, `write-instagram-post`, `write-threads-post`, `write-generation-prompt`, `generate-image`,
 `generate-video` and `edit-talking-head`. `write-hook` suggests the headline, subject line or video title that gets a piece
-noticed, and works on anything you hand it. `build-site` keeps the campaign page current, and
+noticed, and works on anything you hand it. `publish-social` puts a finished post live, one yes at
+a time. `build-site` keeps the campaign page current, and
 `architecture` is the reference describing how the whole thing fits together.
 
 **Agents** — `strategist`, `researcher`, `content-writer`, `paid-creative`, `analyst`, `qa`.

@@ -62,11 +62,11 @@ entirely**, not shown empty:
 
 | Section | Built from |
 |---|---|
-| **Overview** | the deliverables table (manifest ids + registered pipeline sub-ids, each with its latest status from the log, artifact counts, the logged cost sum) and the collected `⚠️ CLAIM CHECK` strip, at the top of this section |
+| **Overview** | the deliverables table (manifest ids + registered pipeline sub-ids, each with its latest status from the log, artifact counts, the logged cost sum, and for a posted deliverable a `.badge-posted` link to its latest `publish` event's `permalink`) and the collected `⚠️ CLAIM CHECK` strip, at the top of this section |
 | **Strategy** | `docs/brief.md`, rendered |
 | **Concept** | `docs/message.md`, rendered, plus a key-visual gallery (candidates and the locked lineage, badged) |
 | **Content** | every `content/*.md`, rendered, with a short in-page anchor list at the top of just this section (it is the one that tends to run long) |
-| **Media** | the chronology: `generate` events from the log sorted by time, grouped by deliverable — file reference/player, version, model, cost, status badge, prompt in a collapsed details block; for media nobody generated, the `source` and `credit` in place of the model (a stock cutaway reads the library and the creator, "Pexels · Jane Doe" or "Pixabay · Sam Lee", linked to its `source_url`; a recorded take reads "your footage"); on-disk files missing from the log appear badged `unlogged`. An `edit-talking-head` edit folder (`media/<id>/<id>-edit/`) is a working folder: do not list its contents as media |
+| **Media** | the chronology: `generate` events from the log sorted by time, grouped by deliverable — file reference/player, version, model, cost, status badge, prompt in a collapsed details block; for media nobody generated, the `source` and `credit` in place of the model (a stock cutaway reads the library and the creator, "Pexels · Jane Doe" or "Pixabay · Sam Lee", linked to its `source_url`; a recorded take reads "your footage"; a `"source":"derived"` copy reads "JPEG copy for posting" beside the render it came from, rather than as a picture of its own); on-disk files missing from the log appear badged `unlogged`. Each `publish` event appears in the timeline at its `ts` as a **posted** entry: the platform, the account, the number of pictures, and the `permalink` as a link, exactly as logged (a `publish` with no `permalink` shows the post id and says the link did not come back). An `edit-talking-head` edit folder (`media/<id>/<id>-edit/`) is a working folder: do not list its contents as media |
 | **QA** | `docs/qa-report.md` when present |
 
 Media is relatively linked (`../media/...`), **never embedded/base64'd** — the page stays small and

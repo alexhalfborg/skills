@@ -114,7 +114,14 @@ are two kinds of entry, and choosing the right one is the point.
 **Asset entries** (`kind: asset`, the default) are one entry, one artifact, one expander. Use them
 for standalone deliverables: a blog via `write-personal-post` or `write-customer-story`, an email or newsletter
 via `write-email`, `build-landing-page`, `explore-visual-ideas`, `compose-lockup`, or a talking-head
-short the user will film themselves via `edit-talking-head` (`format: talking-head-short`). The `skill` field names
+short the user will film themselves via `edit-talking-head` (`format: talking-head-short`), or an
+organic Instagram post via `write-instagram-post` (`channel: instagram`, `format: single` or
+`carousel`, `aspect: 4x5` unless the plan settled another feed shape, `quantity` = the number of
+slides for a carousel; one entry per post), or an organic Threads post via `write-threads-post`
+(`channel: threads`, `format: text`, `single` or `carousel`, `quantity` = pictures for a carousel; one
+entry per post). An Instagram or Threads channel in the plan maps to these entries
+without any further question: paid Instagram placements stay inside the ads pipeline, and only
+organic posts become `write-instagram-post` or `write-threads-post` entries. The `skill` field names
 the concrete voice/expander skill (blog and email deliverables name the voice skill directly, exactly
 as a page names `build-landing-page`). Assign `id`, `skill`, `channel`, `format`, the refs (`funnel_stage`,
 `audience_ref`, `offer_ref`), and any format fields (`aspect`, `sizes`, `duration_seconds`, `quantity`).

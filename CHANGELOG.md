@@ -1,5 +1,53 @@
 # Changelog
 
+## 0.10.0
+
+**Instagram and Threads posts, drafted and posted.** Three new skills, the first time the engine can
+put anything live:
+
+- **`write-instagram-post`** drafts an organic feed post, a single picture or a carousel of up to
+  ten slides: the caption in the brand's voice, the opening line before "…more" (from `write-hook`),
+  3 to 5 hashtags, alt text for every picture, and the pictures themselves at a feed shape (4:5 by
+  default). New pictures go through `generate-image` or `compose-lockup` and their usual cost stops;
+  ffmpeg then makes the JPEG copies Instagram accepts. Everything lands in `content/<id>.md`, with the
+  caption in a fenced block so a line opening on a hashtag cannot turn into a heading. It never posts.
+- **`write-threads-post`** drafts a Threads post: text only (with one link preview), a single
+  picture, or a carousel of up to twenty. The text is counted in UTF-8 bytes against Threads' 500
+  (emoji cost more than one), with at most five links and one topic tag set as the post's tag, never
+  as a hashtag in the text, where the first one would silently become the tag. PNG posts as it is,
+  and pictures made for the Instagram post can be reused. Same file shape, so `publish-social` reads
+  both alike.
+- **`publish-social`** posts a finished draft to the brand's Instagram or Threads account, after a yes for
+  **that one post**: a sentence saying it goes public and cannot be undone, then the exact caption,
+  the pictures in order, the alt text, the account and the AI-label setting. There is no batch
+  approval. It refuses when the connected account is not the brand's own handle, when the final
+  check found a FAIL on the post, or when the draft breaks a limit, and it posts the file exactly as
+  written. It never deletes, schedules or cross-posts a post (the Threads option to share to
+  Instagram Stories is never used). Not set up, it hands back the text and pictures to post from the
+  app.
+- **Posting needs a token, not a sign-in.** Meta's official MCP servers cannot post organically, so
+  posting uses the `@mikusnuz/meta-mcp@2.2.2` server with four new optional settings,
+  `instagram_access_token`, `instagram_user_id`, `threads_access_token` and `threads_user_id`.
+  Each token lasts about 60 days;
+  `skills/publish-social/references/meta-setup.md` walks through getting and renewing it, and
+  `/halfborg-campaign:setup-engine` now reports which accounts posting is connected to. Meta fetches
+  each picture from a web address, which comes from fal's free upload: no fal spend.
+- **One home for the limits.** The new `schema/social-platforms.md` holds every organic limit
+  (picture format, size and shape, caption length, hashtags, @mentions, carousel size, alt text),
+  each with its source and the date it was checked. Drafting, posting and QA all read it.
+- **Brand packs gain an optional `social` block**: the brand's handles (never a credential) and
+  hashtag rules, `always` and `never`. `/halfborg-campaign:setup-brand` asks for them.
+- **Contracts.** `campaign-structure.md` adds the `slide` role, the `4x5` ratio, JPEG format copies
+  logged as `"source":"derived"`, and a `publish` log event (post id and link exactly as Instagram
+  returned them) followed by `status: final` on each posted picture. `run-qa` gains platform checks
+  for social posts; the campaign page shows a "posted" badge linking to the live post; `write-brief`
+  maps Instagram and Threads channels to `write-instagram-post` and `write-threads-post` entries. The fal rule now reads "only
+  `generate-image` and `generate-video` spend on fal", which is what it always meant: other skills
+  already used the free upload.
+
+No agent can post: none carries a publishing tool, so posting only happens in the main conversation.
+Facebook, Reels, Stories, video and chains of Threads replies come later.
+
 ## 0.9.0
 
 **Stock b-roll from Pixabay.** Pexels stopped issuing new API keys in late 2026, so new users

@@ -46,6 +46,24 @@ Then derive the angle bank yourself rather than asking them to invent one from a
 
 Write the `ads` block with `presenter` always set, `buying_mode: acute` on any product they flagged as an impulse buy, and the agreed angle bank. Never write an `ads` block without a human answer to the presenter question: the ad tools treat that block's presence as confirmation that a person decided who may appear in an ad.
 
+## Social accounts (optional)
+
+Ask once: "Will you post to Instagram, Threads or Facebook from here? If so, what are the brand's
+handles?" Lead with what you can see: if their website links an Instagram account, propose that
+handle and let them confirm it. If they do not post organically, skip this section and write no
+`social` block.
+
+If they do, record the handles under `social` in `pack.yaml` (`instagram`, `threads`, `facebook`).
+Say in a clause why it matters: the engine only ever posts a campaign's work to the account named
+here, so one brand's post can never land on another brand's feed. Only handles go here, never a
+password, token or login, and never one you inferred without them confirming it. If they offer a
+password or token, stop them, say it belongs in the plugin's settings and not in this conversation,
+and do not repeat it back.
+
+Then one light question on hashtags: "Is there a hashtag every post carries, like your brand's own,
+or any you never want used?" Record the answers as `social.hashtags.always` and `never`. None is a
+fine answer; write nothing rather than inventing a tag.
+
 ## Product photos (optional, ask only if they named products)
 
 Ask once, plainly: "Do you have photos of any of these? Even a phone shot on a plain background is
@@ -198,7 +216,7 @@ If the brand has no published writing, say so plainly: the pack, design, and the
 
 ## Finish
 
-Confirm back in one or two plain sentences what you set up — the pack, and if you wrote them, that you captured their look (colours and fonts) and their voice so ads, pages, and posts come out on-brand. Then tell them they can start a campaign with `/halfborg-campaign:new-campaign <id>`. Do not read the file contents back to them.
+Confirm back in one or two plain sentences what you set up — the pack, and if you wrote them, that you captured their look (colours and fonts), their voice and their social handles so ads, pages, and posts come out on-brand. Then tell them they can start a campaign with `/halfborg-campaign:new-campaign <id>`. Do not read the file contents back to them.
 
 If you saved a logo, that file is the one thing worth them opening, so give its full path once and
 say plainly that you took it off their site and it is worth a glance. If you looked and came away

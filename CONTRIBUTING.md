@@ -9,14 +9,23 @@ There is no executable code anywhere in this repo — no script, no Node depende
 itself: `build-site` reads a campaign's own files and writes `site/index.html` directly,
 rather than running a build script.
 
-Three things run on the **user's** machine at run time, fetched by `npx` and pinned to an exact
+Four things run on the **user's** machine at run time, fetched by `npx` and pinned to an exact
 version, never vendored here: HyperFrames (`hyperframes@0.9.6`, which `edit-talking-head` uses to
-transcribe and render) and the two stock-footage MCP servers, Pixabay
-(`@hanoak/pixabay-mcp-server@1.0.1`) and Pexels (`@hanoak/pexels-mcp-server@1.0.2`), both declared in
-`.mcp.json`. Moving any of them to a new version is a deliberate edit: change the pin, re-run a real
+transcribe and render), the two stock-footage MCP servers, Pixabay
+(`@hanoak/pixabay-mcp-server@1.0.1`) and Pexels (`@hanoak/pexels-mcp-server@1.0.2`), and the
+Instagram and Threads posting server (`@mikusnuz/meta-mcp@2.2.2`), all three servers declared in `.mcp.json`.
+Moving any of them to a new version is a deliberate edit: change the pin, re-run a real
 short end to end in a scratch workspace, and update `skills/edit-talking-head/references/hyperframes.md`
 (or, for a stock server, `references/broll-rules.md` section 3) wherever the tool's behaviour moved. That file records what was observed by running the pinned
 version, so it is only as good as its last real run.
+
+The `meta` server needs more care than the others, because it posts to a live account and offers
+far more than the engine uses (deletes, comments, messages, token tools). Before moving its pin,
+read the new version's source for the eleven tools `publish-social` calls, check nothing changed in
+how they publish or what they return, and post once from a **test** Instagram account and a **test**
+Threads profile in a scratch
+workspace. Never test against a client's account. `skills/architecture/references/integrations.md`
+lists the eleven tools and why the rest are off-limits.
 
 ## Repo layout
 
@@ -25,7 +34,7 @@ version, so it is only as good as its last real run.
 plugins/
   halfborg-campaign/              one plugin, self-contained
     .claude-plugin/plugin.json
-    skills/<20 skills>/           one folder per skill, no category layer
+    skills/<23 skills>/           one folder per skill, no category layer
     commands/ agents/ schema/ templates/ .mcp.json
 ```
 

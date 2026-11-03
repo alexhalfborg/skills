@@ -19,6 +19,17 @@
       "env": {
         "PIXABAY_API_KEY": "${user_config.pixabay_key}"
       }
+    },
+    "meta": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@mikusnuz/meta-mcp@2.2.2"],
+      "env": {
+        "INSTAGRAM_ACCESS_TOKEN": "${user_config.instagram_access_token}",
+        "INSTAGRAM_USER_ID": "${user_config.instagram_user_id}",
+        "THREADS_ACCESS_TOKEN": "${user_config.threads_access_token}",
+        "THREADS_USER_ID": "${user_config.threads_user_id}"
+      }
     }
   }
 }

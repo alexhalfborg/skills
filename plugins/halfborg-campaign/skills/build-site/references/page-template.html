@@ -27,7 +27,7 @@
     .empty          muted placeholder text when a section has a folder but no content worth showing
     .media-grid     grid wrapper for media cards (Media section, key-visual gallery)
     .media-card     one artifact: <img>/<video> + .file + .meta-line rows + badges
-    .badge          status chip; variants .badge-locked .badge-final .badge-superseded .badge-rejected .badge-unlogged
+    .badge          status chip; variants .badge-locked .badge-final .badge-superseded .badge-rejected .badge-unlogged .badge-posted (an <a> to the live post)
     details.prompt  collapsed generation prompt inside a media card
     .deliverable-group  wrapper for one deliverable's cards in the Media chronology
 
@@ -161,6 +161,7 @@
   .badge-final { background: #e9f6e4; border-color: #7fbb6a; color: #35672a; }
   .badge-superseded, .badge-rejected { opacity: 0.55; }
   .badge-unlogged { background: var(--warn-bg); border-color: var(--warn-line); color: var(--warn-ink); }
+  .badge-posted { background: #e6eefb; border-color: #6d8fd1; color: #2c4a85; text-decoration: none; }
   details.prompt { margin-top: 6px; }
   details.prompt summary { cursor: pointer; color: var(--accent); font-size: 0.8rem; font-weight: 600; }
   details.prompt pre { white-space: pre-wrap; margin: 6px 0 0; background: var(--note); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }

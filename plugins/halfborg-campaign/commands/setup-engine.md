@@ -1,5 +1,5 @@
 ---
-description: Prepare the workspace. Reports what is wired, scaffolds the campaign workspace, writes the engine defaults and the project-instructions block, and says how to connect fal for image generation. Nothing here is required — the pipeline runs either way.
+description: Prepare the workspace. Reports what is wired, scaffolds the campaign workspace, writes the engine defaults and the project-instructions block, and says how to connect fal for image generation and how to set up Instagram and Threads posting. Nothing here is required — the pipeline runs either way.
 ---
 
 Turn the current working directory into a campaign workspace, and tell the user plainly where they
@@ -106,7 +106,7 @@ own connection, so it needs this sign-in too; it is the same fal account and cos
 
 If they would rather not, that is a finished setup, not an abandoned one. Say so and carry on.
 
-## 6. Report where fal and stock footage stand
+## 6. Report where fal, stock footage and posting stand
 
 The real answer is whether the `mcp__fal-ai__*` tools are live in **this** session. A sign-in
 through `/mcp` takes effect straight away; if the tools still are not there, re-running this command
@@ -132,6 +132,33 @@ test only whether `pixabay_search_videos` or `pexels_search_videos` is live.
   films itself does not need to hear about it. If they ask why `/mcp` shows a failed server, this is
   it: a stock-footage server with no key does not start, and nothing else is affected. With only a
   Pixabay key, the Pexels server shows as failed for the same reason, and that is fine.
+
+**Then, in one or two sentences, Instagram and Threads posting.** The engine can put finished
+Instagram and Threads posts live on the brand's accounts, always stopping first to show each post and
+wait for a yes. Like stock footage it is a plugin setting, not a sign-in: an access token and the
+account's number for each platform, entered under `/plugin` → **Installed** → **Halfborg Campaign
+Engine**. The two are separate; either can be set up alone. Mention a platform only if the workspace
+has a brand with it in its channels or a handle for it under `social`, or the user asks; a team that
+does not post organically does not need to hear about it.
+
+The tools appearing is not the test, because the posting server starts even with nothing entered.
+For each platform that matters here, call its read once, `ig_get_profile` for Instagram and
+`threads_get_profile` for Threads: each only reads the account's name and changes nothing.
+
+- **A username comes back:** say posting to that platform is set up and name the account it posts
+  to. If a brand's handle for that platform (`social.instagram`, `social.threads`) differs from it,
+  say so plainly: the engine will refuse to post that brand's work there until the two match. Posts
+  with pictures also need fal signed in (step 5), because Meta fetches each picture from a web
+  address fal provides; if fal is not connected, say that too. A Threads post with no pictures does
+  not need it.
+- **An access-token error, or no tool:** say that posts come out ready to put up by hand in the app,
+  with the caption and pictures in order, and that setting up posting is a one-off. If they want to,
+  walk them through `${CLAUDE_PLUGIN_ROOT}/skills/publish-social/references/meta-setup.md` one step
+  at a time, the Instagram steps or the Threads section as needed. If the error says the token has
+  expired, it is the 60-day renewal in that same file.
+
+**Never ask for, accept or repeat a token, password or account number in chat.** If one is pasted
+anyway, say it is now in the conversation, suggest making a fresh one, and point at the settings.
 
 Do not check for Node, HyperFrames or ffmpeg here. The skills that use them check at the moment
 they need them, and say what is missing in terms of what it costs.

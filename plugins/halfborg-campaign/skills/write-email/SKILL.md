@@ -17,7 +17,7 @@ description: >-
   subject line and preview text come from write-hook, called inline. Output lands in
   campaigns/<slug>/content/<name>.md, logged and site-rebuilt. Do NOT use for blog posts or articles
   (write-personal-post for founder voice, write-customer-story for testimonials), for paid-ad copy
-  (write-ad-creative), for organic social captions, to rework only the subject line of an existing
+  (write-ad-creative), for organic Instagram posts (write-instagram-post) or other social captions, to rework only the subject line of an existing
   email (write-hook), or to design an HTML email template (this writes the copy; it does not build
   markup).
 ---

@@ -139,6 +139,42 @@
         }
       }
     },
+    "social": {
+      "type": "object",
+      "description": "Optional. The brand's own organic social accounts and its hashtag rules. Handles only: NEVER a token, password, user id or any other credential (those are plugin settings, entered under /plugin). SAFETY-RELEVANT for publishing: publish-social refuses to post a campaign's work unless the account it is connected to matches the active brand's handle here, so a workspace holding several brands cannot post one brand's campaign to another's feed. Absent means not recorded, never that the brand has no accounts; drafting still works without it.",
+      "properties": {
+        "instagram": {
+          "type": "string",
+          "description": "The Instagram username, with or without a leading @, e.g. \"@acmeskin\". Compared case-insensitively against the connected account's username before anything is posted.",
+          "pattern": "^@?[A-Za-z0-9._]{1,30}$"
+        },
+        "threads": {
+          "type": "string",
+          "description": "The Threads username, with or without a leading @. Usually the same as the Instagram one.",
+          "pattern": "^@?[A-Za-z0-9._]{1,30}$"
+        },
+        "facebook": {
+          "type": "string",
+          "description": "The Facebook Page's name or URL."
+        },
+        "hashtags": {
+          "type": "object",
+          "description": "Brand-level hashtag rules, applied by every social drafting skill and checked by run-qa. A campaign may add its own on top, from the brief.",
+          "properties": {
+            "always": {
+              "type": "array",
+              "description": "Hashtags every Instagram post carries, e.g. the brand's own tag. They count towards the post's limit. On Threads, which allows one topic tag per post, the first is the default tag when the campaign sets none.",
+              "items": { "type": "string", "pattern": "^#?[^\\s#]+$" }
+            },
+            "never": {
+              "type": "array",
+              "description": "Hashtags the brand never uses (a competitor's tag, a hijacked or off-brand tag). A post carrying one fails QA, as a nogo does.",
+              "items": { "type": "string", "pattern": "^#?[^\\s#]+$" }
+            }
+          }
+        }
+      }
+    },
     "ads": {
       "type": "object",
       "description": "Optional. Present only for brands that run paid ads; read by write-ad-creative and write-video-ad-script, ignored by every other phase. SAFETY-RELEVANT: if this block is present, `presenter` is required, because the ads pipeline treats it as the confirmed answer to who may appear in an ad. A brand with no `ads` block is not ads-ready, and write-ad-creative routes to /halfborg-campaign:setup-brand rather than guessing.",

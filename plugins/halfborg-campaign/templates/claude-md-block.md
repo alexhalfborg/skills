@@ -30,7 +30,8 @@ Brief → Message → Expansion → QA. The first two are **human-gated**: inter
 sign-off, *then* write the artifact. Do not automate past a gate or collapse two into one. State
 lives in files, not the conversation, so each phase reads the previous phase's output rather than
 relying on chat history. Rendering an image or video always stops for approval first: a plain
-sentence with the cost, then the verbatim prompt and settings.
+sentence with the cost, then the verbatim prompt and settings. Posting to a live social account
+always stops for a yes on that one post, showing the exact caption, pictures and account.
 
 The engine's own vocabulary stays in its files. Talk to the user in plain English.
 
@@ -43,7 +44,7 @@ The engine's own vocabulary stays in its files. Talk to the user in plain Englis
 ### Brands
 
 [one line per brand found under `brands/`, e.g.:]
-[- `acme` — Acme Tools. Ads configured (presenter: founder), founder voice + customer stories.]
+[- `acme` — Acme Tools. Ads configured (presenter: founder), founder voice + customer stories. Posts as @acmetools on Instagram.]
 [- `beta-co` — Beta Co. No ads block yet.]
 
 Full architecture, contracts and invariants: run the `architecture` skill.

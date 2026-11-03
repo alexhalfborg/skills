@@ -16,6 +16,7 @@ required. ffmpeg readiness is checked by each skill that uses it, at the moment 
 | **ffmpeg** (`ffprobe`, `ffmpeg`) | `generate-video` step 8, to verify a downloaded clip (duration, resolution, a sample frame) | You still get the clip. Report it **unverified** rather than silently assuming it is good or claiming a check you did not run. |
 | **ffmpeg** (`ffprobe`, `ffmpeg`) | `write-hook`, to sample frames from a video file it is asked to title | It asks for a script, transcript or one-line summary instead. It never sends audio anywhere to be transcribed. |
 | **ffmpeg** (`ffprobe`, `ffmpeg`) | `edit-talking-head`, to find the pauses in a take, check downloads and check the finished short | It stops before planning and says why: without it there is no way to find the pauses. |
+| **ffmpeg** (`ffprobe`, `ffmpeg`) | `write-instagram-post`, to make the JPEG copies Instagram accepts and check their size and shape; `publish-social`, to re-check them | The draft and its pictures are still made, but the post cannot go out until the JPEG copies exist. It says so rather than converting any other way. |
 | **Node 22+ with HyperFrames** (`npx -y hyperframes@0.9.6`) | `edit-talking-head`, to transcribe the take (Parakeet, local) and render the short | It still plans and fetches the cutaways, then hands back the cut list as timestamps and the clips, to assemble in any editor. Nothing is rendered. |
 
 Each of them confirms with `ffprobe -version` (or, for HyperFrames, its own `doctor`) rather than
@@ -73,8 +74,9 @@ unofficial, MIT, and from the same author:
 | `pexels` | `npx -y @hanoak/pexels-mcp-server@1.0.2` | `pexels_key` → `PEXELS_API_KEY` | `pexels_search_videos`, `pexels_get_video` |
 
 The harness substitutes each setting into its server's environment, so **no skill ever reads a
-key**. They are the engine's only keys: fal is a sign-in, the stock libraries have none. Test for
-the live search tools, never for a key.
+key**. fal is a sign-in; the stock libraries and Instagram and Threads posting (below) are plugin settings,
+because none of them has a sign-in the engine can use. Test for the live search tools, never for a
+key.
 
 **Pixabay is the one to recommend.** Its key is free and immediate: log in at
 <https://pixabay.com/api/docs/> and the key is shown on the page. Pexels stopped issuing new API keys
@@ -93,12 +95,58 @@ and never uses a clip whose creator it cannot name. Both are free (Pixabay: 100 
 Pexels: 200 an hour, 20,000 a month), so there is no cost gate. There is still an approval stop
 before anything is fetched, because choosing footage is a creative call.
 
+## Instagram and Threads posting (the meta MCP)
+
+The plugin's `.mcp.json` declares a third stdio server, unofficial and MIT, for organic posting:
+
+| Server | Package | Settings → env vars | Tools the engine uses |
+|---|---|---|---|
+| `meta` | `npx -y @mikusnuz/meta-mcp@2.2.2` | `instagram_access_token` → `INSTAGRAM_ACCESS_TOKEN`, `instagram_user_id` → `INSTAGRAM_USER_ID`, `threads_access_token` → `THREADS_ACCESS_TOKEN`, `threads_user_id` → `THREADS_USER_ID` | Instagram: `ig_get_profile`, `ig_publish_photo`, `ig_publish_carousel`, `ig_get_media`, `ig_get_media_list`. Threads: `threads_get_profile`, `threads_publish_text`, `threads_publish_image`, `threads_publish_carousel`, `threads_get_post`, `threads_get_posts` |
+
+`publish-social` is the only skill that uses it, and only those eleven tools. The server exposes many
+more (deleting posts and replies, comments, direct messages, insights, searches, and token tools that take the
+token as an argument). None of them is called: they are outside the job, and the token tools would
+put the brand's access token into the conversation. No agent lists any `meta` tool, so posting only
+happens in the main conversation, where the person answers the per-post gate.
+
+**It is a token, not a sign-in.** Meta's official MCP servers cover ads, app management and WhatsApp,
+not organic posting, so the official "Meta ads" connector some users have in claude.ai cannot post
+and is never used. The token comes from the user's own Meta developer app, lasts about 60 days, and
+is entered under `/plugin` → **Installed** → **Halfborg Campaign Engine** with the account number.
+Instagram and Threads have separate tokens and account numbers; either can be set up alone. The
+Threads publishing tools can also cross-share a post to Instagram Stories; `publish-social` never
+sets that, because it would be a second post nobody approved.
+`skills/publish-social/references/meta-setup.md` is the plain walkthrough, including renewal. The
+server never refreshes the token itself here; the person renews it and pastes the new one into the
+settings.
+
+**Test with a read, not for tools.** The server reads empty settings as empty strings and starts
+anyway, so its tools appear even when nothing is set up. The test is one `ig_get_profile` (or, for
+Threads, `threads_get_profile`) call: a
+username back means connected; an access-token error means not set up or expired.
+
+**It also needs fal.** Meta fetches every picture from a public HTTPS address and takes no local
+file, so `publish-social` uploads each picture with fal's free `upload_file` (a prepared upload, a PUT
+of the bytes, then `verify_upload`) and passes that address. Nothing on fal is spent. Without fal
+connected there is no address to give, so a post with pictures falls back to the by-hand block too.
+A Threads text-only post has no pictures and needs no fal.
+
+**Without it** (or with an expired token), `publish-social` posts nothing and hands back the
+account, the caption verbatim, the pictures in order with their alt text and the AI-label setting,
+to post from the app; nothing is logged. `write-instagram-post` and `write-threads-post` are unaffected either way:
+drafting needs no connection.
+
+The pin moves only by a deliberate edit, after a real post from a test account in a scratch
+workspace. The server is young and has one maintainer, so read what a new version changes in the eleven
+tools above before moving it. Its Instagram carousel tool caps a post at 10 pictures although the API allows 20;
+`schema/social-platforms.md` records 10 as the working limit for that reason.
+
 ## Connector plugins
 
 If the environment already exposes connectors (Notion, Ahrefs, SimilarWeb, Klaviyo, Supermetrics,
 HubSpot, Canva), they need authentication only — there is nothing for this engine to declare. **No
-skill here requires one.** They are conveniences for research and publishing at the edges of the
-pipeline.
+skill here requires one.** They are conveniences for research at the edges of the pipeline.
+Publishing goes through the engine's own `meta` server above, never a connector.
 
 Analytics integrations in particular are **not wired**. The `analyst` agent and `write-ad-creative`'s
 iteration modes work from data the user supplies (a CSV/XLSX dropped into the campaign folder, or

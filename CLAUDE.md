@@ -95,6 +95,9 @@ to it:
 - `plain-language.md` — what a skill says out loud. The engine's words belong in its files, not in
   the conversation; section 2 lists the strings that are never translated (the verbatim prompt, the
   model id, the money, a path they can open). Read it before touching any user-facing line.
+- `social-platforms.md` — the organic limits per platform (picture shape and format, caption
+  length, hashtags, carousel size, alt text), each with its source and the date it was checked. The
+  only home for those numbers; drafting, publishing and QA all defer to it.
 - `preflight.md` — the shared readiness-and-routing contract (referenced 19×). Two tiers: the
   `## Campaign engine` block in the workspace's CLAUDE.md as a free context check, then the
   filesystem artifact chain. Underlying rule: *route, do not guess.*
@@ -153,9 +156,16 @@ to make a skill simpler:
   reads `brands/<id>/pack.yaml`. "The active brand" always means `campaign.brand` in the campaign's
   `system/manifest.yaml`, never the folder-name prefix.
 - State lives in files, not the conversation, so any phase can be picked up cold.
-- The two human gates and the pre-render approval gate are unconditional — no `engine.yaml` value
-  relaxes them, and no expander may bypass `generate-image` / `generate-video`, the only skills that
-  touch fal.
+- The two human gates, the pre-render approval gate and the pre-publish gate are unconditional — no
+  `engine.yaml` value relaxes them. No expander may bypass `generate-image` / `generate-video`, the
+  only skills that **spend** on fal (others may call fal's free `upload_file`, never a render).
+- `publish-social` is the only skill that posts to a live account, with one approval **per post**
+  (no batch yes). It refuses when the connected account does not match the active brand's
+  handle for that platform (`social.instagram`, `social.threads`), when QA holds a FAIL on the post,
+  or when the draft breaks a limit in
+  `schema/social-platforms.md`, and it posts the file exactly as written. It never deletes,
+  schedules or cross-posts a post, and calls only its eleven listed `meta` tools. No agent's `tools:` list may carry a `meta`
+  tool, so posting stays in the main conversation where the gate can be answered.
 - Never fabricate a generated-media link, cost or log line. With fal not connected the render skills
   hand back the prompt/model/settings and write nothing — a supported mode, not a degraded one.
 - fal is the plugin's `fal-ai` server in `.mcp.json`, pointed at fal's OAuth relay
@@ -163,6 +173,11 @@ to make a skill simpler:
   `userConfig` and no `Authorization` header (setting one disables OAuth). Test for rendering by
   checking for live `mcp__fal-ai__*` tools, not for a file. Never ask a user for a key or credentials
   in chat.
+- The keys that do exist are `userConfig` settings, entered under `/plugin`: the Pixabay and Pexels
+  stock keys, and the Instagram and Threads access tokens and account numbers for the `meta` server
+  (`@mikusnuz/meta-mcp`, pinned). Meta's official MCP servers cannot post organically, which is why
+  this one is a token rather than a sign-in. The `meta` server starts even with no token, so test
+  posting with one `ig_get_profile` or `threads_get_profile` read, not for live tools.
 - Media is versioned and never overwritten; candidate / locked / final / superseded is a *status in
   the generation log*, not a folder.
 

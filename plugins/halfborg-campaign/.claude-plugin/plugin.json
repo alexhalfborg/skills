@@ -1,7 +1,7 @@
 {
   "name": "halfborg-campaign",
   "displayName": "Halfborg Campaign Engine",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "A brand-agnostic, human-gated campaign engine for Claude Code. Turns a fuzzy marketing goal into a full set of campaign deliverables, reading everything brand-specific from a per-brand pack.",
   "author": {
     "name": "Alex",
@@ -18,6 +18,8 @@
     "paid-social",
     "image-generation",
     "video-editing",
+    "instagram",
+    "threads",
     "content"
   ],
   "userConfig": {
@@ -32,6 +34,28 @@
       "title": "Pexels API key",
       "description": "Optional, only if you already have one: Pexels is not issuing new keys at the moment, so use the Pixabay key instead. Lets the engine search free Pexels stock footage for b-roll as well. https://www.pexels.com/api/",
       "sensitive": true
+    },
+    "instagram_access_token": {
+      "type": "string",
+      "title": "Instagram access token",
+      "description": "Optional. Lets the engine post your finished Instagram posts for you, always after you have seen each one and said yes. Without it you get each post ready to put up yourself in the app. Needs a professional Instagram account linked to a Facebook Page; you make the token at https://developers.facebook.com/tools/explorer/ and stretch it to 60 days in the Access Token Debugger. Run /halfborg-campaign:setup-engine for the step-by-step. It runs out after about 60 days; renew it the same way and paste the new one here.",
+      "sensitive": true
+    },
+    "instagram_user_id": {
+      "type": "string",
+      "title": "Instagram user id",
+      "description": "Optional, needed with the Instagram access token. The long number for your Instagram business account (it looks like 17841400123456789), found in the Graph API Explorer. Run /halfborg-campaign:setup-engine for where to find it."
+    },
+    "threads_access_token": {
+      "type": "string",
+      "title": "Threads access token",
+      "description": "Optional. Lets the engine post your finished Threads posts for you, always after you have seen each one and said yes. Without it you get each post ready to put up yourself in the app. You make it from the same Meta developer app as the Instagram one, with your Threads profile added as a tester. Run /halfborg-campaign:setup-engine for the step-by-step. It runs out after about 60 days; renew it and paste the new one here.",
+      "sensitive": true
+    },
+    "threads_user_id": {
+      "type": "string",
+      "title": "Threads user id",
+      "description": "Optional, needed with the Threads access token. The number for your Threads profile, found in the Graph API Explorer with me?fields=id,username. Run /halfborg-campaign:setup-engine for where to find it."
     }
   }
 }

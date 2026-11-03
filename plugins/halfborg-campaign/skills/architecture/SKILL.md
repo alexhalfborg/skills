@@ -4,8 +4,8 @@ description: >-
   How the campaign engine fits together, as one reference document. Covers what the four phases are
   and which of them are human-gated, where brand facts live versus campaign work, the artifact chain
   each phase reads and writes, how deliverables are named and logged, and the invariants that are
-  never relaxed (never render without approval, never hardcode a brand fact into a skill, never
-  fabricate a generated-media link). Two moments call for it. Read it to orient before picking up
+  never relaxed (never render without approval, never post without a yes for that post, never
+  hardcode a brand fact into a skill, never fabricate a generated-media link). Two moments call for it. Read it to orient before picking up
   campaign work in an unfamiliar workspace, where the files are the only state and nothing is
   carried over in conversation. Read it also when the question is about the engine rather than about
   a campaign: how the pieces connect, why a phase is shaped the way it is, where something belongs,
@@ -96,9 +96,12 @@ The manifest distinguishes these, and picking the right one matters.
   `write-email` (emails and newsletters), plus `build-landing-page` (a self-contained HTML page,
   written into `media/<id>/`), `explore-visual-ideas` (rough visual idea variations for a deliverable),
   `compose-lockup` (production typographic lockup: headline set onto the clean key visual for a
-  static/banner/poster), and `edit-talking-head` (a recorded talking-head take cut into a finished
+  static/banner/poster), `edit-talking-head` (a recorded talking-head take cut into a finished
   vertical short: pauses out, stock cutaways in, captions burned on, rendered locally with
-  HyperFrames). A running series of shorts lives in one long-running campaign, one asset entry per
+  HyperFrames), `write-instagram-post` (an organic Instagram feed post, single image or
+  carousel: caption, slide plan, alt text and publish-ready JPEGs, drafted to the limits in
+  `schema/social-platforms.md`), and `write-threads-post` (an organic Threads post: text only, a single
+  image or a carousel, counted in bytes, one topic tag). A running series of shorts lives in one long-running campaign, one asset entry per
   short. Written deliverables name the concrete voice skill in the manifest `skill:`
   field; `content-writer` is the agent that routes such a request to the right voice skill.
 - **Pipeline entries** (`kind: pipeline`): one entry a multi-step pipeline fans out into many
@@ -113,6 +116,13 @@ video's title, a short's first-frame line). It is never a manifest entry. `write
 blog voice skills call it inline and keep its options in their own doc; a direct request writes
 `content/<id>-hooks.md` against the deliverable it was run on. Paid hooks stay inside the ads
 pipeline.
+
+One skill sits past expansion, at the edge of the pipeline: `publish-social`, which puts a finished
+social draft live on the brand's own account. It is the only skill that publishes anything, it is
+never a manifest entry, and no expander calls it. The drafting skills (`write-instagram-post`,
+`write-threads-post`, and later one for Facebook) write everything a post needs into `content/<id>.md`;
+`publish-social` reads that file cold, re-checks it, and posts only after its own per-post gate
+(see Invariants).
 
 ## Layout: the plugin versus the workspace
 
@@ -129,9 +139,11 @@ agents/                       six specialists the main thread dispatches: strate
                               content-writer, paid-creative, analyst, qa
 schema/                       the contracts (below), plus preflight.md
 templates/                    seeds copied into a workspace: engine.yaml, claude-md-block.md, design.md
-.mcp.json                     the fal-ai server (fal's OAuth relay, signed in to through /mcp) and
+.mcp.json                     the fal-ai server (fal's OAuth relay, signed in to through /mcp),
                               the pixabay and pexels stock-footage servers (pixabay_key and
-                              pexels_key settings)
+                              pexels_key settings), and the meta server for Instagram and Threads posting
+                              (instagram_access_token, instagram_user_id, threads_access_token and
+                              threads_user_id settings)
 ```
 
 An agent is a context of its own, not a fifth kind of skill: it either spans several skills and
@@ -191,6 +203,9 @@ Validate against the schema, silently fix failures, and never show a user a vali
 - Campaign paths, filenames, and the generation log against
   `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` (prose contract, not JSON Schema; the build
   script lints the log on every run).
+- Organic social posts (picture shape and format, caption length, hashtag and @mention counts,
+  carousel size, alt text) against `${CLAUDE_PLUGIN_ROOT}/schema/social-platforms.md`, the one home
+  for those numbers.
 - Phase readiness and routing against `${CLAUDE_PLUGIN_ROOT}/schema/preflight.md`.
 - Everything said to the user against `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md`. The engine's
   words are for its files; the person reading them is a marketer. The contract carries the
@@ -262,12 +277,15 @@ the phase that writes it and the phases that read it.
   whether rendering is available, check for live `mcp__fal-ai__*` tools, not for a file. Secrets never
   go in `engine.yaml`, a brand pack, a campaign, or the conversation. Never ask the user for a key or
   credentials in chat; point them at `/mcp` or at `/halfborg-campaign:setup-engine`.
-- **The stock libraries are the only keys, and they are plugin settings.** Pixabay and Pexels have no
-  sign-in, so their keys are the plugin's `pixabay_key` and `pexels_key` user config, stored in secure
-  storage and substituted into the `pixabay` and `pexels` servers' environments by the harness. No
-  skill reads them. Test for a live `pixabay_search_videos` or `pexels_search_videos`, not for a key,
-  and point the user at `/plugin` → **Installed** → **Halfborg Campaign Engine**. Point new users at
-  the Pixabay key: Pexels stopped issuing new keys in late 2026.
+- **Everything that is not fal is a plugin setting, never a conversation.** Pixabay and Pexels have
+  no sign-in, so their keys are the plugin's `pixabay_key` and `pexels_key` user config; the
+  Instagram and Threads tokens and account numbers for posting are `instagram_access_token`,
+  `instagram_user_id`, `threads_access_token` and `threads_user_id`. All are stored in secure storage and substituted into their server's
+  environment by the harness. No skill reads them. Test for a live `pixabay_search_videos` or
+  `pexels_search_videos`, not for a key. Test posting with one `ig_get_profile` or `threads_get_profile` read, because the
+  `meta` server starts even with no token entered. Point the user at `/plugin` → **Installed** →
+  **Halfborg Campaign Engine**. Point new users at the Pixabay key: Pexels stopped issuing new keys
+  in late 2026.
 - Not connecting fal is a supported way to run this workspace, not a degraded one. `generate-image` and
   `generate-video` render when the fal MCP is live and otherwise hand back the prompt, model id, and
   settings to run by hand at fal.ai — writing no file, no log line, and no invented URL or cost.
@@ -278,13 +296,28 @@ the phase that writes it and the phases that read it.
   estimate. The sentence is what they decide on; the receipt is what they are agreeing to, and it
   never shrinks to read better. It then offers two routes: the engine renders it, or the user renders
   it by hand at fal.ai. This gate lives
-  in `generate-image` (step 4) and `generate-video` (step 5), which are the only skills that touch
-  fal, so every caller inherits it and no expander may bypass it. It is unconditional: no
+  in `generate-image` (step 4) and `generate-video` (step 5), which are the only skills that
+  **spend** on fal, so every caller inherits it and no expander may bypass it. Other skills may call
+  fal's free `upload_file` (to hand a model a reference picture, or Meta a picture to fetch), never
+  a render. It is unconditional: no
   `engine.yaml` value relaxes it, and an earlier "make the visuals" is not standing approval for a
   specific render. A caller with a bounded reroll loop (`compose-lockup`, `prepare-reference-kit`) gates once
   by declaring the reroll cap and worst-case spend up front; work inside that envelope does not
   re-ask, anything beyond it does. The by-hand route is the offline hand-back block, so the two paths
   produce the same artifact — offline it is the only option, online it is the user's choice.
+- **Never publish without a yes for that post.** `publish-social` is the only skill that posts to a
+  live account, and it stops before every post, in the same two parts: a sentence saying what goes
+  out, to which account, and that it cannot be undone; then a literal receipt with the **verbatim
+  caption**, the pictures in order with their alt text, the account handle and the AI-label setting.
+  One yes covers one post: there is no batch approval, and an earlier "post them all" is not one.
+  It is unconditional like the render gate. Around it, three refusals that no instruction overrides:
+  the connected account must match the active brand's handle for that platform, `social.instagram` or `social.threads` (so one brand's campaign
+  never reaches another's feed); a QA FAIL on the post blocks it; and the post goes out exactly as the
+  file holds it, never edited, converted or re-cropped on the way. Not connected is a supported mode:
+  it hands back the caption, pictures and alt text to post by hand, and logs nothing. No skill deletes
+  or schedules a post, and none of the `meta` server's other tools (comments, messages, deletes,
+  token tools) is ever called. No agent's tool list carries a `meta` tool, so posting only ever
+  happens in the main conversation, where the person can answer the gate.
 
 ## Content house rules
 
@@ -299,7 +332,7 @@ is the contract, and every skill defers to it.
 ## Local tooling and external skills
 
 See `references/integrations.md` beside this file for what ffmpeg, Node with HyperFrames, the fal
-MCP and the two stock-footage MCPs (Pixabay, Pexels) each unlock, and exactly how the engine behaves when any is absent. The short
+MCP, the two stock-footage MCPs (Pixabay, Pexels) and the meta MCP for Instagram and Threads posting each unlock, and exactly how the engine behaves when any is absent. The short
 version: all are optional and none blocks a phase. `edit-talking-head` needs ffmpeg to cut at all
 and HyperFrames to render, and hands back a cut list when it cannot render.
 

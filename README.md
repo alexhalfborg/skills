@@ -53,9 +53,9 @@ Four stages, and you have a say at every one.
    pictures it could hang on. You pick the line and the picture. Again, nothing is locked until you
    do.
 3. **Making things.** Ads, landing pages, emails, blog posts in your own voice, customer stories,
-   video scripts and the clips themselves. It also edits the talking-head videos you film yourself
-   into finished shorts, with b-roll and captions. Everything builds on the picture you chose, so it
-   all looks like one campaign.
+   Instagram and Threads posts, video scripts and the clips themselves. It also edits the
+   talking-head videos you film yourself into finished shorts, with b-roll and captions. Everything
+   builds on the picture you chose, so it all looks like one campaign.
 4. **The check.** It goes back over the lot against your brand rules — the claims you are allowed to
    make, the things you never say, the small print that has to appear — and tells you what needs
    fixing. It reports; it does not quietly edit.
@@ -63,6 +63,10 @@ Four stages, and you have a say at every one.
 **It never spends your money without asking.** Before any image or video is generated, it stops,
 tells you what it is about to make and what it will cost, and shows you exactly what is being sent.
 You can always take the prompt and run it yourself instead. No setting turns that off.
+
+**It never posts without asking, either.** If you connect your Instagram or Threads account, it can put a
+finished post live, but only after showing you that exact post and getting a yes, every time, and
+only to your brand's own account.
 
 **It works without image generation connected at all.** Without it, it hands you the finished prompt to run
 wherever you like, and everything else is identical. That is a supported way to use it, not a
