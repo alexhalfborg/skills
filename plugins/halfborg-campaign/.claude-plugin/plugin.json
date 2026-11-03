@@ -1,7 +1,7 @@
 {
   "name": "halfborg-campaign",
   "displayName": "Halfborg Campaign Engine",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "A brand-agnostic, human-gated campaign engine for Claude Code. Turns a fuzzy marketing goal into a full set of campaign deliverables, reading everything brand-specific from a per-brand pack.",
   "author": {
     "name": "Alex",
@@ -21,10 +21,16 @@
     "content"
   ],
   "userConfig": {
+    "pixabay_key": {
+      "type": "string",
+      "title": "Pixabay API key",
+      "description": "Optional. Lets the engine search free Pixabay stock footage for b-roll when it edits a talking-head short. Without a stock key the engine still plans the cutaways and gives you search links to pick clips yourself. Free key: log in at https://pixabay.com/api/docs/ and copy the key shown there.",
+      "sensitive": true
+    },
     "pexels_key": {
       "type": "string",
       "title": "Pexels API key",
-      "description": "Optional. Lets the engine search free Pexels stock footage for b-roll when it edits a talking-head short. Without it the engine still plans the cutaways and gives you search links to pick clips yourself. Free key at https://www.pexels.com/api/",
+      "description": "Optional, only if you already have one: Pexels is not issuing new keys at the moment, so use the Pixabay key instead. Lets the engine search free Pexels stock footage for b-roll as well. https://www.pexels.com/api/",
       "sensitive": true
     }
   }

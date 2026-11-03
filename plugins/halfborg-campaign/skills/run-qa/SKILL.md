@@ -108,7 +108,7 @@ Work the matrix in [references/qa-checklist.md](references/qa-checklist.md). In 
 - **Family 1 — Structure & completeness.** Manifest ids and registered pipeline sub-ids that have no
   artifact; media on disk with no `generate` line; ghost ids (a log `deliverable` that is not a
   manifest id, `key-visual`, or a registered sub-id); filename-grammar violations; nothing yet
-  promoted to `final`; a stock cutaway (`"source":"pexels"`) logged without `credit` or
+  promoted to `final`; a stock cutaway (`"source":"pexels"` or `"pixabay"`) logged without `credit` or
   `source_url` (FAIL: nobody can credit or licence-check it later). Agree with the site builder's
   Overview roll-up; if you disagree, re-read the log.
 - **Family 2 — Copy & claims.** Over `content/*.md`, build-landing-page HTML and ad copy: every product
@@ -129,7 +129,7 @@ Work the matrix in [references/qa-checklist.md](references/qa-checklist.md). In 
   and if `ffmpeg`/`ffprobe` is absent, mark the clip **"unverified" (WARN)** rather than claim a check
   you did not run. For a talking-head short (`edit-talking-head`), also sample a frame inside each
   `broll` cutaway's beat: a **recognisable person in stock footage on a paid deliverable** is a FAIL
-  (the Pexels licence forbids implied endorsement and model releases are not guaranteed), and on an
+  (neither stock licence allows implied endorsement and model releases are not guaranteed), and on an
   organic one it is a WARN only when the words under it make a claim. Spell-check the burned-in
   captions against the pack's brand and product names.
 - **Family 4 — Message drift.** Every deliverable ladders up to the one key message; taglines are the

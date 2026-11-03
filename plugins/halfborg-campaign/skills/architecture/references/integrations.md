@@ -62,25 +62,36 @@ hand at <https://fal.ai/models>, and write nothing — no file, no log line, no 
 Both gate unconditionally on explicit approval with an estimate before spending; no setting relaxes
 that.
 
-## Stock footage (the Pexels MCP)
+## Stock footage (the Pixabay and Pexels MCPs)
 
-The plugin's `.mcp.json` also declares `pexels`, a stdio server
-(`npx -y @hanoak/pexels-mcp-server@1.0.2`, unofficial, MIT) that searches Pexels' free stock photos
-and video. The harness substitutes the plugin's `pexels_key` setting into its `PEXELS_API_KEY`
-environment variable, so **no skill ever reads the key**. It is the engine's only key: fal is a
-sign-in, Pexels has none. Test for the live
-`pexels_search_videos` tool.
+The plugin's `.mcp.json` also declares two stdio servers that search free stock video, both
+unofficial, MIT, and from the same author:
 
-With no key set, the server refuses to start, so its tools simply do not appear (and `/mcp` lists it
-as failed). That is the intended offline state, not a fault, and fal is unaffected because it is a
-separate server. `edit-talking-head` is the only skill that uses Pexels. Without it, the skill plans
-the cutaways anyway and gives each one a search link to pick by hand.
+| Server | Package | Setting → env var | Tools the engine uses |
+|---|---|---|---|
+| `pixabay` | `npx -y @hanoak/pixabay-mcp-server@1.0.1` | `pixabay_key` → `PIXABAY_API_KEY` | `pixabay_search_videos`, `pixabay_get_video` |
+| `pexels` | `npx -y @hanoak/pexels-mcp-server@1.0.2` | `pexels_key` → `PEXELS_API_KEY` | `pexels_search_videos`, `pexels_get_video` |
 
-The server returns links, never files. `edit-talking-head` downloads the clip itself, logs it with
-`"source":"pexels"`, the Pexels page as `source_url` and the creator as `credit`, and never uses a clip
-whose creator it cannot name. Pexels is free (200 requests an hour, 20,000 a month, a free key at
-<https://www.pexels.com/api/>), so there is no cost gate. There is still an approval stop before
-anything is fetched, because choosing footage is a creative call.
+The harness substitutes each setting into its server's environment, so **no skill ever reads a
+key**. They are the engine's only keys: fal is a sign-in, the stock libraries have none. Test for
+the live search tools, never for a key.
+
+**Pixabay is the one to recommend.** Its key is free and immediate: log in at
+<https://pixabay.com/api/docs/> and the key is shown on the page. Pexels stopped issuing new API keys
+in late 2026 (around 30 September); existing keys still work, so the server stays for anyone who has
+one. Never send a new user to sign up for Pexels.
+
+With no key set, a server refuses to start, so its tools simply do not appear (and `/mcp` lists it
+as failed). That is the intended offline state, not a fault, and nothing else is affected because
+each is a separate server. `edit-talking-head` is the only skill that uses them. With one live it
+uses that one; with both, it searches Pexels first and tops up thin beats from Pixabay. With neither,
+it plans the cutaways anyway and gives each one a search link to pick by hand.
+
+The servers return links, never files. `edit-talking-head` downloads the clip itself, logs it with
+`"source":"pixabay"` or `"pexels"`, the library's page as `source_url` and the creator as `credit`,
+and never uses a clip whose creator it cannot name. Both are free (Pixabay: 100 requests a minute;
+Pexels: 200 an hour, 20,000 a month), so there is no cost gate. There is still an approval stop
+before anything is fetched, because choosing footage is a creative call.
 
 ## Connector plugins
 

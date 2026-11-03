@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.9.0
+
+**Stock b-roll from Pixabay.** Pexels stopped issuing new API keys in late 2026, so new users
+could no longer turn on stock search for `edit-talking-head`. Pixabay's keys are still free and
+immediate, so it joins as a second library:
+
+- A new optional `pixabay_key` setting and a `pixabay` MCP server
+  (`@hanoak/pixabay-mcp-server@1.0.1`, from the same author as the Pexels server).
+- With one library connected, the skill searches that one. With both, it searches Pexels first and
+  tops up any beat with fewer than three usable clips from Pixabay. With neither, each cutaway still
+  comes with a search link, which now points at Pixabay.
+- Pixabay has no portrait filter for video, so the skill asks only for clips at least 1920 high
+  (upright HD, or 4K landscape) and checks the real renditions before offering one.
+- Pixabay clips are logged with `"source":"pixabay"`, the clip's page and the creator, exactly like
+  Pexels clips. `run-qa` and the campaign page treat both libraries the same.
+- Clips you download yourself and drop in are now checked like any other pick (resolution, length,
+  a frame for the face rule) and logged with their library and creator.
+
+Existing Pexels keys keep working. Setup, the README and `/halfborg-campaign:setup-engine` now point
+new users at Pixabay and stop suggesting a Pexels key.
+
+To use it, add a free Pixabay key under `/plugin` → **Installed** → **Halfborg Campaign Engine**:
+log in at <https://pixabay.com/api/docs/> and copy the key shown there. A library without a key
+shows as a failed server in `/mcp`; nothing else is affected.
+
 ## 0.8.0
 
 **New skill: `edit-talking-head`.** Hand it a vertical talking-head take filmed on a phone and it

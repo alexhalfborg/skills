@@ -12,13 +12,14 @@ description: >-
   the captions), brands/<id>/pack.yaml (brand.name, products[].name, nogos, voice.spelling),
   brands/<id>/design.md (typeface, accent and dark colours) and, if present, docs/message.md.
   Transcribes with a local engine (Parakeet), finds silences with ffmpeg silencedetect, searches
-  Pexels stock through the plugin's pexels MCP (pexels_search_videos / pexels_get_video), and stops
+  stock through whichever of the plugin's stock MCPs is live (pexels: pexels_search_videos /
+  pexels_get_video; pixabay: pixabay_search_videos / pixabay_get_video), and stops
   once at a single approval of the cut list and the cutaway picks, written to
   content/<id>-broll-plan.md with thumbnails shown on the campaign page. Writes the edit project to
   media/<id>/<id>-edit/, cutaways as media/<id>/<id>-broll<N>-v<NN>.mp4 logged with source_url and
   credit, and the short as media/<id>/<id>-v<NN>.mp4, verified with ffprobe and sampled frames.
   Never calls fal itself: an AI-generated cutaway goes through generate-video and its cost gate.
-  Without Pexels it hands back search terms and links; without HyperFrames or Node it stops after the
+  Without a stock library it hands back search terms and links; without HyperFrames or Node it stops after the
   approval and hands back the cut list and clips. Do NOT use to write the script or the hook
   (write-video-ad-script, write-hook), to generate footage from a prompt (generate-video), to edit
   footage that is not a person talking to camera, or to join, trim or reformat ad clips.
@@ -89,8 +90,9 @@ halfway through:
 
 - **`npx -y hyperframes@0.9.6 doctor`** reports Node, ffmpeg, Chrome and the speech engines in one go
   (`hyperframes.md` section 1). If `npx` itself is missing, Node is not installed.
-- **The Pexels tools.** Check whether `pexels_search_videos` is live from the plugin's `pexels` server.
-  Never look for a key and never ask for one.
+- **The stock libraries.** Check whether `pixabay_search_videos` (the plugin's `pixabay` server) and
+  `pexels_search_videos` (its `pexels` server) are live. Either is enough. Never look for a key and
+  never ask for one.
 
 What each gap costs, said plainly and once:
 
@@ -99,11 +101,13 @@ What each gap costs, said plainly and once:
 | Node, or HyperFrames will not run | Plan and fetch as normal. At the end, hand back the cut list as timestamps and the downloaded cutaways, to assemble in any editor. Nothing is rendered. |
 | ffmpeg | Stop before planning. Without it neither the pauses nor the render can be worked out. Say that plainly. |
 | a speech engine | Offer to install Parakeet: a one-time download of several hundred megabytes, about a minute (`hyperframes.md` section 3). If they decline, stop. Without words there is nothing to cut or caption. |
-| Pexels | Plan as normal, but each stock beat carries a search link instead of picks (step 5). |
+| a stock library (Pixabay or Pexels) | Plan as normal, but each stock beat carries a search link instead of picks (step 5). |
 
-None of these is an error, and none needs an apology. The Pexels key is entered under `/plugin`, the
-**Installed** tab, **Halfborg Campaign Engine**, where Claude Code asks for it. Mention that once, in a clause,
-if Pexels is missing.
+None of these is an error, and none needs an apology. If neither library is live, mention once, in a
+clause, that a free Pixabay key turns on stock search: it is entered under `/plugin`, the
+**Installed** tab, **Halfborg Campaign Engine**, where Claude Code asks for it. Do not suggest a
+Pexels key; Pexels has stopped issuing new ones. A user who already has one can enter it in the same
+place.
 
 ## 3. Transcribe, find the pauses, tighten
 
@@ -134,15 +138,28 @@ the plan.
 
 ## 5. Find the stock
 
-For every `stock` beat, search and filter by `broll-rules.md` section 3. Fetch each candidate's
-thumbnail into `<id>-edit/options/` and look at it (section 5 of the same file). Keep the best two
-or three per beat. A beat where nothing passes is shown with that fact and a suggestion: a
-different idea, keep the face, or a generated clip.
+For every `stock` beat, search and filter by `broll-rules.md` section 3. **Which library:** with
+only one live, use it. With both live, search Pexels first, and search Pixabay for a beat only when
+fewer than three Pexels results pass. Fetch each candidate's thumbnail into `<id>-edit/options/` and
+look at it (section 5 of the same file). Keep the best two or three per beat, whichever library they
+came from. A beat where nothing passes is shown with that fact and a suggestion: a different idea,
+keep the face, or a generated clip.
 
-**Without Pexels**, give each stock beat its search query and a link the user can open:
-`https://www.pexels.com/search/videos/<query>/?orientation=portrait`. If they later drop downloaded
-clips in, take each as `<id>-broll<N>-v01.mp4` and ask who made it, because the credit is needed for
-the record.
+**Without a stock library**, give each stock beat its search query and a link the user can open:
+`https://pixabay.com/videos/search/<query>/?orientation=vertical`, with spaces in the query as
+`%20`. If they ask for Pexels instead, the link is
+`https://www.pexels.com/search/videos/<query>/?orientation=portrait`.
+
+If they later drop downloaded clips in, treat each one as a stock pick:
+
+1. Copy it to `<id>-broll<N>-v01.mp4` (the next free `vNN` if one exists) for the beat they name.
+2. `ffprobe` it against the resolution and length bar in `broll-rules.md` section 3, and extract
+   one frame from inside the length the beat will use, into the scratchpad. Look at it for the
+   rejects in the same section. A clip that fails is reported with the reason; it is not used
+   without the user saying so.
+3. Ask who made it and the page they took it from, because the credit is needed for the record.
+   Log it as step 7 does, with `source` set to the library they name (`pixabay`, `pexels`), or to
+   `user` when it is their own footage, which needs no credit.
 
 ## 6. The approval stop
 
@@ -159,9 +176,9 @@ The doc, in this order:
 2. **Caption corrections.** Every word changed from what the transcript heard, before and after.
 3. **The cutaways.** One block per beat: number, time on the finished short, the words under it,
    the idea, then the options, each with its thumbnail
-   (`![beat 2, option a](../media/<id>/<id>-edit/options/beat2-a.jpg)`), its length, its creator and
-   its Pexels page. The recommended option first. A `generate` beat says what it would show and that
-   it would cost money to make, with no figure, because `generate-video` quotes the price.
+   (`![beat 2, option a](../media/<id>/<id>-edit/options/beat2-a.jpg)`), its length, its creator,
+   and its page on the library it came from (Pixabay or Pexels). The recommended option first. A
+   `generate` beat says what it would show and that it would cost money to make, with no figure, because `generate-video` quotes the price.
 4. **What the face keeps.** The hook, the turn and the call to action, with their times, so the user
    can see the cutaways stay off them.
 5. **Notes.** Anything the user should know: a sideways take, a stand-in caption font, a step that
@@ -188,8 +205,9 @@ decline the cost, that beat falls back to its best stock option or to the face; 
 
 ## 7. Fetch the picks
 
-For each approved stock pick, get its full rendition list (`pexels_get_video`), choose the smallest
-rendition that clears the resolution bar (`broll-rules.md` section 3), and download it:
+For each approved stock pick, get its full rendition list from the library it came from
+(`pexels_get_video` or `pixabay_get_video`), choose the smallest rendition that clears the
+resolution bar (`broll-rules.md` section 3), and download it:
 
 ```bash
 curl -L -o "campaigns/<slug>/media/<id>/<id>-broll<N>-v01.mp4" "<the rendition link>"
@@ -201,9 +219,11 @@ width and height you chose. Log each one:
 
 ```json
 {"ts":"…","event":"generate","skill":"edit-talking-head","deliverable":"<id>","role":"broll","file":"media/<id>/<id>-broll2-v01.mp4","source":"pexels","source_url":"https://www.pexels.com/video/<pexels id>/","credit":"<creator name> on Pexels","cost_usd":0,"status":"iteration","notes":"beat 2, over \"<the words>\""}
+{"ts":"…","event":"generate","skill":"edit-talking-head","deliverable":"<id>","role":"broll","file":"media/<id>/<id>-broll3-v01.mp4","source":"pixabay","source_url":"<the result's pageURL>","credit":"<user> on Pixabay","cost_usd":0,"status":"iteration","notes":"beat 3, over \"<the words>\""}
 ```
 
-`credit` is not optional for stock. A clip whose creator you cannot name is not used.
+`source_url` is the clip's page on the library, never the download link, which expires. `credit` is
+not optional for stock. A clip whose creator you cannot name is not used.
 
 ## 8. Build the edit
 
@@ -253,7 +273,7 @@ Then rebuild the campaign page once, for everything this run logged (`campaign-s
 Report per `plain-language.md` section 5: what it is ("your 41-second short about morning
 dashboards"), the one path to open (the MP4, in full), what you checked, and what you did not do or
 could not check. Offer, once, a credits line they can paste into the post description:
-"B-roll: Jane Doe, Sam Lee on Pexels."
+"B-roll: Jane Doe on Pexels, Sam Lee on Pixabay."
 
 End on one next action. Usually: watch it and tell me what to change. When they say it is ready to
 post, log a `status` event with `"status":"final"` for that MP4.

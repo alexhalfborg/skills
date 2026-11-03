@@ -42,7 +42,7 @@ does not FAIL the campaign for other deliverables being incomplete.
 | Pipeline fulfilment | Every `register`ed pipeline sub-id that is expected to ship has an artifact on disk. A sub-id that is only *registered* — its concept locked in the parent pipeline's doc — with no media is **concepted, not produced**. | WARN by default; FAIL only if the campaign is being signed off as complete-in-full; WARN if working iterations exist but none is `final` |
 | No ghost ids | Every `generate`/`status` log `deliverable` is a manifest id, `key-visual`, or a registered sub-id. | FAIL (log integrity) |
 | No unlogged media | Every file under `media/<id>/` (except a clearly-marked `_ref-*` input, and the contents of an `edit-talking-head` edit folder `media/<id>/<id>-edit/`, which is a working folder per `campaign-structure.md` §3.1) has a `generate` line. | WARN (traceability) |
-| Stock provenance | Every `generate` line with `"source":"pexels"` (or any stock library) carries `credit` and `source_url`. | FAIL (cannot be credited or licence-checked) |
+| Stock provenance | Every `generate` line with a stock `source` (`pexels`, `pixabay`, or any other library) carries `credit` and `source_url`. | FAIL (cannot be credited or licence-checked) |
 | Reference inputs | An `_ref-*` source image used by a render is either logged or explicitly noted as a supplied input. | WARN |
 | Filename grammar | Media filenames match `<id>[-role][-seq][-ratio]-v<NN>.<ext>` (`campaign-structure.md` §3). | WARN |
 | Version integrity | No overwritten versions; a re-roll is a new `v<NN>`. (A gap in the log where a file exists but has no birth `generate` is the signal.) | WARN |
@@ -101,7 +101,7 @@ against `design.md` tokens.
 | Text-free anchor | `key-visual` locked still | The locked master visual carries no baked headline/logo/tagline. A titled anchor is a defect. | FAIL |
 | Video technical | `.mp4` deliverables | `ffprobe`: a video stream present, duration ≈ intended, width×height match the intended resolution/ratio, an audio stream if audio was requested, non-trivial file size. | FAIL (wrong spec) |
 | Video content | `.mp4` deliverables | Extract 1+ sample frames to the **scratchpad**, `Read` them: right subject, on-brand, not a black/garbled frame; for multi-shot, the cuts are actually present. | FAIL (garbled) / WARN (soft) |
-| Stock faces | talking-head shorts with `broll` cutaways | Sample a frame inside each cutaway's beat (times are in `content/<id>-broll-plan.md`). A recognisable person in stock footage on a **paid** short implies endorsement the Pexels licence forbids, with no model release guaranteed. On an organic short it is a finding only when the words under it make a claim. | FAIL (paid) / WARN (organic, under a claim) |
+| Stock faces | talking-head shorts with `broll` cutaways | Sample a frame inside each cutaway's beat (times are in `content/<id>-broll-plan.md`). A recognisable person in stock footage on a **paid** short implies an endorsement neither stock licence allows (Pexels forbids it outright, Pixabay forbids misleading use), with no model release guaranteed. On an organic short it is a finding only when the words under it make a claim. | FAIL (paid) / WARN (organic, under a claim) |
 | Caption spelling | talking-head shorts | Burned-in captions spell the brand and every product name exactly as the pack does. Sample frames where those names are spoken. | FAIL (brand or product misspelled) / WARN (other word) |
 
 **Three do-not traps.** (1) `explore-visual-ideas` outputs (role `idea`) carry *approximate* in-image text by

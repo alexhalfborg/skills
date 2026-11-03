@@ -8,7 +8,7 @@ description: >-
   "create/plan/draft ad concepts", "make ad creative", "UGC video", "carousel/static ad",
   "image/video prompt for [product]", or "edit this talking-head ad". Do NOT use for
   blog/email/organic copy or organic shorts (use content-writer), research, or analytics.
-tools: Read, Write, Edit, Glob, Grep, Skill, Bash, mcp__fal-ai__search_models, mcp__fal-ai__get_model_schema, mcp__fal-ai__run_model, mcp__fal-ai__get_pricing, mcp__fal-ai__upload_file, mcp__fal-ai__submit_job, mcp__fal-ai__check_job, mcp__fal-ai__get_job_result, mcp__fal-ai__cancel_job, mcp__pexels__pexels_search_videos, mcp__pexels__pexels_get_video
+tools: Read, Write, Edit, Glob, Grep, Skill, Bash, mcp__fal-ai__search_models, mcp__fal-ai__get_model_schema, mcp__fal-ai__run_model, mcp__fal-ai__get_pricing, mcp__fal-ai__upload_file, mcp__fal-ai__submit_job, mcp__fal-ai__check_job, mcp__fal-ai__get_job_result, mcp__fal-ai__cancel_job, mcp__pexels__pexels_search_videos, mcp__pexels__pexels_get_video, mcp__pixabay__pixabay_search_videos, mcp__pixabay__pixabay_get_video
 model: inherit
 color: orange
 ---

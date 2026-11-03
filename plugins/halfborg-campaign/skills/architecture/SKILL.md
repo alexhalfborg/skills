@@ -130,7 +130,8 @@ agents/                       six specialists the main thread dispatches: strate
 schema/                       the contracts (below), plus preflight.md
 templates/                    seeds copied into a workspace: engine.yaml, claude-md-block.md, design.md
 .mcp.json                     the fal-ai server (fal's OAuth relay, signed in to through /mcp) and
-                              the pexels stock-footage server (pexels_key setting)
+                              the pixabay and pexels stock-footage servers (pixabay_key and
+                              pexels_key settings)
 ```
 
 An agent is a context of its own, not a fifth kind of skill: it either spans several skills and
@@ -261,10 +262,12 @@ the phase that writes it and the phases that read it.
   whether rendering is available, check for live `mcp__fal-ai__*` tools, not for a file. Secrets never
   go in `engine.yaml`, a brand pack, a campaign, or the conversation. Never ask the user for a key or
   credentials in chat; point them at `/mcp` or at `/halfborg-campaign:setup-engine`.
-- **Pexels is the one key, and it is a plugin setting.** Pexels has no sign-in, so its key is the
-  plugin's `pexels_key` user config, stored in secure storage and substituted into the `pexels`
-  server's environment by the harness. No skill reads it. Test for a live `pexels_search_videos`, not
-  for a key, and point the user at `/plugin` → **Installed** → **Halfborg Campaign Engine**.
+- **The stock libraries are the only keys, and they are plugin settings.** Pixabay and Pexels have no
+  sign-in, so their keys are the plugin's `pixabay_key` and `pexels_key` user config, stored in secure
+  storage and substituted into the `pixabay` and `pexels` servers' environments by the harness. No
+  skill reads them. Test for a live `pixabay_search_videos` or `pexels_search_videos`, not for a key,
+  and point the user at `/plugin` → **Installed** → **Halfborg Campaign Engine**. Point new users at
+  the Pixabay key: Pexels stopped issuing new keys in late 2026.
 - Not connecting fal is a supported way to run this workspace, not a degraded one. `generate-image` and
   `generate-video` render when the fal MCP is live and otherwise hand back the prompt, model id, and
   settings to run by hand at fal.ai — writing no file, no log line, and no invented URL or cost.
@@ -296,7 +299,7 @@ is the contract, and every skill defers to it.
 ## Local tooling and external skills
 
 See `references/integrations.md` beside this file for what ffmpeg, Node with HyperFrames, the fal
-MCP and the Pexels MCP each unlock, and exactly how the engine behaves when any is absent. The short
+MCP and the two stock-footage MCPs (Pixabay, Pexels) each unlock, and exactly how the engine behaves when any is absent. The short
 version: all are optional and none blocks a phase. `edit-talking-head` needs ffmpeg to cut at all
 and HyperFrames to render, and hands back a cut list when it cannot render.
 

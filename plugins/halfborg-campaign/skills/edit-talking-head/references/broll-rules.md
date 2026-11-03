@@ -96,36 +96,50 @@ would go there. (Their own footage library is planned, not built yet.)
 
 ## 3. Choosing the stock
 
-Search Pexels with `pexels_search_videos`, query from the beat, `orientation: portrait`, up to 15
-results. If fewer than three pass the rules below, search again with `orientation: landscape` and
-`size: large` (4K). Then apply these rules to every result:
+The query comes from the beat. How to search depends on the library (SKILL.md step 5 says which
+to use):
+
+**Pexels.** `pexels_search_videos` with `orientation: portrait`, up to 15 results. If fewer than
+three pass the rules below, search again with `orientation: landscape` and `size: large` (4K).
+List results carry only the top few renditions; `pexels_get_video` returns all of them.
+
+**Pixabay.** `pixabay_search_videos` with `video_type: film`, `safesearch: true`, `per_page: 20` and
+`min_height: 1920`. Pixabay's video search has no orientation filter, but that height floor lets
+through exactly the clips that can clear the resolution bar below: an upright clip at 1080×1920, or a
+4K landscape one at 2160 high. Tell portrait from landscape by the result's width and height. Search
+results show only the medium rendition, so call `pixabay_get_video` on each candidate that passes
+the length check to see all four renditions (`tiny`, `small`, `medium`, `large`; `large` is empty
+when there is no 4K) and their thumbnails.
+
+Then apply these rules to every result, from either library:
 
 **Resolution.** A portrait clip needs a rendition at least 1080 wide. A landscape clip needs one at
 least 3840 wide: cropping a 1920×1080 clip to vertical leaves about 608 pixels of width, which
 looks soft once it is enlarged to fill a phone. Download the **smallest rendition that clears the
-bar**, not the largest; 4K portrait files are big and gain nothing at 1080×1920. List results carry
-only the top few renditions; `pexels_get_video` returns all of them.
+bar**, not the largest; 4K portrait files are big and gain nothing at 1080×1920.
 
 **Length.** The clip must run at least the beat's length plus 0.5 seconds, so the cutaway can skip
-the first half-second (where stock often fades in). Pexels search cannot filter by length, so check
-`duration` on every result yourself.
+the first half-second (where stock often fades in). Neither library's search can filter by length,
+so check `duration` on every result yourself.
 
-**What is in it.** Download the clip's thumbnail (`image`) into `<id>-edit/options/` and look at it
-(section 5). Reject anything with:
+**What is in it.** Download the clip's thumbnail into `<id>-edit/options/` and look at it
+(section 5). On Pexels it is the result's `image`; on Pixabay, the `thumbnail` of the rendition you
+would download. If a Pixabay rendition has no thumbnail, take one frame from about a second into its
+`tiny` rendition with ffmpeg instead. Reject anything with:
 
 - on-screen text, a logo, a watermark, or a competitor's brand mark
 - anything the brand has said never to show or say (`pack.nogos`)
 - a look that fights the campaign's main picture, when there is one
-- **a recognisable face, on a paid short.** The Pexels licence forbids implying that a person
-  endorses anything, and model releases for its footage are not guaranteed. On paid media that risk
-  is not worth taking. On organic shorts a face is allowed, but never under a claim, a product line
+- **a recognisable face, on a paid short.** Neither library guarantees a model release, and both
+  licences forbid misleading use: Pexels names implied endorsement outright, and Pixabay leaves any
+  third party's consent to you. On paid media that risk is not worth taking. On organic shorts a face is allowed, but never under a claim, a product line
   or a testimonial, where it would read as that person vouching for it.
 
 A short is **paid** when its deliverable list entry has a `funnel_stage`, or its `channel` or
 `format` names an ad. When the entry does not settle it, ask once.
 
-**Keep the best two or three per beat**, ranked, each with its Pexels page, creator name, length,
-the rendition you would download, and the thumbnail you looked at.
+**Keep the best two or three per beat**, ranked, each with its library, its page there, creator
+name, length, the rendition you would download, and the thumbnail you looked at.
 
 ## 4. Captions: correct, then re-time
 
@@ -156,7 +170,8 @@ or more) a group of its own when it would otherwise wrap.
 
 ## 5. Looking at the options
 
-The campaign page is offline by design, so it cannot load thumbnails from Pexels. Download each
+The campaign page is offline by design, so it cannot load thumbnails from a stock library (and
+Pixabay's terms forbid linking to them permanently anyway). Download each
 option's thumbnail into `media/<id>/<id>-edit/options/` as `beat<N>-<letter>.jpg` (`beat2-a.jpg`,
 `beat2-b.jpg`), then open each one and look at it before it reaches the plan. The plan doc links them
 as `../media/<id>/<id>-edit/options/beat2-a.jpg`: that relative path resolves both from `content/`
@@ -164,13 +179,32 @@ and from `site/`, since both sit beside `media/`.
 
 These thumbnails are working files for the decision, not deliverables, so they are not logged.
 
-## 6. The Pexels licence, in brief
+## 6. The stock licences, in brief
 
-- Free to use, including commercially and in ads, and free to modify. Attribution is not required.
+Both libraries are free for commercial use, ads included, and free to modify. Neither requires
+attribution. The skill logs the creator with every clip anyway and offers a credits line for the
+post description; nothing goes on screen.
+
+**Pixabay** (the Pixabay Content License):
+
+- Not allowed: selling or distributing a clip on its own, unchanged; using a clip that shows a
+  recognisable trademark, logo or brand commercially (already a reject in section 3); using footage
+  in a misleading or deceptive way, or an immoral or illegal one, especially footage of
+  recognisable people; using it as part of a trademark or business name.
+- Some clips may carry other people's rights, and checking for that is the user's job, which is
+  one more reason for the paid-short face rule.
+- API terms: show where results come from (the plan doc names the library and the creator), cache
+  searches for 24 hours, no automated bulk downloading, no permanent hotlinking. The skill searches
+  once per beat and downloads only the approved picks, so it meets all four.
+- Full terms: <https://pixabay.com/service/license-summary/>. The API allows 100 requests a minute.
+
+**Pexels** (the Pexels licence):
+
 - Not allowed: implying that a person or brand in the footage endorses anything; showing an
   identifiable person in a bad or offensive light; selling unaltered copies; redistributing the
   footage on a stock site; using it as part of a trademark or logo.
-- Pexels' API terms ask for the creator to be credited where possible. The skill logs the creator
-  with every clip and offers a credits line for the post description; nothing goes on screen.
+- Pexels' API terms ask for the creator to be credited where possible.
 - Full terms: <https://www.pexels.com/license/>. The API allows 200 requests an hour and 20,000 a
-  month. One short uses a few dozen.
+  month. Pexels stopped issuing new API keys in late 2026; existing keys still work.
+
+One short uses a few dozen requests on either.

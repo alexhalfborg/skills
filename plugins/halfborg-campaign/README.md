@@ -98,7 +98,7 @@ finishing a campaign.
 | **ffmpeg** | checking a video after it is made | You still get the clip. It just says it could not open the file to check it. |
 | **a fal.ai account, signed in** | images and video made here | It hands you the finished prompt and settings to run yourself at fal.ai, and writes nothing. |
 | **Node.js 22 or newer** | your talking-head shorts edited and rendered on your own computer | It still plans the cuts and finds the b-roll, then gives you the list to put together in CapCut or any editor. |
-| **a Pexels key** (free) | stock b-roll found and downloaded for your shorts | It plans where the b-roll goes and gives you search links to pick the clips yourself. |
+| **a Pixabay key** (free) | stock b-roll found and downloaded for your shorts | It plans where the b-roll goes and gives you search links to pick the clips yourself. |
 
 ### Editing talking-head shorts
 
@@ -112,10 +112,14 @@ that runs entirely on your computer. Nothing you say is sent anywhere to be tran
 it costs anything. Only a cutaway you ask it to generate with AI costs money, and that stops and shows
 you the price like any other render.
 
-For stock b-roll, get a free key at [pexels.com/api](https://www.pexels.com/api/). Then open
-`/plugin`, go to the **Installed** tab and select **Halfborg Campaign Engine**: Claude Code asks for
-the Pexels key there. Run `/reload-plugins`, or restart. It is the one key the engine holds, and it
-goes into secure storage, never into a conversation.
+For stock b-roll, make a free account at [pixabay.com](https://pixabay.com), then open
+[pixabay.com/api/docs](https://pixabay.com/api/docs/) while logged in: your key is shown on that
+page. Then open `/plugin`, go to the **Installed** tab and select **Halfborg Campaign Engine**:
+Claude Code asks for the Pixabay key there. Run `/reload-plugins`, or restart. The key goes into
+secure storage, never into a conversation.
+
+If you already have a Pexels key, you can enter it in the same place and it searches both. Pexels
+is not giving out new keys at the moment, so you don't need one.
 
 ### Turning on image and video
 

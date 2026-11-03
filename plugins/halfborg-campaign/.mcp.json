@@ -11,6 +11,14 @@
       "env": {
         "PEXELS_API_KEY": "${user_config.pexels_key}"
       }
+    },
+    "pixabay": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@hanoak/pixabay-mcp-server@1.0.1"],
+      "env": {
+        "PIXABAY_API_KEY": "${user_config.pixabay_key}"
+      }
     }
   }
 }

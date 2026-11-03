@@ -9,12 +9,13 @@ There is no executable code anywhere in this repo — no script, no Node depende
 itself: `build-site` reads a campaign's own files and writes `site/index.html` directly,
 rather than running a build script.
 
-Two things run on the **user's** machine at run time, fetched by `npx` and pinned to an exact
+Three things run on the **user's** machine at run time, fetched by `npx` and pinned to an exact
 version, never vendored here: HyperFrames (`hyperframes@0.9.6`, which `edit-talking-head` uses to
-transcribe and render) and the Pexels MCP server (`@hanoak/pexels-mcp-server@1.0.2`, declared in
-`.mcp.json`). Moving either to a new version is a deliberate edit: change the pin, re-run a real
+transcribe and render) and the two stock-footage MCP servers, Pixabay
+(`@hanoak/pixabay-mcp-server@1.0.1`) and Pexels (`@hanoak/pexels-mcp-server@1.0.2`), both declared in
+`.mcp.json`. Moving any of them to a new version is a deliberate edit: change the pin, re-run a real
 short end to end in a scratch workspace, and update `skills/edit-talking-head/references/hyperframes.md`
-wherever the tool's behaviour moved. That file records what was observed by running the pinned
+(or, for a stock server, `references/broll-rules.md` section 3) wherever the tool's behaviour moved. That file records what was observed by running the pinned
 version, so it is only as good as its last real run.
 
 ## Repo layout

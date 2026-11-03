@@ -106,7 +106,7 @@ own connection, so it needs this sign-in too; it is the same fal account and cos
 
 If they would rather not, that is a finished setup, not an abandoned one. Say so and carry on.
 
-## 6. Report where fal and Pexels stand
+## 6. Report where fal and stock footage stand
 
 The real answer is whether the `mcp__fal-ai__*` tools are live in **this** session. A sign-in
 through `/mcp` takes effect straight away; if the tools still are not there, re-running this command
@@ -118,17 +118,20 @@ is the way to check again.
   finished prompt and the model to run it with, at <https://fal.ai/models>, and everything else in
   the pipeline is identical. Frame it as a choice. It is the intended offline behaviour, not a defect.
 
-**Then, in one or two sentences, stock footage.** The plugin can also search free Pexels stock
-footage for the b-roll in talking-head shorts. Unlike fal it is a key, not a sign-in: a free one from
-<https://www.pexels.com/api/>, entered under `/plugin` → **Installed** → **Halfborg Campaign
-Engine**, where Claude Code asks for it. Never ask for it in chat, and test only whether the
-`pexels_search_videos` tool is live.
+**Then, in one or two sentences, stock footage.** The plugin can also search free stock footage
+for the b-roll in talking-head shorts, from Pixabay (and from Pexels, for anyone who already has a
+Pexels key). Unlike fal it is a key, not a sign-in. The one to suggest is Pixabay's: free and
+immediate, shown on <https://pixabay.com/api/docs/> once they are logged in, and entered under
+`/plugin` → **Installed** → **Halfborg Campaign Engine**, where Claude Code asks for it. Do not
+suggest getting a Pexels key; Pexels has stopped issuing new ones. Never ask for a key in chat, and
+test only whether `pixabay_search_videos` or `pexels_search_videos` is live.
 
-- **Live:** say stock footage search is ready, and that it is free.
-- **Absent:** say that when they edit a talking-head short, the cutaways come with search links
-  to pick clips themselves instead. Mention it only if they make video; a team that never films
-  itself does not need to hear about it. If they ask why `/mcp` shows a failed server, this is it:
-  with no key the stock-footage server does not start, and nothing else is affected.
+- **Either live:** say stock footage search is ready, and that it is free.
+- **Neither live:** say that when they edit a talking-head short, the cutaways come with search
+  links to pick clips themselves instead. Mention it only if they make video; a team that never
+  films itself does not need to hear about it. If they ask why `/mcp` shows a failed server, this is
+  it: a stock-footage server with no key does not start, and nothing else is affected. With only a
+  Pixabay key, the Pexels server shows as failed for the same reason, and that is fine.
 
 Do not check for Node, HyperFrames or ffmpeg here. The skills that use them check at the moment
 they need them, and say what is missing in terms of what it costs.

@@ -200,12 +200,13 @@ A take the user recorded and a stock clip fetched from a library are logged with
 like anything else, so they appear on the campaign page and QA can trace them, but with no `model`
 and no `prompt`:
 
-- `source` names where the file came from: `user` for footage a person supplied, `pexels` for
-  Pexels stock. Absent means generated, which is every entry written before this field existed.
-- `credit` is the creator's name exactly as the library gave it (`"Jane Doe on Pexels"`). Required
-  whenever `source` is a stock library. Pexels does not demand attribution, but its API terms ask
-  for credit where possible, and a stock clip with no recorded creator is one nobody can credit
-  later.
+- `source` names where the file came from: `user` for footage a person supplied, or the stock
+  library it came from, `pexels` or `pixabay`. Absent means generated, which is every entry written
+  before this field existed.
+- `credit` is the creator's name exactly as the library gave it, followed by the library
+  (`"Jane Doe on Pexels"`, `"Sam Lee on Pixabay"`). Required whenever `source` is a stock library.
+  Neither library demands attribution, but Pexels' API terms ask for credit where possible, and a
+  stock clip with no recorded creator is one nobody can credit later.
 - `source_url` is the library's page for the clip, not the file link, so a person can open it and
   check the licence. `cost_usd` is `0`.
 

@@ -11,7 +11,7 @@ description: >-
   email, or social caption, "find a better headline/title" for one, or "edit my talking-head
   short". Do NOT use for paid-ad concepts, ad headlines or paid video (use paid-creative) or
   research/strategy.
-tools: Read, Write, Edit, Glob, Grep, Skill, Bash, WebSearch, WebFetch, mcp__pexels__pexels_search_videos, mcp__pexels__pexels_get_video
+tools: Read, Write, Edit, Glob, Grep, Skill, Bash, WebSearch, WebFetch, mcp__pexels__pexels_search_videos, mcp__pexels__pexels_get_video, mcp__pixabay__pixabay_search_videos, mcp__pixabay__pixabay_get_video
 model: inherit
 color: green
 ---
