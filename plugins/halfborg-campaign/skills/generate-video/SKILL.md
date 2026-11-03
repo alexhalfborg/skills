@@ -60,8 +60,8 @@ and `ffmpeg` (a still frame to eyeball), so a working ffmpeg is what lets you ch
 Confirm with `ffprobe -version` rather than assuming — it is an optional dependency and may not be
 installed. ffmpeg is required only for verification, never for rendering: if it cannot be found,
 still deliver the clip but say clearly that you could **not** check it — in those words, not as
-"unverified" — rather than skipping silently or claiming a check you did not run. This is the only
-place ffmpeg is checked at all — nothing upstream checks it for you, so confirm it here, every time.
+"unverified" — rather than skipping silently or claiming a check you did not run. Nothing upstream
+checks it for you, so confirm it here, every time.
 
 **The fal MCP.** The fal MCP is a plugin-scoped streamable-HTTP server declared in the
 `halfborg-campaign` plugin's `.mcp.json` (`fal-ai` → `https://mcp.fal.ai/mcp-relay`, fal's OAuth

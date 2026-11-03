@@ -126,8 +126,9 @@ it will tell you what is missing rather than invent a number.
 by `write-ad-creative`, `write-video-ad-script`, `prepare-reference-kit`, `compose-lockup`,
 `explore-visual-ideas`, `analyse-competitor-ads`, `build-landing-page`, `write-personal-post`,
 `write-customer-story`, `write-email`, `write-generation-prompt`, `generate-image` and
-`generate-video`. `build-site` keeps the campaign page current, and `architecture` is the reference
-describing how the whole thing fits together.
+`generate-video`. `write-hook` suggests the headline, subject line or video title that gets a piece
+noticed, and works on anything you hand it. `build-site` keeps the campaign page current, and
+`architecture` is the reference describing how the whole thing fits together.
 
 **Agents** — `strategist`, `researcher`, `content-writer`, `paid-creative`, `analyst`, `qa`.
 

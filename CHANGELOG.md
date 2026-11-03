@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.7.0
+
+**New skill: `write-hook`.** Hand it any organic piece and it suggests up to five ranked hooks for
+the surface it is going out on: an email's subject line paired with preview text, an article's
+headline, a social post's first line, a YouTube video's title, or a short's single line that works
+on the first frame and as its title. Each option is a different angle, ranked with a reason, and
+paid off by the content; a stronger hook the piece has not yet earned is set aside with what the
+piece would need to add. It never predicts open or click rates.
+
+- It runs with or without a brand or campaign, and says what it could not check. Inside a campaign
+  a direct request writes `content/<id>-hooks.md` against the piece it was run on, and puts the
+  picked line into the piece only when asked.
+- It takes pasted text, a file, a campaign piece, a web link, a script or a video file. From a video
+  file it samples frames with ffmpeg; it cannot hear the audio and asks for a transcript when the
+  piece is carried by speech.
+- **The subject-line method moved out of `write-email`** into `write-hook`, which `write-email` now
+  calls for every email. `write-personal-post` and `write-customer-story` call it too, so every
+  article now comes back with headline options and the top pick as its H1.
+- Paid hooks are unchanged and stay with `write-ad-creative` and `write-video-ad-script`.
+
+No upgrade steps.
+
 ## 0.6.0
 
 **fal is now a sign-in, not a key.** The plugin's `fal-ai` server points at fal's own OAuth relay,

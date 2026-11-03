@@ -12,19 +12,21 @@ description: >-
   profile is required, and only one byline is ever loaded), brands/<id>/pack.yaml (audience,
   products with price/url/claims_allowed, voice.spelling, mandatories, nogos), and, inside a campaign,
   campaigns/<slug>/docs/message.md (key message + chosen tagline) and brief.md (objective, audience).
-  Its own methodology — subject line and preview text, the one-idea section flow, a single primary CTA,
-  sequence cadence, and the honesty rules — is brand-agnostic and works fully offline (no external
-  marketing skill needed). Output lands in campaigns/<slug>/content/<name>.md, logged and site-rebuilt.
-  Do NOT use for blog posts or articles (write-personal-post for founder voice, write-customer-story for
-  testimonials), for paid-ad copy (write-ad-creative), for organic social captions, or to design an HTML
-  email template (this writes the copy; it does not build markup).
+  Its own methodology — the one-idea section flow, a single primary CTA, sequence cadence, and the
+  honesty rules — is brand-agnostic and works fully offline (no external marketing skill needed); the
+  subject line and preview text come from write-hook, called inline. Output lands in
+  campaigns/<slug>/content/<name>.md, logged and site-rebuilt. Do NOT use for blog posts or articles
+  (write-personal-post for founder voice, write-customer-story for testimonials), for paid-ad copy
+  (write-ad-creative), for organic social captions, to rework only the subject line of an existing
+  email (write-hook), or to design an HTML email template (this writes the copy; it does not build
+  markup).
 ---
 
 # write-email — write a brand's emails and newsletters in its own voice
 
 This skill writes email and newsletter **copy** in a brand's voice. The methodology below (how to
-write a subject line, how to structure a broadcast versus a sequence, the single-CTA discipline, the
-honesty rules, the self-review checklist) is brand-agnostic and applies to any brand. It carries no
+structure a broadcast versus a sequence, the single-CTA discipline, the honesty rules, the
+self-review checklist) is brand-agnostic and applies to any brand. It carries no
 brand facts of its own — every persona detail, product, price, URL, and real turn of phrase comes
 from the active brand's profile and pack.
 
@@ -38,6 +40,7 @@ Where the neighbours sit:
   they read (founder or team), so a newsletter sounds like the brand's other writing.
 - `content-writer` — the agent that routes a written-content request to the right voice skill; it
   invokes this one for email/newsletter surfaces.
+- `write-hook` — owns the subject-line method. This skill calls it inline for every email it writes.
 - `write-message` — locks the key message and tagline a campaign email must ladder up to. Read-only.
 - `write-ad-creative` — paid copy, a different discipline. Email is owned, permissioned, and long-lived; it
   is not an ad.
@@ -87,16 +90,18 @@ for the subject line, the body, and the CTA.
 ## Subject line and preview text
 
 The subject line and the preview text (the grey snippet after the subject) are one two-part unit and
-the only thing that earns the open.
+the only thing that earns the open. The method for writing them belongs to `write-hook`; this skill
+does not restate it.
 
-- Draft **3–5 subject-line options** and let the user pick; do not ship a single guess.
-- Range across the useful registers: a curiosity/question line, a plain benefit line, a
-  news/timeliness line, and the brand's own voice tell. Match the profile's register — a warm
-  peer-to-peer brand does not send a hype subject line.
-- Keep it short enough to survive a phone inbox (aim ~40 characters). No ALL CAPS, minimal emoji, and
-  nothing on the `nogos` list — an email subject is still a brand claim.
-- The **preview text** completes or complicates the subject; it never repeats it. It is not throwaway —
-  a blank preview shows raw HTML or the first body line.
+Once the body is drafted, call `write-hook` **inline** with the email surface, the draft, and the
+brand and campaign you have already resolved. It returns up to five subject-and-preview pairs, best
+first, each one paid off by the email. Then:
+
+- Put its block at the top of the email doc under `## Subject line options`, and carry the top pick
+  as the email's subject and preview.
+- For a sequence, call it once per email; each email earns its own open.
+- Keep the options in this skill's log `notes` (below). `write-hook` writes no file and no log line
+  of its own when called this way.
 
 ## Structure by email type
 
@@ -176,7 +181,8 @@ Outside a campaign, write where the user asks and skip the log step.
 Before handing back:
 
 1. One job, one primary CTA? (If two asks, split into two emails.)
-2. Subject line: 3–5 options offered, short, on-voice, nothing on `nogos`?
+2. Subject line: up to five ranked subject-and-preview pairs from `write-hook` at the top of the doc,
+   with the top pick carried into the email?
 3. Preview text present and not a repeat of the subject?
 4. Voice matches the chosen byline's profile? Not generic "marketing email" tone?
 5. Every product claim within `claims_allowed`? Stronger claims softened or `⚠️ CLAIM CHECK:` flagged?
@@ -202,8 +208,8 @@ honest, always one job, always linked to a real place.
 Follow `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` sections 5 and 6. Three things, in this
 order:
 
-1. **The subject-line options**, so they can pick one. This is the decision they actually have to
-   make.
+1. **The subject-line options**, best first with the top pick named, so they can pick one. This is
+   the decision they actually have to make.
 2. **What you left for them to fill or confirm** — every placeholder, every real deadline, price or
    link you would not invent, and any claim you flagged. Name them plainly; do not make them hunt
    through the draft for square brackets.

@@ -7,15 +7,16 @@ failure, and should be reported that way.
 
 `/halfborg-campaign:setup-engine` does not check any local binary — there is nothing left to check.
 `site/index.html` is authored by the `build-site` skill directly, no separate runtime
-required. ffmpeg readiness is checked only by `generate-video` itself, when it is actually used.
+required. ffmpeg readiness is checked by each skill that uses it, at the moment it is actually used.
 
 ## Local tooling
 
 | Binary | Used by | Behaviour without it |
 |---|---|---|
 | **ffmpeg** (`ffprobe`, `ffmpeg`) | `generate-video` step 8, to verify a downloaded clip (duration, resolution, a sample frame) | You still get the clip. Report it **unverified** rather than silently assuming it is good or claiming a check you did not run. |
+| **ffmpeg** (`ffprobe`, `ffmpeg`) | `write-hook`, to sample frames from a video file it is asked to title | It asks for a script, transcript or one-line summary instead. It never sends audio anywhere to be transcribed. |
 
-`generate-video` confirms with `ffprobe -version` rather than assuming. Do not print install
+Each of them confirms with `ffprobe -version` rather than assuming. Do not print install
 commands for a specific package manager unless the user asks — this engine runs on any OS.
 
 ## Image and video generation (the fal MCP)

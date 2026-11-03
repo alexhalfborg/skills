@@ -230,6 +230,9 @@ One `.md` per deliverable:
   `content/<pipeline-id>-prompts.md`; per-ad prompt docs `content/<sub-id>-prompts.md`. A video
   ad's generation prompt is not its own doc: `write-video-ad-script` appends it to the scripts doc under
   `## Generation prompts`, so a `-prompts.md` holds image prompts.
+- Hook options: `content/<id>-hooks.md`, written by a direct `write-hook` run on deliverable `<id>`
+  and logged against that same id. Not a deliverable of its own, so it never needs a manifest entry.
+  Re-runs add a round below the last rather than replacing it.
 - No brand-name prefixes — the campaign folder already scopes them.
 
 Text files are **not** filename-versioned; they are edited in place and git carries their history.

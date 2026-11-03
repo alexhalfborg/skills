@@ -16,9 +16,11 @@ description: >-
   customer-story profile (team byline, naming convention, opener bank,
   annotated excerpts, sample posts) from brands/<id>/voice/customer-story.md;
   the methodology here (quote taxonomy, results-timeline structure, honesty
-  rules) is brand-agnostic and carries no phrase list of its own. Do NOT use
-  for the founder's first-person posts (use write-personal-post), or when no
-  brand's customer-story profile exists yet.
+  rules) is brand-agnostic and carries no phrase list of its own. Headline
+  options come from write-hook, called inline at hand-back. Do NOT use for the
+  founder's first-person posts (use write-personal-post), to rework only the
+  headline of an existing post (write-hook), or when no brand's
+  customer-story profile exists yet.
 ---
 
 # Customer Story Voice — Third-person customer testimonial and transformation posts
@@ -343,13 +345,17 @@ written permission before publication.
 
 ## When you hand it back
 
-Follow `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` sections 5 and 6. Three things, in this
+Before handing back, call `write-hook` **inline** with the article surface, the finished draft, and
+the brand and campaign you already resolved. Make its top pick the draft's H1.
+
+Then follow `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` sections 5 and 6. Four things, in this
 order:
 
 1. **The permission question, first and plainly.** Has the customer given written permission to
    publish their story, their name and their photos? This is the one thing that stops the piece
    going out, so it leads — never tuck it under the good news.
-2. **Every placeholder you left**, listed plainly, with what each one needs: a missing quote, a
+2. **The headline options**, best first, with the one now on the draft named, so they can swap it.
+3. **Every placeholder you left**, listed plainly, with what each one needs: a missing quote, a
    timeline, a photo, a product they actually used.
-3. **One next action** — the next thing on the campaign's list, named as a thing, or an offer of a
+4. **One next action** — the next thing on the campaign's list, named as a thing, or an offer of a
    shorter cut for social. Name no skill.

@@ -104,6 +104,13 @@ The manifest distinguishes these, and picking the right one matters.
   owns the Reach / Trust / Sell fan-out. `write-brief` must not enumerate individual ads; the
   pipeline decides the concrete assets.
 
+One helper sits alongside both shapes rather than being one: `write-hook`, which owns the line that
+earns attention for organic content (an email's subject and preview, an article's headline, a
+video's title, a short's first-frame line). It is never a manifest entry. `write-email` and the two
+blog voice skills call it inline and keep its options in their own doc; a direct request writes
+`content/<id>-hooks.md` against the deliverable it was run on. Paid hooks stay inside the ads
+pipeline.
+
 ## Layout: the plugin versus the workspace
 
 The engine ships as a plugin, installed read-only into a cache directory. Everything the user owns

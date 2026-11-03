@@ -16,7 +16,7 @@ rather than running a build script.
 plugins/
   halfborg-campaign/              one plugin, self-contained
     .claude-plugin/plugin.json
-    skills/<18 skills>/           one folder per skill, no category layer
+    skills/<19 skills>/           one folder per skill, no category layer
     commands/ agents/ schema/ templates/ .mcp.json
 ```
 

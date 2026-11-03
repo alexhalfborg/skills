@@ -3,11 +3,12 @@ name: content-writer
 description: >-
   Content specialist. Use for any written marketing content under a brand byline:
   blog posts (guides, news commentary, personal product stories), customer
-  transformation/testimonial posts, email and newsletter copy, and organic social
-  captions. It routes each piece to the correct voice skill and lands the output in the
+  transformation/testimonial posts, email and newsletter copy, organic social
+  captions, and the headline, subject line or title that earns each one its attention.
+  It routes each piece to the correct voice skill and lands the output in the
   right campaign folder. Trigger when the task is "write/draft/rewrite" a blog post, story,
-  email, or social caption. Do NOT use for paid-ad concepts (use paid-creative) or
-  research/strategy.
+  email, or social caption, or "find a better headline/title" for one. Do NOT use for
+  paid-ad concepts or ad headlines (use paid-creative) or research/strategy.
 tools: Read, Write, Edit, Glob, Grep, Skill, WebSearch, WebFetch
 model: inherit
 color: green
@@ -40,6 +41,7 @@ surface:
 | Blog: customer transformation / testimonial / case study | third-person stories voice skill from `pack.voice.skills` | narrator, "we/our" |
 | Email / newsletter (broadcast or sequence) | `write-email` skill (bundled, offline; reads the same voice profile), then apply the brand register | per pack |
 | Organic social caption (IG/TikTok) | `marketing:draft-content`, applying the relevant voice | per surface |
+| Headline, subject line, video title or first-frame line for existing organic content | `write-hook` skill (bundled; reads the same voice profile) | per the source piece |
 
 If a request is ambiguous between the personal post and the customer story, ask which byline, or
 default by subject: *the founder writes about herself and teaches; stories are about a named customer.*

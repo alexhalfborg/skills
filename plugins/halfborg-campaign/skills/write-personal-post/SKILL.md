@@ -15,9 +15,11 @@ description: >-
   excerpts, sample posts) from brands/<id>/voice/personal-post.md; the
   methodology here (opener patterns, empathy+authority structure, sentence
   rhythm, content-type templates, honesty rules) is brand-agnostic and carries
-  no phrase list of its own. Do NOT use for third-person customer testimonial
-  / transformation-story posts (use write-customer-story), or when no brand's
-  personal-post profile exists yet.
+  no phrase list of its own. Headline options come from write-hook, called
+  inline at hand-back. Do NOT use for third-person customer testimonial /
+  transformation-story posts (use write-customer-story), to rework only the
+  headline of an existing post (write-hook), or when no brand's personal-post
+  profile exists yet.
 ---
 
 # write-personal-post — write in a brand's first-person founder voice
@@ -405,13 +407,17 @@ For everything else, go ahead and draft. Always honest, always linked, always gr
 
 ## When you hand it back
 
-Follow `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` sections 5 and 6. Three things, in this
+Before handing back, call `write-hook` **inline** with the article surface, the finished draft, and
+the brand and campaign you already resolved. Make its top pick the draft's H1.
+
+Then follow `${CLAUDE_PLUGIN_ROOT}/schema/plain-language.md` sections 5 and 6. Four things, in this
 order:
 
-1. **Every placeholder you left**, listed plainly — the founder's own anecdote, an unsourced figure,
+1. **The headline options**, best first, with the one now on the draft named, so they can swap it.
+2. **Every placeholder you left**, listed plainly — the founder's own anecdote, an unsourced figure,
    a customer story you would not invent. Say what each one needs and who can supply it. Do not
    leave them to find the square brackets themselves.
-2. **The one thing worth checking** in the draft: usually whether it actually sounds like the person
+3. **The one thing worth checking** in the draft: usually whether it actually sounds like the person
    whose name is on it.
-3. **One next action** — the next thing on the campaign's list, named as a thing, or an offer of a
+4. **One next action** — the next thing on the campaign's list, named as a thing, or an offer of a
    different angle on the same post. Name no skill.
