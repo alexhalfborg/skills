@@ -63,15 +63,21 @@ hand at <https://fal.ai/models>, and write nothing — no file, no log line, no 
 Both gate unconditionally on explicit approval with an estimate before spending; no setting relaxes
 that.
 
-## Stock footage (the Pixabay and Pexels MCPs)
+## Stock footage and photos (the Pixabay and Pexels MCPs)
 
-The plugin's `.mcp.json` also declares two stdio servers that search free stock video, both
-unofficial, MIT, and from the same author:
+The plugin's `.mcp.json` also declares two stdio servers that search free stock video and photos,
+both unofficial, MIT, and from the same author:
 
 | Server | Package | Setting → env var | Tools the engine uses |
 |---|---|---|---|
-| `pixabay` | `npx -y @hanoak/pixabay-mcp-server@1.0.1` | `pixabay_key` → `PIXABAY_API_KEY` | `pixabay_search_videos`, `pixabay_get_video` |
-| `pexels` | `npx -y @hanoak/pexels-mcp-server@1.0.2` | `pexels_key` → `PEXELS_API_KEY` | `pexels_search_videos`, `pexels_get_video` |
+| `pixabay` | `npx -y @hanoak/pixabay-mcp-server@1.0.1` | `pixabay_key` → `PIXABAY_API_KEY` | `pixabay_search_videos`, `pixabay_get_video`, `pixabay_search_images`, `pixabay_get_image` |
+| `pexels` | `npx -y @hanoak/pexels-mcp-server@1.0.2` | `pexels_key` → `PEXELS_API_KEY` | `pexels_search_videos`, `pexels_get_video`, `pexels_search_photos`, `pexels_get_photo` |
+
+The photo tools feed one fallback: a b-roll beat with too few usable clips gets a stock still,
+animated with a slow zoom. A standard Pixabay key returns photos only up to 1280px on the long side
+(`largeImageURL`; the full-size `imageURL` needs Pixabay's separate full-access approval), so a
+Pixabay still is shown framed over a blurred copy of itself rather than enlarged to fill the frame.
+Pexels' `src.original` is full size.
 
 The harness substitutes each setting into its server's environment, so **no skill ever reads a
 key**. fal is a sign-in; the stock libraries and Instagram and Threads posting (below) are plugin settings,

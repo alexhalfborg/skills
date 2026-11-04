@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.12.0
+
+**Stock photos with a slow zoom when stock video runs out.** In `edit-talking-head`, a b-roll beat
+left with fewer than two usable clips now gets a stock photo search too, on Pexels
+(`pexels_search_photos`) and Pixabay (`pixabay_search_images`), in the same order as for video:
+
+- **Every still moves:** one slow, even zoom across its beat (a push in to 1.08 times, or a pull out),
+  set in the edit file's timeline. The face and stock clips never get it, and zoom cuts stay hard
+  cuts.
+- **Full frame or framed, decided by size.** A photo big enough to fill 1080×1920 at the top of the
+  zoom fills the frame. A smaller one zooms whole and sharp inside the 4:5 crop, over a blurred,
+  darkened copy of itself. A standard Pixabay key returns photos only up to 1280px on the long side,
+  so Pixabay stills are framed, which keeps them sharp. Anything under 1280px is rejected.
+- **Same rules as clips:** the same rejects (text, logos, `nogos`, faces on paid shorts) plus
+  illustrations and posed looks to camera, the same credit and `source_url` in the log, saved as
+  `<id>-broll<N>-v<NN>.jpg`. A still is the second step of the fallback list, after a second clip
+  search. Reaction moments skip it.
+- **Contracts.** `campaign-structure.md` lists a `.jpg` `broll`; `hyperframes.md` gains section 6.4,
+  checked by rendering at HyperFrames 0.9.6; the `content-writer` and `paid-creative` agents gain the
+  four photo tools.
+
 ## 0.11.0
 
 **Talking-head shorts get a title, a shape, graphics and zoom cuts.** `edit-talking-head` now edits

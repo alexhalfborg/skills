@@ -3,8 +3,9 @@ name: edit-talking-head
 description: >-
   Turn a raw vertical talking-head recording into a finished 9:16 short: tighten the take (cut
   pauses, ums and false starts), open on the hook as a title in a brand-colour box held inside the
-  4:5 crop for 3 to 5 seconds, open each sentence on the face then cut to stock b-roll or
-  animated HyperFrames graphic cards (figure, phrase, reaction emoji, bar chart, step diagram, and a
+  4:5 crop for 3 to 5 seconds, open each sentence on the face then cut to stock b-roll (falling
+  back to a stock still with a slow Ken Burns zoom, full frame or framed over a blurred copy, when
+  too few clips pass for a beat) or animated HyperFrames graphic cards (figure, phrase, reaction emoji, bar chart, step diagram, and a
   mock newspaper or web page for a cited article or study) until it ends, never meme GIFs or
   borrowed film/TV clips, punch in with zoom cuts on a
   single-angle take (listicle headlines, keywords), burn in fixed-size brand-styled word-by-word
@@ -20,11 +21,13 @@ description: >-
   colours) and, if present, docs/message.md.
   Transcribes with a local engine (Parakeet), finds silences with ffmpeg silencedetect, searches
   stock through whichever of the plugin's stock MCPs is live (pexels: pexels_search_videos /
-  pexels_get_video; pixabay: pixabay_search_videos / pixabay_get_video), and stops
+  pexels_get_video, pexels_search_photos / pexels_get_photo; pixabay: pixabay_search_videos /
+  pixabay_get_video, pixabay_search_images / pixabay_get_image), and stops
   once at a single approval of the cut list, the title, the cutaway picks and the zoom cuts, written to
   content/<id>-broll-plan.md with thumbnails shown on the campaign page. Writes the edit project to
-  media/<id>/<id>-edit/, cutaways as media/<id>/<id>-broll<N>-v<NN>.mp4 logged with source_url and
-  credit, and the short as media/<id>/<id>-v<NN>.mp4, verified with ffprobe and sampled frames.
+  media/<id>/<id>-edit/, cutaways as media/<id>/<id>-broll<N>-v<NN>.mp4 (a still as .jpg) logged
+  with source_url and credit, and the short as media/<id>/<id>-v<NN>.mp4, verified with ffprobe and
+  sampled frames.
   Never calls fal itself: an AI-generated cutaway goes through generate-video and its cost gate.
   Without a stock library it hands back search terms and links; without HyperFrames or Node it stops after the
   approval and hands back the cut list and clips. Do NOT use to write the script or the hook
@@ -39,7 +42,8 @@ short that is ready to post:
 
 - the pauses, ums and false starts are cut out
 - the hook opens the short as a title in a box of the brand's colour, placed so a 4:5 crop keeps it
-- each sentence opens on the speaker, then cuts to stock clips or graphic cards until it ends
+- each sentence opens on the speaker, then cuts to stock clips or graphic cards until it ends; where
+  no clip fits, a stock photo with a slow zoom stands in
 - on a single camera angle, zoom cuts punch in on listicle headlines and keywords
 - captions light up word by word, one size throughout, in the brand's type and colour
 - the result is rendered as a 1080×1920 MP4
@@ -105,8 +109,9 @@ halfway through:
 - **`npx -y hyperframes@0.9.6 doctor`** reports Node, ffmpeg, Chrome and the speech engines in one go
   (`hyperframes.md` section 1). If `npx` itself is missing, Node is not installed.
 - **The stock libraries.** Check whether `pixabay_search_videos` (the plugin's `pixabay` server) and
-  `pexels_search_videos` (its `pexels` server) are live. Either is enough. Never look for a key and
-  never ask for one.
+  `pexels_search_videos` (its `pexels` server) are live. Either is enough. Each server's photo
+  tools (`pixabay_search_images`, `pexels_search_photos`) come with it, so the stills need no
+  separate check. Never look for a key and never ask for one.
 
 What each gap costs, said plainly and once:
 
@@ -173,6 +178,11 @@ look at it (section 5 of the same file). Keep the best two or three per beat, wh
 came from. A beat where nothing passes goes down the fallback list in `broll-rules.md` section 2
 ("When nothing fits a beat"), and the plan says so. Never a meme GIF or a borrowed clip.
 
+**Stills, when the clips run thin.** A beat left with fewer than two passing clips gets a still
+search, in the same library order, by `broll-rules.md` section 3.1. Each still is sized up there
+and marked `full` or `framed`, and given the direction of its slow zoom from its thumbnail. It is
+offered beside any clip that did pass, ranked below it.
+
 **Source cards need their source.** For each source card, open the article or study if you can and
 copy its headline or title, publication or authors, and date exactly. If you cannot open it, or the
 speaker names no source, the plan asks the user for the link, or for the headline, publication and
@@ -181,15 +191,20 @@ date pasted in. Nothing on a source card is written from memory.
 **Without a stock library**, give each stock beat its search query and a link the user can open:
 `https://pixabay.com/videos/search/<query>/?orientation=vertical`, with spaces in the query as
 `%20`. If they ask for Pexels instead, the link is
-`https://www.pexels.com/search/videos/<query>/?orientation=portrait`.
+`https://www.pexels.com/search/videos/<query>/?orientation=portrait`. Add, once, that a photo works
+too where no clip fits, and give the photo link beside each video link:
+`https://pixabay.com/images/search/<query>/?orientation=vertical` (Pexels:
+`https://www.pexels.com/search/<query>/?orientation=portrait`).
 
-If they later drop downloaded clips in, treat each one as a stock pick:
+If they later drop downloaded clips or photos in, treat each one as a stock pick:
 
-1. Copy it to `<id>-broll<N>-v01.mp4` (the next free `vNN` if one exists) for the beat they name.
-2. `ffprobe` it against the resolution and length bar in `broll-rules.md` section 3, and extract
-   one frame from inside the length the beat will use, into the scratchpad. Look at it for the
-   rejects in the same section. A clip that fails is reported with the reason; it is not used
-   without the user saying so.
+1. Copy it to `<id>-broll<N>-v01.mp4` (a photo: `<id>-broll<N>-v01.jpg`, converting a PNG or WebP
+   to JPEG with ffmpeg) for the beat they name, at the next free `vNN` if one exists.
+2. `ffprobe` it against the bar in `broll-rules.md`: section 3's resolution and length for a clip,
+   section 3.1's size table for a photo, which also sets `full` or `framed`. For a clip, extract one
+   frame from inside the length the beat will use, into the scratchpad; a photo you look at
+   directly. Look for the rejects in the same sections. A file that fails is reported with the
+   reason; it is not used without the user saying so.
 3. Ask who made it and the page they took it from, because the credit is needed for the record.
    Log it as step 7 does, with `source` set to the library they name (`pixabay`, `pexels`), or to
    `user` when it is their own footage, which needs no credit.
@@ -212,7 +227,9 @@ The doc, in this order:
 4. **The cutaways.** One block per beat: number, time on the finished short, the words under it,
    the idea, then what goes there. For stock, the options, each with its thumbnail
    (`![beat 2, option a](../media/<id>/<id>-edit/options/beat2-a.jpg)`), its length, its creator,
-   and its page on the library it came from (Pixabay or Pexels), the recommended option first. For a
+   and its page on the library it came from (Pixabay or Pexels), the recommended option first. A
+   still says so in plain words, with its move and how it sits: "photo, slow push in, full frame"
+   or "photo, slow pull out, framed over a blurred copy (1280×853)". For a
    graphic card, its kind and everything on it ("figure: 300 / customers"; "bar chart: before 12%,
    after 31%"), with where each number came from (the words at 0:21, or the source). A source card
    gives the link and the headline as published, and flags any gap between what the speaker says and
@@ -233,6 +250,9 @@ much was cut, how many cutaways and where to look:
 > It opens on "Why your shop feels busy but sells less", then eight cutaways (six stock clips, two
 > graphics) and three zoom cuts, nothing to pay for. Open the campaign page to see them, then tell
 > me what to swap.
+
+When stills are in it, count them on their own and say why once: "(four stock clips, two stock
+photos with a slow zoom where no clip fitted, two graphics)".
 
 **The receipt:** the page path in full, the title line, and the beats as a short numbered list
 (time, words, the recommended pick or the card's words in a few words) so they can answer without
@@ -271,6 +291,17 @@ width and height you chose. Log each one:
 `source_url` is the clip's page on the library, never the download link, which expires. `credit` is
 not optional for stock. A clip whose creator you cannot name is not used.
 
+**Stills** are fetched the same way: `pexels_get_photo` or `pixabay_get_image`, then the size
+`broll-rules.md` section 3.1 names (Pexels `src.original` with `?auto=compress&cs=tinysrgb&h=2400`
+added; Pixabay `largeImageURL`), saved as `<id>-broll<N>-v01.jpg`. `ffprobe` gives its width and
+height; check them against section 3.1's table, since the treatment rests on the file that arrived,
+not on the size the search promised. If the treatment changes, say so before building. The log line
+is a clip's, with the still's page as `source_url` and the still recorded in `notes`:
+
+```json
+{"ts":"…","event":"generate","skill":"edit-talking-head","deliverable":"<id>","role":"broll","file":"media/<id>/<id>-broll4-v01.jpg","source":"pixabay","source_url":"<the result's pageURL>","credit":"<user> on Pixabay","cost_usd":0,"status":"iteration","notes":"beat 4, still, framed, push in, over \"<the words>\""}
+```
+
 ## 8. Build the edit
 
 `vNN` is one more than the highest edit file in the folder, and every file below carries it.
@@ -282,9 +313,9 @@ not optional for stock. A clip whose creator you cannot name is not used.
 2. Write `compositions/<id>-graphic<N>-vNN.html` for each graphic beat from its template in
    `graphic-cards.md`, in the brand's colours and type.
 3. Write `<id>-edit-vNN.html` (`hyperframes.md` section 6): the kept parts end to end, each stock or
-   generated cutaway at its beat starting half a second into its clip, each graphic card mounted at
-   its beat, the captions, the opening title on top (section 6.1), and the zoom cuts in the timeline
-   (section 6.3).
+   generated cutaway at its beat starting half a second into its clip, each still at its beat with
+   its slow zoom (section 6.4), each graphic card mounted at its beat, the captions, the opening
+   title on top (section 6.1), and the zoom cuts in the timeline (section 6.3).
 
 If `design.md` is missing, use white captions with a neutral dark highlight, a near-black title box
 and near-black cards, and say they are not in the brand's colours yet.
@@ -295,9 +326,11 @@ Say roughly how long it will take before starting (`hyperframes.md` section 7), 
 `media/<id>/<id>-vNN.mp4`, where `vNN` matches the edit file.
 
 **Without HyperFrames or Node**, do not render. Hand back the cut list (kept parts as take
-timestamps), the title line with its timing, the cutaway picks with their positions, each graphic
-card's words with its position, the zoom cuts as in and out times, and the downloaded files, so the
-short can be assembled in CapCut or any editor. Write nothing that pretends to be the short.
+timestamps), the title line with its timing, the cutaway picks with their positions, each still
+with its move in plain words ("push in slowly, drifting left"; "framed: put it over a blurred copy
+of itself"), each graphic card's words with its position, the zoom cuts as in and out times, and
+the downloaded files, so the short can be assembled in CapCut or any editor. Write nothing that
+pretends to be the short.
 
 **Check the file before you call it done**, the way `generate-video` step 8 does:
 
@@ -305,13 +338,16 @@ short can be assembled in CapCut or any editor. Write nothing that pretends to b
   of the tightened length.
 - Extract frames into the scratchpad, not into `media/`: the very first frame, one in the middle of
   each of two or three cutaways (a graphic card among them, if there is one), one inside a zoom cut,
-  and one in the call to action. On the first frame, draw the 4:5 crop as a box
+  and one in the call to action. For one still, take a frame just after its beat starts and one just
+  before it ends. On the first frame, draw the 4:5 crop as a box
   (`drawbox=x=0:y=285:w=1080:h=1350:color=red@0.9:t=6`) before you look.
 - Look at each. The title is there in the first frame, whole and inside the 4:5 box. The face is
   where it should be and fills the frame inside a zoom cut. The cutaways and cards fill the frame,
   and nothing on a card is cut off or overlapping. Look at every chart, diagram, source and reaction
   card, not just a sample: chart bars are in proportion to their values, and a reaction emoji is
   Noto's glossy, rounded design (a flat, outlined face means the font failed to load).
+  The two frames of a still differ in scale (the zoom ran), a full-frame still leaves no black edge
+  at either end, and a framed one is sharp, whole and inside the 4:5 box over its blurred copy.
   The captions are legible, spelled right, the same size throughout and on one line; a caption that
   wrapped onto two lines means its group was too long for this typeface, so regroup it shorter and
   render again.
@@ -329,11 +365,15 @@ Log the short:
 {"ts":"…","event":"generate","skill":"edit-talking-head","deliverable":"<id>","file":"media/<id>/<id>-v01.mp4","status":"iteration","notes":"edit media/<id>/<id>-edit/<id>-edit-v01.html; take aroll-v01; 41.2s from 58.0s; title \"Why your shop feels busy but sells less\"; 8 cutaways (6 stock, 2 graphic); 3 zoom cuts"}
 ```
 
+When stills were used, count them inside the stock figure: `8 cutaways (6 stock, 2 of them stills;
+2 graphic)`.
+
 Then rebuild the campaign page once, for everything this run logged (`campaign-structure.md` 4.1).
 
 Report per `plain-language.md` section 5: what it is ("your 41-second short about morning
 dashboards"), the one path to open (the MP4, in full), what you checked, and what you did not do or
-could not check. Offer, once, a credits line they can paste into the post description:
+could not check. Offer, once, a credits line they can paste into the post description, with the
+photographers in it alongside the clip makers:
 "B-roll: Jane Doe on Pexels, Sam Lee on Pixabay."
 
 End on one next action. Usually: watch it and tell me what to change. When they say it is ready to
@@ -360,9 +400,12 @@ earlier cut stays watchable.
   plain mock of the page, never the publication's logo, design or a screenshot.
 - **The take is never altered.** Tightening is a list of times. The take is never re-encoded,
   trimmed in place or overwritten.
-- **Faces on paid shorts.** No recognisable person in stock cutaways on paid media. On organic, never
-  under a claim or a product line.
+- **Faces on paid shorts.** No recognisable person in stock cutaways on paid media, clip or still.
+  On organic, never under a claim or a product line.
+- **A still always moves.** Every stock photo gets its slow zoom, and only a photo does: never the
+  face, never a clip. A still too small to frame sharply is not used.
 - **Pinned tools.** `hyperframes@0.9.6`, local engines only, none of HeyGen's paid services.
-- **Speak plainly.** Pauses, ums, the title, cutaways, graphics, zoom cuts, captions, the short. Not
-  keep-ranges, compositions, sub-compositions, tracks, transforms or renditions.
+- **Speak plainly.** Pauses, ums, the title, cutaways, photos, slow zoom, graphics, zoom cuts,
+  captions, the short. Not keep-ranges, compositions, sub-compositions, tracks, transforms,
+  renditions or "Ken Burns".
 - UK English, no em dashes in anything you author.

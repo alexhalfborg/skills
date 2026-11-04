@@ -82,8 +82,8 @@ As a general shape, **every sentence opens on the face and cuts away until it en
   longer, below) and changes on a word boundary. The last one
   ends with the sentence's last word, so the next sentence starts on the face again.
 - If less than 1.5 seconds of the sentence is left after the opening, it all stays on the face.
-- Back-to-back cutaways never show the same idea twice, and no more than two graphic cards run in a
-  row.
+- Back-to-back cutaways never show the same idea twice, no more than two graphic cards run in a
+  row, and no more than two stills run in a row (a third makes it read as a slideshow).
 
 **Whole sentences stay on the face** when they are:
 
@@ -179,11 +179,35 @@ in on the face to mark a moment, then cut back out to carry on.
   at either scale.
 - **Not on a soft take.** Skip zoom cuts when the take is narrower than 1080 pixels; enlarging it
   further shows.
-- Zoom cuts scale the face only. Cutaways and cards are never scaled.
+- Zoom cuts scale the face only. Cutaways and cards are never scaled, except a still's own slow
+  zoom (below), which is part of the still, not a zoom cut.
+
+### Stills and the slow zoom
+
+When video runs out for a beat, a stock photo can stand in for the clip (section 3.1 says when and
+how one is chosen). A photo held still on screen looks like a mistake, so every still moves: one
+slow, steady zoom across the whole beat, the Ken Burns move.
+
+- **The move:** either a push in, from 1.0 to 1.08 times, or a pull out, from 1.08 to 1.0, at an
+  even speed from the first frame of the beat to the last. It may drift up to 2% of the frame
+  towards the subject as it goes. Never an ease, a bounce or a second move inside one beat.
+- **Which way:** look at the thumbnail. Push in towards a detail (a hand, a screen, a product on a
+  shelf); pull out to reveal a place or a scene. When two stills run back to back, the second goes
+  the other way, so the pair does not read as one long zoom.
+- **How long:** the same 1.5 to 3 seconds as any cutaway. A still needs no length from its source.
+- **Two treatments,** set by the photo's size, never by taste (section 3.1):
+  - `full`: the photo fills the frame, and the zoom moves the whole picture.
+  - `framed`: the photo is too small to fill the frame sharply, so it sits whole and sharp in the
+    middle, inside the part a 4:5 crop keeps, over a blurred and darkened copy of itself that fills
+    the rest. Only the sharp photo zooms; the blurred copy stays put.
+- **The difference from a zoom cut.** A zoom cut is a hard cut on the face, never animated. The slow
+  zoom is the opposite and belongs to stills only. The face never gets a slow zoom, and a stock clip
+  never gets one either: it already moves.
 
 ### Stock, graphic or generated
 
-`stock` is the default for anything a camera could film. `graphic` is for figures, comparisons,
+`stock` is the default for anything a camera could film, and covers both a stock clip and, when no
+clip passes, a stock still with its slow zoom. `graphic` is for figures, comparisons,
 processes, cited sources, reactions, terms and abstract points. Choose `generate` only when neither
 can show the idea and a generated clip honestly can (a stylised metaphor, an impossible camera move,
 a scene matching the campaign's main picture). A generated cutaway goes through `generate-video` and
@@ -198,12 +222,17 @@ famous meme carries the same problem.
 **When nothing fits a beat,** work down this list:
 
 1. a second stock search with a different idea for the same words;
-2. the speaker's own footage, if they have supplied some (SKILL.md step 5). Short reaction takes
+2. a stock still with a slow zoom (section 3.1). Stock photos are far more plentiful than stock
+   clips for most subjects, so this is usually where a thin beat is rescued;
+3. the speaker's own footage, if they have supplied some (SKILL.md step 5). Short reaction takes
    (an eye-roll, a shrug, a slow blink) give the meme effect with nothing to clear, so when a short
    is full of reaction moments, suggest in the plan's notes that they record a few next time;
-3. a graphic card: a reaction for a reaction, a phrase for a point;
-4. the face;
-5. a generated original, offered with its cost.
+4. a graphic card: a reaction for a reaction, a phrase for a point;
+5. the face;
+6. a generated original, offered with its cost.
+
+A reaction moment skips step 2: a still of a person pulling a face is a stock face doing the
+speaker's job, and it reads as one. Go to their own footage or a reaction card.
 
 If the user wants a GIF sticker from Instagram's or TikTok's own library, it has to be added in the
 app when posting: stickers used there come under the app's own arrangements. The plan can note the
@@ -261,6 +290,55 @@ A short is **paid** when its deliverable list entry has a `funnel_stage`, or its
 **Keep the best two or three per beat**, ranked, each with its library, its page there, creator
 name, length, the rendition you would download, and the thumbnail you looked at.
 
+### 3.1 Choosing a still
+
+**When.** A `stock` beat that ends with **fewer than two passing clips** goes to a still search.
+That point comes after both libraries (when both are live) and after the second search with a
+different idea (section 2, "When nothing fits a beat"). Stills top the beat up to two or three
+options. A passing clip always ranks above a still, because real movement beats a zoom on a photo.
+Stills stand in for stock clips only: a graphic beat stays a graphic, and a reaction moment never
+gets a still (section 2).
+
+**Searching.** The same library order as for clips (SKILL.md step 5): with both live, Pexels first,
+and Pixabay only when fewer than three Pexels stills pass.
+
+- **Pexels.** `pexels_search_photos` with `orientation: portrait`, up to 15 results; if fewer than
+  three pass, again with `orientation: landscape`. `pexels_get_photo` returns the full set of sizes.
+  The file to download is `src.original` with `?auto=compress&cs=tinysrgb&h=2400` added, which asks
+  Pexels for a copy 2400 high instead of a full-size original that can run past 6000 pixels.
+- **Pixabay.** `pixabay_search_images` with `image_type: photo`, `safesearch: true`,
+  `orientation: vertical` and `per_page: 20`; if fewer than three pass, again with
+  `orientation: all`. `pixabay_get_image` returns the sizes. The file to download is
+  `largeImageURL`. The `width` and `height` in the result are the original's, not the download's: a
+  standard Pixabay key gets at most 1280 pixels on the long side (a 4160×6240 photo comes down as
+  853×1280), so work out the download's size by scaling the original down to 1280 on its long side.
+
+**Reject** on the same grounds as a clip (text, a logo or watermark, a competitor's mark,
+`pack.nogos`, a look that fights the main picture, a recognisable face on a paid short), plus
+anything that is an illustration, a vector or an obvious composite, and anything posed so the
+person in it is looking at the camera.
+
+**Size sets the treatment** (section 2, "Stills and the slow zoom"). Take the downloaded file's
+width and height, not the original's:
+
+| The download, cropped to 9:16 | Treatment |
+|---|---|
+| at least 1210 wide and 2150 high | `full`: it fills the frame and still clears 1080×1920 at the top of the zoom |
+| smaller, but at least 1280 on its long side | `framed` |
+| under 1280 on its long side | reject: too small even to frame |
+
+In practice every Pixabay still is `framed` on a standard key, and most Pexels stills are `full`.
+
+**Framed sizes.** Fit the photo, uncropped, so that at the top of the zoom (1.08 times) it still
+sits whole inside a 1080×1350 box (the band a 4:5 crop keeps, y 285 to 1635), and never draw it
+larger than its own pixels there either: its drawn width is the smallest of 1000,
+`1250 × width ÷ height`, and `width ÷ 1.08`, rounded down to a whole pixel, with the height
+following from the photo's shape. Centre it in the frame. A 1280×853 landscape photo comes out at
+1000×666; an 853×1280 upright one at 790×1185. The blurred copy behind it covers the whole frame.
+
+**Keep** each still with its library, page, creator, the size you will download, the treatment, and
+the direction of the zoom, chosen from the thumbnail (section 2).
+
 ## 4. Captions: correct, then re-time
 
 **Correct before captioning.** Speech engines mangle names. Before any word reaches a caption,
@@ -301,11 +379,15 @@ option's thumbnail into `media/<id>/<id>-edit/options/` as `beat<N>-<letter>.jpg
 as `../media/<id>/<id>-edit/options/beat2-a.jpg`: that relative path resolves both from `content/`
 and from `site/`, since both sit beside `media/`.
 
+For a still, the thumbnail is the photo's own small size: `src.medium` on Pexels, `webformatURL` on
+Pixabay. Its file name is the same `beat<N>-<letter>.jpg`.
+
 These thumbnails are working files for the decision, not deliverables, so they are not logged.
 
 ## 6. The stock licences, in brief
 
-Both libraries are free for commercial use, ads included, and free to modify. Neither requires
+Both libraries license photos on the same terms as video, so everything below covers a still as
+well as a clip. Both are free for commercial use, ads included, and free to modify. Neither requires
 attribution. The skill logs the creator with every clip anyway and offers a credits line for the
 post description; nothing goes on screen.
 

@@ -153,8 +153,9 @@ colour change.
 ## 6. The edit file
 
 `<id>-edit/<id>-edit-vNN.html`. One root composition, one `<video>` per kept part of the take, one
-wrapper per stock or generated cutaway, each graphic card and the captions mounted as
-sub-compositions, the opening title on top, and the zoom cuts in the root timeline:
+wrapper per stock or generated cutaway, one per stock still, each graphic card and the captions
+mounted as sub-compositions, the opening title on top, and the zoom cuts and the stills' slow zooms
+in the root timeline:
 
 ```html
 <!doctype html>
@@ -171,6 +172,10 @@ sub-compositions, the opening title on top, and the zoom cuts in the root timeli
       .aroll, .broll video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
       .aroll { z-index: 0; transform-origin: 50% 30%; }
       .broll, .graphic { position: absolute; inset: 0; z-index: 1; }
+      .still { overflow: hidden; background: #000; }
+      .still-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 50%; }
+      .framed .still-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(40px) brightness(0.55); transform: scale(1.15); }
+      .framed .still-img { inset: auto; left: 50%; top: 50%; object-fit: contain; }
       .captions { position: absolute; inset: 0; z-index: 2; }
       .title { position: absolute; left: 140px; right: 140px; bottom: 600px; z-index: 3; display: flex; justify-content: center; }
       .title-box { background: #1F6FEB; color: #ffffff; font-family: "Montserrat", sans-serif; font-weight: 800; font-size: 72px; line-height: 1.12; text-align: center; padding: 28px 40px 32px; border-radius: 12px; }
@@ -185,6 +190,14 @@ sub-compositions, the opening title on top, and the zoom cuts in the root timeli
       <div class="clip broll" data-start="5.77" data-duration="1.82" data-track-index="1">
         <video id="b1" class="clip" src="../short-03-broll1-v01.mp4" data-start="5.77" data-duration="1.82" data-media-start="0.5" muted playsinline></video>
       </div>
+      <!-- one wrapper per stock still; it moves by the slow zoom in the timeline below (section 6.4) -->
+      <div id="s4" class="clip broll still" data-start="14.20" data-duration="2.30" data-track-index="1">
+        <img class="still-img" src="../short-03-broll4-v01.jpg" alt="" />
+      </div>
+      <div id="s6" class="clip broll still framed" data-start="19.05" data-duration="2.10" data-track-index="1">
+        <img class="still-bg" src="../short-03-broll6-v01.jpg" alt="" />
+        <img class="still-img" src="../short-03-broll6-v01.jpg" alt="" style="width: 1000px; height: 666px; margin: -333px 0 0 -500px;" />
+      </div>
       <!-- one mount per graphic card -->
       <div id="graphic3" class="graphic" data-composition-id="graphic3" data-composition-src="compositions/short-03-graphic3-v01.html" data-start="9.10" data-duration="2.00" data-track-index="1"></div>
       <!-- captions -->
@@ -198,6 +211,9 @@ sub-compositions, the opening title on top, and the zoom cuts in the root timeli
       // zoom cuts: in, then out, on the face only
       tl.set(".aroll", { scale: 1.2, transformOrigin: "50% 30%" }, 12.40);
       tl.set(".aroll", { scale: 1 }, 13.85);
+      // stills: one slow, even zoom across each beat (a push in, then a pull out)
+      tl.fromTo("#s4 .still-img", { scale: 1, xPercent: 0 }, { scale: 1.08, xPercent: -2, duration: 2.30, ease: "none" }, 14.20);
+      tl.fromTo("#s6 .still-img", { scale: 1.08 }, { scale: 1, duration: 2.10, ease: "none" }, 19.05);
       window.__timelines["main"] = tl;
     </script>
   </body>
@@ -260,7 +276,43 @@ Times are on the tightened timeline, to two decimals. Selecting the class rather
 means a zoom carries across a kept-part boundary unchanged (checked). It scales only the take; the
 cutaways and cards are separate layers. `#root` needs `overflow: hidden` so the enlarged take does
 not spill past the frame. `tl.set` is a hard cut by design; never use `tl.to` here, which would
-animate a push-in.
+animate a push-in. The one animated push in the edit is a still's slow zoom (section 6.4), and it
+never touches `.aroll`.
+
+### 6.4 Stills and the slow zoom
+
+A stock still is a `.broll.still` wrapper holding an `<img>`, timed like a clip's wrapper with its
+beat's `data-start` and `data-duration`, and set moving by one `tl.fromTo` in the root timeline,
+beside the zoom cuts. The id is `s<N>`, where `<N>` is the beat number. The editorial rules (which
+way, how far, `full` or `framed`) are in `broll-rules.md` section 2, "Stills and the slow zoom",
+and the sizes in its section 3.1.
+
+- **`full`:** one `<img class="still-img">`. `object-fit: cover` crops it to the frame, as with a
+  clip.
+- **`framed`:** two `<img>` of the same file. `still-bg` is the blurred, darkened copy that fills
+  the frame; `scale(1.15)` pushes the blur's soft edge outside the frame. `still-img` is the sharp
+  photo, given its drawn size from section 3.1 inline, with negative margins of half its height and
+  half its width so it sits centred. A 1000×666 photo is `width: 1000px; height: 666px; margin:
+  -333px 0 0 -500px;`. Drawn at the full 1080 width instead, it loses about 43 pixels off each side
+  at the top of the zoom (checked), which is why `broll-rules.md` caps the width at 1000.
+- **The zoom** goes on `#s<N> .still-img` only, never on the wrapper or the blurred copy: from
+  `scale: 1` to `scale: 1.08` to push in, the reverse to pull out, `duration` equal to the beat's
+  `data-duration`, `ease: "none"`, at the beat's `data-start`. An optional drift is `xPercent` or
+  `yPercent` of up to 2, in the direction of the subject. To two decimals, like every time in the
+  file.
+- **No `muted` or `data-has-audio`:** those are for `<video>`; an `<img>` has no sound to declare.
+- The root timeline is paused and seeked frame by frame, so the zoom lands on the same frame in
+  every render, as the graphic cards' animations do.
+
+**Checked at 0.9.6** with exactly this layout, one full and one framed still over a take: each
+still's wrapper appears and disappears on its beat with the take showing either side, both zooms
+run at an even speed from the first frame of the beat to the last, the blurred copy fills the frame
+behind a sharp framed photo, and two renders of the same file match frame for frame.
+
+Lint flags the still images the way it flags the clips (`invalid_parent_traversal_in_asset_path`,
+`missing_local_asset`), and adds two warnings of its own: `nested_structure_needs_subcomposition`
+for each still's wrapper, and `duplicate_media_discovery_risk` for a framed still's two images of
+the same file. The render above was correct with all of them showing. Leave them, as in section 6.
 
 ## 7. Render
 

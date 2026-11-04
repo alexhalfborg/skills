@@ -98,8 +98,9 @@ log's `register` events are the sub-id registry.
     and recorded in the consuming render's `refs` (section 4)
   - `aroll` — recorded footage a person supplied (a talking-head take), copied in by
     `edit-talking-head`. The `-v<NN>` counts takes: a re-record is `v02`
-  - `broll` — a cutaway laid over the A-roll: stock footage fetched by `edit-talking-head`, or a
-    clip `generate-video` rendered for that beat
+  - `broll` — a cutaway laid over the A-roll: stock footage fetched by `edit-talking-head`, a stock
+    still (`.jpg`) it fetched to animate with a slow zoom when no clip fitted, or a clip
+    `generate-video` rendered for that beat
   - `edit` — the edit project folder `edit-talking-head` works in (section 3.1). A folder, not a
     media file
   - `slide` — one picture of a carousel social post, in posting order. A single-image post has no
@@ -135,6 +136,7 @@ media/AD-R1-b/AD-R1-b-clip2-v01.mp4
 media/banner-ad/banner-ad-idea-03-v01.png
 media/short-03/short-03-aroll-v01.mp4
 media/short-03/short-03-broll2-v01.mp4
+media/short-03/short-03-broll4-v01.jpg
 media/short-03/short-03-v02.mp4
 media/ig-launch/ig-launch-slide1-v01.png
 media/ig-launch/ig-launch-slide1-v01.jpg

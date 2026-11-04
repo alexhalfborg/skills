@@ -14,7 +14,7 @@ description: >-
   short". Do NOT use for paid-ad concepts, ad headlines or paid video (use paid-creative),
   research/strategy, checking finished work (use qa), or putting a post live (that stays with the
   main conversation, never an agent).
-tools: Read, Write, Edit, Glob, Grep, Skill, Bash, WebSearch, WebFetch, mcp__pexels__pexels_search_videos, mcp__pexels__pexels_get_video, mcp__pixabay__pixabay_search_videos, mcp__pixabay__pixabay_get_video
+tools: Read, Write, Edit, Glob, Grep, Skill, Bash, WebSearch, WebFetch, mcp__pexels__pexels_search_videos, mcp__pexels__pexels_get_video, mcp__pixabay__pixabay_search_videos, mcp__pixabay__pixabay_get_video, mcp__pexels__pexels_search_photos, mcp__pexels__pexels_get_photo, mcp__pixabay__pixabay_search_images, mcp__pixabay__pixabay_get_image
 model: inherit
 color: green
 ---
