@@ -125,9 +125,10 @@ make exactly these changes. Everything else in the file stays as installed.
 | every `width: 1920px;` / `height: 1080px;` | `width: 1080px;` / `height: 1920px;` | vertical (`html, body` and `#highlight`) |
 | `data-width="1920"` / `data-height="1080"` | `data-width="1080"` / `data-height="1920"` | vertical |
 | `data-duration="8"` | the edit's total length, e.g. `data-duration="38.42"` | match the edit |
-| `bottom: 140px;` (`.hl-group`) | `bottom: 620px;` | lifts captions clear of the app's caption, buttons and progress bar |
+| `bottom: 140px;` (`.hl-group`) | `bottom: 380px;` | low in the frame, below the opening title (section 6.1) |
 | `padding: 0 100px;` (`.hl-group`) | `padding: 0 140px;` | clears the right-hand button rail |
-| `fitFontSize(groupText, 80, "800", "Montserrat", 1620)` | the same call with the brand family and `800` as the last argument | caption lines fit the vertical width |
+| `font-size: 80px;` (`.hl-word`) | `font-size: 64px;` | one caption size for the whole short |
+| `var computedSize = fitFontSize(groupText, 80, "800", "Montserrat", 1620);` | `var computedSize = 64;` | stops long groups shrinking (the installed call takes them down to 36px) |
 | `family=Montserrat:wght@800` (Google Fonts link) and `"Montserrat"` in `.hl-word` | the brand's typeface from `design.md`, weight 700 or 800 | brand type |
 | `#ff1745 0%, #df1238 100%` (`.hl-word-bg`) and the `rgba(229, 20, 58, 0.32)` shadow | the brand accent hex, both stops; the shadow in the same hue | the spoken word lights up in the brand colour |
 | the `WORDS` array | the corrected, re-timed words of this edit (`broll-rules.md` section 4) | the actual speech |
@@ -141,14 +142,19 @@ captions are in a stand-in font, because the brand's own font is not one the ren
 green), white will not read on it: set `.hl-word` `color` to the brand's darkest colour from
 `design.md` instead, and drop its `text-shadow`.
 
-The safe-area numbers are for TikTok, Reels and Shorts, which all reserve roughly the bottom fifth
-and a right-hand strip. They are fixed on purpose: every brand gets the same safe placement, and only
-the type and colour change.
+**Placement.** At `bottom: 380px` a one-line caption sits at about y 1450 to 1540, under the opening
+title and still inside the 4:5 crop (which keeps y 285 to 1635). That is lower than the apps'
+caption-safe area, by choice: on TikTok, Reels and Shorts it can sit behind the post's own text when
+that is expanded. The title, not the captions, is what is held inside the safe area. A caption that
+wraps to two lines grows upward to about y 1370, which still clears the title's bottom edge at
+y 1320. The numbers are fixed on purpose: every brand gets the same placement, and only the type and
+colour change.
 
 ## 6. The edit file
 
 `<id>-edit/<id>-edit-vNN.html`. One root composition, one `<video>` per kept part of the take, one
-wrapper per cutaway, and the captions mounted as a sub-composition:
+wrapper per stock or generated cutaway, each graphic card and the captions mounted as
+sub-compositions, the opening title on top, and the zoom cuts in the root timeline:
 
 ```html
 <!doctype html>
@@ -156,32 +162,42 @@ wrapper per cutaway, and the captions mounted as a sub-composition:
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1080, height=1920" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800&display=swap" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body { width: 1080px; height: 1920px; overflow: hidden; background: #000; }
-      #root { position: relative; width: 1080px; height: 1920px; }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; }
       .aroll, .broll video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-      .aroll { z-index: 0; }
-      .broll { position: absolute; inset: 0; z-index: 1; }
+      .aroll { z-index: 0; transform-origin: 50% 30%; }
+      .broll, .graphic { position: absolute; inset: 0; z-index: 1; }
       .captions { position: absolute; inset: 0; z-index: 2; }
+      .title { position: absolute; left: 140px; right: 140px; bottom: 600px; z-index: 3; display: flex; justify-content: center; }
+      .title-box { background: #1F6FEB; color: #ffffff; font-family: "Montserrat", sans-serif; font-weight: 800; font-size: 72px; line-height: 1.12; text-align: center; padding: 28px 40px 32px; border-radius: 12px; }
     </style>
   </head>
   <body>
     <div id="root" data-composition-id="main" data-start="0" data-duration="38.42" data-width="1080" data-height="1920">
       <!-- the take, one element per kept part; data-media-start is where in the take it begins -->
-      <video id="a1" class="clip aroll" src="../short-03-aroll-v01.mp4" data-start="0" data-duration="2.46" data-media-start="0" data-track-index="0" data-has-audio="true" playsinline></video>
-      <video id="a2" class="clip aroll" src="../short-03-aroll-v01.mp4" data-start="2.46" data-duration="0.67" data-media-start="5.19" data-track-index="0" data-has-audio="true" playsinline></video>
-      <!-- one wrapper per cutaway, muted -->
-      <div class="clip broll" data-start="3.77" data-duration="1.82" data-track-index="1">
-        <video id="b1" class="clip" src="../short-03-broll1-v01.mp4" data-start="3.77" data-duration="1.82" data-media-start="0.5" muted playsinline></video>
+      <video id="a1" class="clip aroll" src="../short-03-aroll-v01.mp4" data-start="0" data-duration="4.46" data-media-start="0" data-track-index="0" data-has-audio="true" playsinline></video>
+      <video id="a2" class="clip aroll" src="../short-03-aroll-v01.mp4" data-start="4.46" data-duration="3.67" data-media-start="7.19" data-track-index="0" data-has-audio="true" playsinline></video>
+      <!-- one wrapper per stock or generated cutaway, muted -->
+      <div class="clip broll" data-start="5.77" data-duration="1.82" data-track-index="1">
+        <video id="b1" class="clip" src="../short-03-broll1-v01.mp4" data-start="5.77" data-duration="1.82" data-media-start="0.5" muted playsinline></video>
       </div>
+      <!-- one mount per graphic card -->
+      <div id="graphic3" class="graphic" data-composition-id="graphic3" data-composition-src="compositions/short-03-graphic3-v01.html" data-start="9.10" data-duration="2.00" data-track-index="1"></div>
       <!-- captions -->
       <div class="captions" data-composition-id="captions" data-composition-src="compositions/short-03-captions-v01.html" data-start="0" data-duration="38.42" data-track-index="2"></div>
+      <!-- the opening title, from frame one -->
+      <div class="clip title" data-start="0" data-duration="4.12" data-track-index="3"><div class="title-box">Why your shop feels busy but sells less</div></div>
     </div>
     <script>
       window.__timelines = window.__timelines || {};
       const tl = gsap.timeline({ paused: true });
+      // zoom cuts: in, then out, on the face only
+      tl.set(".aroll", { scale: 1.2, transformOrigin: "50% 30%" }, 12.40);
+      tl.set(".aroll", { scale: 1 }, 13.85);
       window.__timelines["main"] = tl;
     </script>
   </body>
@@ -202,6 +218,49 @@ Rules the render depends on:
   vertical frame from a landscape or portrait source. Never call `play()` or set `currentTime`.
 - **`../` reaches the footage.** Media paths are relative to the edit file, so the take and the
   cutaways stay in `media/<id>/` and are never copied into the project folder.
+- **Lint disagrees, the render does not.** `hyperframes lint` reports the `../` paths
+  (`invalid_parent_traversal_in_asset_path`, `missing_local_asset`) and the timed cutaway wrapper
+  (`video_nested_in_timed_element`) as errors. At 0.9.6 the render loads the take and the cutaways
+  correctly with exactly this layout (checked), because the wrapper and its video share one
+  `data-start`. Do not "fix" either to quiet the linter.
+
+### 6.1 The opening title
+
+The `.title` element above, in the edit file itself rather than a separate file. Set per short:
+
+- the box `background` to the brand accent from `design.md`, and the text `color` to white, or to
+  the brand's darkest colour when the accent is light (the same rule as the captions);
+- `font-family` to the brand typeface, with the same Google Fonts link in the edit file's head
+  (Montserrat as the stand-in, under the same rule as section 5);
+- `data-duration` to the end of the title's word (`broll-rules.md` section 2);
+- the line itself, exactly as picked, as the box's text. Not uppercased.
+
+Leave the position alone. `bottom: 600px` puts the box's bottom edge at y 1320, and a three-line
+title at 72px reaches up to about y 1020: well inside the 4:5 crop (y 285 to 1635), clear of the
+right-hand rail, and above the captions. A fourth line would push it towards the top of that band,
+which is why `broll-rules.md` caps the line at about 40 characters. The title has no entrance
+animation, so it is fully there in the first frame, and it leaves on a cut.
+
+### 6.2 Graphic cards
+
+One file per card: `compositions/<id>-graphic<N>-vNN.html`, where `<N>` is the beat number and `vNN`
+matches the edit file. Mount it as in the example above, with an `id`,
+`data-composition-id="graphic<N>"`, and its beat's start and length. The card registers its own
+timeline under the same `graphic<N>`.
+
+The card files themselves (the shared shell, then figure, phrase, reaction, bar chart, step
+diagram and the two source cards) are in [graphic-cards.md](graphic-cards.md). A card is a plain
+sub-composition: no registry component, nothing installed with `add`.
+
+### 6.3 Zoom cuts
+
+Zoom cuts are `tl.set` calls on `.aroll` in the root timeline, as in the example: one at the zoom-in
+time with `scale: 1.2` and the face's `transformOrigin`, one at the zoom-out time with `scale: 1`.
+Times are on the tightened timeline, to two decimals. Selecting the class rather than one element
+means a zoom carries across a kept-part boundary unchanged (checked). It scales only the take; the
+cutaways and cards are separate layers. `#root` needs `overflow: hidden` so the enlarged take does
+not spill past the frame. `tl.set` is a hard cut by design; never use `tl.to` here, which would
+animate a push-in.
 
 ## 7. Render
 

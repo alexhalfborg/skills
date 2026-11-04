@@ -104,9 +104,16 @@ finishing a campaign.
 ### Editing talking-head shorts
 
 Film yourself talking to camera on your phone, held upright, and hand over the file. It cuts the
-pauses, the ums and the false starts, finds stock footage to cut away to, adds captions that light up
-word by word in your brand's font and colour, and renders a vertical video ready for TikTok, Reels or
-Shorts. It shows you every cut and every clip before it downloads or renders anything.
+pauses, the ums and the false starts, and opens the video on your hook as a title in your brand's
+colour, placed so it still shows when Instagram crops the video for the feed. Each sentence starts
+on you, then cuts away to stock footage or a simple animated graphic (a number, a chart, a diagram,
+or the article or study you mention) until the sentence ends. If you filmed it all from one angle,
+it zooms in on your list headings and key words. Captions light up word by word in your brand's
+font and colour, all the same size. It renders a vertical video ready for TikTok, Reels or Shorts,
+and shows you every cut, clip and graphic before it downloads or renders anything.
+
+It never uses meme GIFs or clips from films and TV: most of those belong to someone else, and a
+brand account posting them risks the video being muted or taken down.
 
 The first time, it asks to download a speech-recognition model (a one-off, a few hundred megabytes)
 that runs entirely on your computer. Nothing you say is sent anywhere to be transcribed, and none of

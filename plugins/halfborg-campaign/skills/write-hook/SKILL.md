@@ -10,7 +10,8 @@ description: >-
   this", "subject line options", "give me a YouTube title", "title for this short", "what should the
   first frame say", "better hook for this post", "what should I call this", "punch up the title".
   Also called inline by write-email, write-personal-post and write-customer-story, which hold no hook
-  method of their own. Accepts pasted text, a file path, a campaign deliverable id, a web URL, a video
+  method of their own, and by edit-talking-head for a short's opening title when no line is picked.
+  Accepts pasted text, a file path, a campaign deliverable id, a web URL, a video
   script or transcript, or a video file (frames sampled with ffmpeg; the audio is never heard, so it
   asks for a transcript when speech carries the piece). Reads the active brand's
   brands/<id>/voice/shared.md plus one byline profile, brands/<id>/pack.yaml (audience,
@@ -40,6 +41,8 @@ Where the neighbours sit:
 
 - `write-email`, `write-personal-post`, `write-customer-story` — draft the content, then call this
   skill inline for the subject line or headline. They hold no hook method of their own; this is it.
+- `edit-talking-head` — calls this skill inline, surface `short`, when the short it is editing has
+  no picked first-frame line, and sets the chosen line on screen as the short's opening title.
 - `write-ad-creative` / `write-video-ad-script` — paid hooks. An ad's hook is tied to its funnel
   stage, its angle bank and the presenter decision in the pack's `ads` block, so it stays there.
   If the request is for an ad, say so in a line and route it.

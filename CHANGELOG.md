@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.11.0
+
+**Talking-head shorts get a title, a shape, graphics and zoom cuts.** `edit-talking-head` now edits
+to house conventions, all checked by rendering at HyperFrames 0.9.6:
+
+- **An opening title.** The short's hook appears from the first frame in a solid box of the brand's
+  accent colour and typeface, for 3 to 5 seconds. It sits low in the middle of the frame, inside the
+  part a 4:5 feed crop keeps. The line is the one picked in `content/<id>-hooks.md` or the script;
+  with none picked, `write-hook` is called inline and its options go to the approval stop.
+- **Sentence by sentence.** Each sentence opens on the speaker, then cuts to one or more cutaways
+  until it ends. The hook, listicle headlines, the turn and the call to action stay on the face. This
+  replaces the old pacing rules (a cutaway every 3 to 6 seconds, at most 40% of the runtime).
+- **Graphic cards,** drawn by HyperFrames in the brand's colours at no cost: a figure, a phrase, a
+  reaction emoji (Noto Color Emoji), a bar chart, a step diagram, and a source card (a mock newspaper
+  or web page) for an article or study the speaker cites. A card shows only what was said or
+  published. Charts are drawn to scale from zero, and source cards copy the headline exactly, never
+  the publication's logo, design or a screenshot. Templates are in the new
+  `skills/edit-talking-head/references/graphic-cards.md`.
+- **Zoom cuts.** On a single-angle take, a hard cut in to 1.2 times on listicle headlines, key words
+  and jump cuts that land on the face, and back out again.
+- **Captions** are one fixed size (64px) instead of shrinking on long phrases, grouped at 14
+  characters or fewer, and sit lower in the frame, below the title.
+- **No meme GIFs or borrowed clips,** with the reasons in `broll-rules.md` section 6 and a fallback
+  order for beats that stock cannot fill.
+- **Contracts.** `campaign-structure.md` section 3.1 adds the graphic card files; `write-hook` lists
+  `edit-talking-head` as an inline caller.
+
 ## 0.10.0
 
 **Instagram and Threads posts, drafted and posted.** Three new skills, the first time the engine can
