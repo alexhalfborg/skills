@@ -8,8 +8,10 @@ description: >-
   too few clips pass for a beat) or animated HyperFrames graphic cards (figure, phrase, reaction emoji, bar chart, step diagram, and a
   mock newspaper or web page for a cited article or study) until it ends, never meme GIFs or
   borrowed film/TV clips, punch in with zoom cuts on a
-  single-angle take (listicle headlines, keywords), burn in fixed-size brand-styled word-by-word
-  captions, and render the MP4 locally with HyperFrames (pinned npx hyperframes@0.9.6, free, no
+  single-angle take (listicle headlines, keywords), lay word highlights and listicle chapter labels
+  over the speaker as transparent overlays that land on the spoken word, flag stretches on the face
+  with nothing new, burn in fixed-size brand-styled word-by-word
+  captions (text colours set by a measured contrast ratio), and render the MP4 locally with HyperFrames (pinned npx hyperframes@0.9.6, free, no
   account). Use whenever the user has recorded footage of a person speaking to camera and wants it
   edited: "edit my talking head", "add b-roll to this", "cut the short", "tighten this take",
   "caption this video", "find b-roll for this video", "edit the short for [deliverable]". Reads the
@@ -45,6 +47,8 @@ short that is ready to post:
 - each sentence opens on the speaker, then cuts to stock clips or graphic cards until it ends; where
   no clip fits, a stock photo with a slow zoom stands in
 - on a single camera angle, zoom cuts punch in on listicle headlines and keywords
+- on the face, a few words the speaker leans on light up as a highlight, and a listicle headline
+  gets a chapter label, without cutting away from them
 - captions light up word by word, one size throughout, in the brand's type and colour
 - the result is rendered as a 1080×1920 MP4
 
@@ -54,12 +58,12 @@ so is the title line.
 Three methods sit beside this file. Read them before the step that needs them:
 
 - [references/broll-rules.md](references/broll-rules.md): how to tighten; the opening title; where
-  cutaways, graphic cards and zoom cuts go and where they never go; which stock passes; how captions
-  are corrected, re-timed and grouped.
+  cutaways, graphic cards, zoom cuts and overlays go and where they never go; the rhythm check;
+  which stock passes; how captions are corrected, re-timed and grouped.
 - [references/hyperframes.md](references/hyperframes.md): every command and attribute, pinned to
-  the version that was tested.
+  the version that was tested, and the contrast rule for text on brand colours (section 5.1).
 - [references/graphic-cards.md](references/graphic-cards.md): the HTML for each kind of graphic
-  card, tested at the same version.
+  card and overlay, tested at the same version.
 - `${CLAUDE_PLUGIN_ROOT}/schema/campaign-structure.md` section 3.1: the edit folder's layout. Paths
   and filenames follow that spec, which wins over any shorthand here.
 
@@ -166,6 +170,17 @@ brand's real product or screen would do, keep the face and say so.
 listicle headlines, leaned-on keywords and jump cuts that land on the face. Extract one frame from
 inside each zoomed stretch into the scratchpad and look where the face is, to set the zoom's centre.
 
+**The overlays.** On the sentences that stay on the face, mark a chapter label on each listicle
+headline and a highlight on the few words the speaker leans on, by `broll-rules.md` section 2 ("On
+the face: overlays"): sparingly, never under the title or on the call to action. Use a face frame
+(the zoom-cut one, or one taken for the purpose) to check the overlay band clears the mouth.
+
+**The rhythm check.** With everything placed, run the check in `broll-rules.md` section 2 ("Keep it
+moving, with contrast") and carry what it finds into the plan's Notes as suggestions.
+
+**The text colours.** Work out, once, which colour goes on the accent and whether the accent reads on
+the dark, by the contrast rule (`hyperframes.md` section 5.1). Note any fallback in the plan.
+
 Correct the transcript for captions now (`broll-rules.md` section 4), so the corrections appear in
 the plan. A graphic card uses the corrected words too.
 
@@ -238,18 +253,22 @@ The doc, in this order:
    `generate-video` quotes the price.
 5. **Zoom cuts.** Each one with its in and out times and the words it marks ("0:12 to 0:14,
    'Number four: not tidying up'"), or why there are none (more than one camera angle, a soft take).
-6. **What the face keeps.** The hook, the listicle headlines, the turn and the call to action, with
+6. **Highlights and chapter labels.** Each one with its times, its kind and its words exactly as
+   they will appear ("0:21 to 0:23, highlight: 'cash flow'"; "0:12 to 0:14, chapter label: NUMBER
+   FOUR / Not tidying up"), or why there are none.
+7. **What the face keeps.** The hook, the listicle headlines, the turn and the call to action, with
    their times, so the user can see the cutaways stay off them.
-7. **Notes.** Anything the user should know: a sideways take, a stand-in font, a title line too long
-   for three lines, a step that could not be checked because there was no campaign message.
+8. **Notes.** Anything the user should know: a sideways take, a stand-in font, a title line too long
+   for three lines, a step that could not be checked because there was no campaign message, a text
+   colour the contrast rule changed, and each stretch the rhythm check flagged, with its suggestion.
 
 Then present it per `plain-language.md` section 4. **The sentence:** how long the short will be, how
 much was cut, how many cutaways and where to look:
 
 > I have cut your 58-second take to 41 seconds: nine long pauses, two ums and one restart came out.
 > It opens on "Why your shop feels busy but sells less", then eight cutaways (six stock clips, two
-> graphics) and three zoom cuts, nothing to pay for. Open the campaign page to see them, then tell
-> me what to swap.
+> graphics), three zoom cuts and two highlights on you, nothing to pay for. Open the campaign page
+> to see them, then tell me what to swap.
 
 When stills are in it, count them on their own and say why once: "(four stock clips, two stock
 photos with a slow zoom where no clip fitted, two graphics)".
@@ -259,7 +278,8 @@ photos with a slow zoom where no clip fitted, two graphics)".
 opening anything. Then stop and wait.
 
 **Answers.** "Beat 3, option B." "Drop beat 5." "Use option 2 for the title." "No zoom on the
-second one." "Keep the 'no, no, no'." "Leave the ums in." Apply
+second one." "Highlight 'never' instead." "No labels." "Keep the 'no, no, no'." "Leave the ums
+in." Apply
 each one to the plan doc, re-show only what changed, and wait again. **An adjustment is not
 approval, and silence is not approval.** Proceed on an explicit go: "go", "looks good", "make it".
 
@@ -270,7 +290,7 @@ decline the cost, that beat falls back to its best stock option or to the face; 
 
 ## 7. Fetch the picks
 
-Graphic cards and zoom cuts need nothing fetched; they are built in step 8. For each approved stock
+Graphic cards, zoom cuts and overlays need nothing fetched; they are built in step 8. For each approved stock
 pick, get its full rendition list from the library it came from
 (`pexels_get_video` or `pixabay_get_video`), choose the smallest rendition that clears the
 resolution bar (`broll-rules.md` section 3), and download it:
@@ -311,14 +331,19 @@ is a clip's, with the still's page as `source_url` and the still recorded in `no
    typeface and accent from `design.md`, and the corrected, re-timed words in groups of up to 14
    characters.
 2. Write `compositions/<id>-graphic<N>-vNN.html` for each graphic beat from its template in
-   `graphic-cards.md`, in the brand's colours and type.
-3. Write `<id>-edit-vNN.html` (`hyperframes.md` section 6): the kept parts end to end, each stock or
+   `graphic-cards.md`, in the brand's colours and type. A figure card's `LAND` comes from the
+   transcript (`graphic-cards.md` section 2).
+3. Write `compositions/<id>-overlay<N>-vNN.html` for each highlight and chapter label from
+   `graphic-cards.md` part 2.
+4. Write `<id>-edit-vNN.html` (`hyperframes.md` section 6): the kept parts end to end, each stock or
    generated cutaway at its beat starting half a second into its clip, each still at its beat with
-   its slow zoom (section 6.4), each graphic card mounted at its beat, the captions, the opening
-   title on top (section 6.1), and the zoom cuts in the timeline (section 6.3).
+   its slow zoom (section 6.4), each graphic card mounted at its beat, each overlay mounted 0.25
+   seconds before its word (section 6.5), the captions, the opening title on top (section 6.1), and
+   the zoom cuts in the timeline (section 6.3).
 
-If `design.md` is missing, use white captions with a neutral dark highlight, a near-black title box
-and near-black cards, and say they are not in the brand's colours yet.
+Every text colour on a brand colour is the one the contrast rule gave in step 4. If `design.md` is
+missing, use white captions with a neutral dark highlight, a near-black title box, near-black cards
+and a near-black highlight block, and say they are not in the brand's colours yet.
 
 ## 9. Render and check
 
@@ -328,7 +353,8 @@ Say roughly how long it will take before starting (`hyperframes.md` section 7), 
 **Without HyperFrames or Node**, do not render. Hand back the cut list (kept parts as take
 timestamps), the title line with its timing, the cutaway picks with their positions, each still
 with its move in plain words ("push in slowly, drifting left"; "framed: put it over a blurred copy
-of itself"), each graphic card's words with its position, the zoom cuts as in and out times, and
+of itself"), each graphic card's words with its position, the zoom cuts as in and out times, each highlight and
+chapter label's words with its in and out times, and
 the downloaded files, so the short can be assembled in CapCut or any editor. Write nothing that
 pretends to be the short.
 
@@ -339,13 +365,17 @@ pretends to be the short.
 - Extract frames into the scratchpad, not into `media/`: the very first frame, one in the middle of
   each of two or three cutaways (a graphic card among them, if there is one), one inside a zoom cut,
   and one in the call to action. For one still, take a frame just after its beat starts and one just
-  before it ends. On the first frame, draw the 4:5 crop as a box
+  before it ends. For each figure card, one at its `LAND`. For each overlay, one 0.4 seconds after
+  its mount starts. On the first frame and the overlay frames, draw the 4:5 crop as a box
   (`drawbox=x=0:y=285:w=1080:h=1350:color=red@0.9:t=6`) before you look.
 - Look at each. The title is there in the first frame, whole and inside the 4:5 box. The face is
   where it should be and fills the frame inside a zoom cut. The cutaways and cards fill the frame,
   and nothing on a card is cut off or overlapping. Look at every chart, diagram, source and reaction
   card, not just a sample: chart bars are in proportion to their values, and a reaction emoji is
-  Noto's glossy, rounded design (a flat, outlined face means the font failed to load).
+  Noto's glossy, rounded design (a flat, outlined face means the font failed to load). A figure
+  card shows exactly the figure as said at its `LAND`, symbols and separators included. Each
+  overlay is whole, inside the 4:5 box, off the mouth and chin, above the captions, with the take
+  visible around it (a solid colour filling the frame means its page is not transparent).
   The two frames of a still differ in scale (the zoom ran), a full-frame still leaves no black edge
   at either end, and a framed one is sharp, whole and inside the 4:5 box over its blurred copy.
   The captions are legible, spelled right, the same size throughout and on one line; a caption that
@@ -362,11 +392,11 @@ it once before you post it."
 Log the short:
 
 ```json
-{"ts":"…","event":"generate","skill":"edit-talking-head","deliverable":"<id>","file":"media/<id>/<id>-v01.mp4","status":"iteration","notes":"edit media/<id>/<id>-edit/<id>-edit-v01.html; take aroll-v01; 41.2s from 58.0s; title \"Why your shop feels busy but sells less\"; 8 cutaways (6 stock, 2 graphic); 3 zoom cuts"}
+{"ts":"…","event":"generate","skill":"edit-talking-head","deliverable":"<id>","file":"media/<id>/<id>-v01.mp4","status":"iteration","notes":"edit media/<id>/<id>-edit/<id>-edit-v01.html; take aroll-v01; 41.2s from 58.0s; title \"Why your shop feels busy but sells less\"; 8 cutaways (6 stock, 2 graphic); 3 zoom cuts; 2 overlays (1 highlight, 1 chapter label)"}
 ```
 
 When stills were used, count them inside the stock figure: `8 cutaways (6 stock, 2 of them stills;
-2 graphic)`.
+2 graphic)`. Leave out the overlays clause when there are none.
 
 Then rebuild the campaign page once, for everything this run logged (`campaign-structure.md` 4.1).
 
@@ -405,7 +435,10 @@ earlier cut stays watchable.
 - **A still always moves.** Every stock photo gets its slow zoom, and only a photo does: never the
   face, never a clip. A still too small to frame sharply is not used.
 - **Pinned tools.** `hyperframes@0.9.6`, local engines only, none of HeyGen's paid services.
+- **Restraint on the face.** At most one highlight or chapter label about every 4 seconds, each
+  landing on its word, never under the title or on the call to action. A stretch with nothing new
+  is flagged for the user, not filled on your own.
 - **Speak plainly.** Pauses, ums, the title, cutaways, photos, slow zoom, graphics, zoom cuts,
-  captions, the short. Not keep-ranges, compositions, sub-compositions, tracks, transforms,
-  renditions or "Ken Burns".
+  highlights, chapter labels, captions, the short. Not keep-ranges, compositions, sub-compositions,
+  overlays, tracks, transforms, renditions, contrast ratios or "Ken Burns".
 - UK English, no em dashes in anything you author.

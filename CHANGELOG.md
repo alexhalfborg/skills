@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.13.0
+
+**Emphasis on the face, figures that land on the word, and a rhythm check.** `edit-talking-head`
+borrows three ideas from huashu-motion's talking-head method
+(<https://github.com/alchaincyf/huashu-motion>, MIT). These are ideas only: huashu-motion's own
+renderer is not used, and the templates are ours, written for HyperFrames 0.9.6.
+
+- **Highlights and chapter labels on the face.** A sentence that stays on the speaker can now carry
+  a highlight (one to four of their words on a block of the accent) or, on a listicle headline, a
+  chapter label beside the zoom cut. Both are transparent overlays below the chin, inside the 4:5
+  crop and above the captions. Each lands as its word is said, with at most one about every
+  4 seconds, never under the title or on the call to action. Files are
+  `compositions/<id>-overlay<N>-vNN.html` (`campaign-structure.md` §3.1, `hyperframes.md` §6.5,
+  `graphic-cards.md` part 2).
+- **Count-up figure card.** The figure counts up from the cut and settles on the exact figure as it
+  is spoken, keeping its own symbols and separators. The card is never blank while it waits.
+- **Rhythm check.** The plan flags any stretch of more than about 4 seconds on the face with nothing
+  new, and cutaways that are all the same length, with a suggestion for each. It never fills them on
+  its own.
+- **Contrast rule.** Text on brand colours (title, caption highlight, cards, highlights) is chosen by
+  the WCAG ratio worked out from `design.md` (`hyperframes.md` §5.1): 4.5:1 for text on the accent,
+  3:1 for the accent as large type on the dark. This replaces "when the accent is light".
+- **Motion rule.** Templates animate only transforms and opacity, and never read the clock or
+  random numbers, so two renders match frame for frame.
+
+Checked by rendering at HyperFrames 0.9.6 over a synthetic take; two-line highlights and chapter
+titles were not rendered.
+
 ## 0.12.0
 
 **Stock photos with a slow zoom when stock video runs out.** In `edit-talking-head`, a b-roll beat

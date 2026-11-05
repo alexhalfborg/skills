@@ -1,10 +1,11 @@
 # Cutting a talking head: the rules
 
 The editorial method behind `edit-talking-head`, in the order the skill applies it: tighten the take,
-shape the short (the opening title, the cutaways, the graphic cards and the zoom cuts), choose the
+shape the short (the opening title, the cutaways, the graphic cards, the zoom cuts and the overlays
+on the face), choose the
 stock, then fix and re-time the captions. Every number here is a default the user can override for
-one run in plain words ("keep it looser", "more face", "no zoom cuts", "keep the title up longer",
-"leave the ums in"). Record any override in the plan doc, so the next re-edit starts from what was
+one run in plain words ("keep it looser", "more face", "no zoom cuts", "no highlights", "keep the
+title up longer", "leave the ums in"). Record any override in the plan doc, so the next re-edit starts from what was
 agreed rather than from these defaults.
 
 ## 1. Tightening the take
@@ -88,7 +89,8 @@ As a general shape, **every sentence opens on the face and cuts away until it en
 **Whole sentences stay on the face** when they are:
 
 - **the hook,** the first spoken sentence, which sits under the title;
-- **a listicle headline** ("Number four: not tidying up"), which gets a zoom cut instead (below);
+- **a listicle headline** ("Number four: not tidying up"), which gets a zoom cut and a chapter
+  label instead (below);
 - **the punchline or turn** the short builds to ("It is not.");
 - **the call to action:** "follow for more", "link in bio", the last sentence;
 - **about the speaker:** "look at me", "honestly", a facial reaction the words depend on.
@@ -105,6 +107,16 @@ least 0.3 seconds before it and ends at least 0.3 seconds after, or a zoom cut t
 exactly that point.
 
 **Snap to words.** A cutaway starts at the start of a word and ends at the end of a word.
+
+**Keep it moving, with contrast.** Once the beats, zoom cuts and overlays are placed, read down the
+tightened timeline for any stretch of more than about 4 seconds on the face where nothing new
+arrives: no cutaway, no zoom cut, no overlay, no new sentence. The title and the call to action are
+exempt; they are meant to hold. Do not fill such a stretch on your own. List each one in the plan's
+Notes with its times and the words under it, and suggest the device that fits ("a zoom cut on
+'never'", "a highlight on 'cash flow'", "a cutaway of a till"). Flag it as well when every cutaway
+in the short is within about 0.3 seconds of the same length: an even beat reads as a slideshow, and
+lengths that vary are what give the short a rhythm. Both checks adapt huashu-motion's rhythm
+method (no long stretch without something new, and contrast between stretches) to a talking head.
 
 **Each beat records:** its start and end on the tightened timeline, the words spoken under it, the
 idea in a few plain words, the source (`stock`, `graphic` or `generate`), and either the search
@@ -132,6 +144,12 @@ your own. A card is a caption made bigger, not new copy.
 
 The last three need reading time, so they run longer than the 1.5 to 3 seconds of other cutaways.
 If the sentence leaves too little room, use a figure or phrase card instead, or stay on the face.
+
+**Motion lands on the word.** The cut to a card still falls on a word boundary, but what the card
+moves towards lands as its word is said. A figure card counts up and settles on the number as the
+speaker finishes saying it (`graphic-cards.md` section 2), so place a figure beat to start on a word
+before the number, at least 0.6 seconds before its end where the sentence allows. The card is never
+empty while it waits: its number is on screen from the cut.
 
 **Charts must be honest.** Bars start at zero and their heights are in true proportion. Every value
 carries its unit. Numbers from a source carry a source line. A trend needs a real value for every
@@ -179,8 +197,37 @@ in on the face to mark a moment, then cut back out to carry on.
   at either scale.
 - **Not on a soft take.** Skip zoom cuts when the take is narrower than 1080 pixels; enlarging it
   further shows.
-- Zoom cuts scale the face only. Cutaways and cards are never scaled, except a still's own slow
-  zoom (below), which is part of the still, not a zoom cut.
+- Zoom cuts scale the face only. Cutaways, cards and overlays are never scaled, except a still's own
+  slow zoom (below), which is part of the still, not a zoom cut.
+
+### On the face: overlays
+
+A sentence that stays on the face can still get a moment of emphasis without leaving the speaker:
+an overlay laid on top of the take, below the chin (`graphic-cards.md` part 2). Two kinds:
+
+| Kind | Use it for | Length |
+|---|---|---|
+| **Highlight** | One to four words the speaker leans on, verbatim: the turn, a named term, the keyword of a point that stays on the face. | 0.9 to 2 s |
+| **Chapter label** | A listicle headline, split at its colon into the number part and the rest ("Number four" / "Not tidying up"). With that headline's zoom cut, where the take has one. | the headline, to 0.1 s before the first word of the explanation that follows (the zoom-out, when there is one) |
+
+- **The same rule as a card:** the words are the speaker's own, in the corrected spelling, and
+  nothing else. A highlight is a caption made louder.
+- **Timing.** Each overlay lands on its word: it starts 0.25 seconds before the word begins and is
+  up for at least 0.9 seconds. It ends 0.1 seconds before the next thing that cuts away from the face
+  or takes the same place on screen, or at the end of its sentence, whichever comes first. With less
+  than 0.9 seconds to give it, leave it out.
+- **How often.** Restraint is the point: at most one overlay about every 4 seconds, and never two
+  in the same sentence. A highlight and a zoom cut may mark the same word; that is one moment, not
+  two.
+- **Never** under the opening title, which holds the same band, never over a cutaway or a card, and
+  never on the call to action, which stays clean.
+- **Not over the mouth.** Look at the face frame taken for the zoom cuts (SKILL.md step 4). If the
+  face sits so low that the overlay band (y 1000 to 1330) would cross the mouth or chin, use no
+  overlays in that short and say why in the plan.
+
+A highlight suits a single-angle take best, but it does not depend on one: on a multi-angle take
+with no zoom cuts, highlights still go on the turn and the named terms, and chapter labels still go
+on listicle headlines.
 
 ### Stills and the slow zoom
 

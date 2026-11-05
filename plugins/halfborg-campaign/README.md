@@ -109,8 +109,11 @@ colour, placed so it still shows when Instagram crops the video for the feed. Ea
 on you, then cuts away to stock footage or a simple animated graphic (a number, a chart, a diagram,
 or the article or study you mention) until the sentence ends. Where no stock clip fits, it uses a
 stock photo instead and gives it a slow zoom, so it still moves. If you filmed it all from one angle,
-it zooms in on your list headings and key words. Captions light up word by word in your brand's
-font and colour, all the same size. It renders a vertical video ready for TikTok, Reels or Shorts,
+it zooms in on your list headings and key words. While you are on screen, a few of your key words
+can pop up beside you in your brand's colour, and each list heading gets a small label, timed to
+land as you say it. If you stay on screen a long while with nothing changing, it points that out
+and suggests what could go there. Captions light up word by word in your brand's font and colour,
+all the same size, in a text colour picked so it stays readable on your brand colour. It renders a vertical video ready for TikTok, Reels or Shorts,
 and shows you every cut, clip and graphic before it downloads or renders anything.
 
 It never uses meme GIFs or clips from films and TV: most of those belong to someone else, and a

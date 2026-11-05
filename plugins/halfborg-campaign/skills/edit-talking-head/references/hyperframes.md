@@ -138,9 +138,36 @@ make exactly these changes. Everything else in the file stays as installed.
 CSS. If it is not (a licensed or custom face), keep Montserrat and say so in the hand-back: the
 captions are in a stand-in font, because the brand's own font is not one the render can fetch.
 
-**Light accents.** The words are white on the accent. If the accent is light (a yellow, a pale
-green), white will not read on it: set `.hl-word` `color` to the brand's darkest colour from
-`design.md` instead, and drop its `text-shadow`.
+**Text colour on the accent.** The spoken word sits on the accent, so its colour comes from the
+contrast rule below. If that rule picks anything but white, set `.hl-word` `color` to it and drop
+its `text-shadow`.
+
+### 5.1 The contrast rule
+
+Every place the edit puts words on a brand colour takes its text colour from this rule, never by eye:
+the caption highlight, the opening title (section 6.1), the graphic cards and the overlays
+(`graphic-cards.md`). It is the WCAG contrast ratio, worked out by hand from the hex values in
+`design.md`.
+
+1. **Luminance of a colour.** For each of its red, green and blue pairs, take the value 0 to 255 and
+   divide by 255, giving `c`. If `c ≤ 0.04045` use `c ÷ 12.92`, otherwise `((c + 0.055) ÷ 1.055)` to
+   the power 2.4. Then `L = 0.2126 × red + 0.7152 × green + 0.0722 × blue`. White is 1, black 0.
+2. **Contrast** between two colours is `(lighter L + 0.05) ÷ (darker L + 0.05)`.
+
+**Text on the accent** (the title box, the caption highlight, a highlight overlay) needs **4.5 to
+1**:
+
+- white, if it reaches 4.5 (in practice: the accent's `L` is 0.183 or less);
+- otherwise the brand's darkest colour, if that reaches 4.5;
+- otherwise black, `#000000`, which always does when white does not. Say so in the plan's Notes.
+
+**The accent used as type or a shape on the darkest colour** (a figure card's number, a chart's
+highlighted bar, a kicker, a chapter label's rule) needs **3 to 1**, since it is very large type or a
+graphic. Below that, the number and the kicker take white, and the plan says the accent was too close
+to the dark to read.
+
+Worked examples: `#1F6FEB` takes white (4.63) and reads on `#0B1B33` (3.72); a yellow `#FFC700`
+fails white (1.56) and takes the brand's dark or black; an orange `#FF6B00` fails white (2.86).
 
 **Placement.** At `bottom: 380px` a one-line caption sits at about y 1450 to 1540, under the opening
 title and still inside the 4:5 crop (which keeps y 285 to 1635). That is lower than the apps'
@@ -153,9 +180,9 @@ colour change.
 ## 6. The edit file
 
 `<id>-edit/<id>-edit-vNN.html`. One root composition, one `<video>` per kept part of the take, one
-wrapper per stock or generated cutaway, one per stock still, each graphic card and the captions
-mounted as sub-compositions, the opening title on top, and the zoom cuts and the stills' slow zooms
-in the root timeline:
+wrapper per stock or generated cutaway, one per stock still, each graphic card, each overlay and the
+captions mounted as sub-compositions, the opening title on top, and the zoom cuts and the stills'
+slow zooms in the root timeline:
 
 ```html
 <!doctype html>
@@ -176,8 +203,9 @@ in the root timeline:
       .still-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 50%; }
       .framed .still-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(40px) brightness(0.55); transform: scale(1.15); }
       .framed .still-img { inset: auto; left: 50%; top: 50%; object-fit: contain; }
-      .captions { position: absolute; inset: 0; z-index: 2; }
-      .title { position: absolute; left: 140px; right: 140px; bottom: 600px; z-index: 3; display: flex; justify-content: center; }
+      .overlay { position: absolute; inset: 0; z-index: 2; }
+      .captions { position: absolute; inset: 0; z-index: 3; }
+      .title { position: absolute; left: 140px; right: 140px; bottom: 600px; z-index: 4; display: flex; justify-content: center; }
       .title-box { background: #1F6FEB; color: #ffffff; font-family: "Montserrat", sans-serif; font-weight: 800; font-size: 72px; line-height: 1.12; text-align: center; padding: 28px 40px 32px; border-radius: 12px; }
     </style>
   </head>
@@ -200,10 +228,12 @@ in the root timeline:
       </div>
       <!-- one mount per graphic card -->
       <div id="graphic3" class="graphic" data-composition-id="graphic3" data-composition-src="compositions/short-03-graphic3-v01.html" data-start="9.10" data-duration="2.00" data-track-index="1"></div>
+      <!-- one mount per overlay, laid over the face (section 6.5) -->
+      <div id="overlay5" class="overlay" data-composition-id="overlay5" data-composition-src="compositions/short-03-overlay5-v01.html" data-start="12.15" data-duration="1.60" data-track-index="2"></div>
       <!-- captions -->
-      <div class="captions" data-composition-id="captions" data-composition-src="compositions/short-03-captions-v01.html" data-start="0" data-duration="38.42" data-track-index="2"></div>
+      <div class="captions" data-composition-id="captions" data-composition-src="compositions/short-03-captions-v01.html" data-start="0" data-duration="38.42" data-track-index="3"></div>
       <!-- the opening title, from frame one -->
-      <div class="clip title" data-start="0" data-duration="4.12" data-track-index="3"><div class="title-box">Why your shop feels busy but sells less</div></div>
+      <div class="clip title" data-start="0" data-duration="4.12" data-track-index="4"><div class="title-box">Why your shop feels busy but sells less</div></div>
     </div>
     <script>
       window.__timelines = window.__timelines || {};
@@ -244,8 +274,8 @@ Rules the render depends on:
 
 The `.title` element above, in the edit file itself rather than a separate file. Set per short:
 
-- the box `background` to the brand accent from `design.md`, and the text `color` to white, or to
-  the brand's darkest colour when the accent is light (the same rule as the captions);
+- the box `background` to the brand accent from `design.md`, and the text `color` by the contrast
+  rule (section 5.1);
 - `font-family` to the brand typeface, with the same Google Fonts link in the edit file's head
   (Montserrat as the stand-in, under the same rule as section 5);
 - `data-duration` to the end of the title's word (`broll-rules.md` section 2);
@@ -313,6 +343,27 @@ Lint flags the still images the way it flags the clips (`invalid_parent_traversa
 `missing_local_asset`), and adds two warnings of its own: `nested_structure_needs_subcomposition`
 for each still's wrapper, and `duplicate_media_discovery_risk` for a framed still's two images of
 the same file. The render above was correct with all of them showing. Leave them, as in section 6.
+
+### 6.5 Overlays
+
+An overlay is a highlight or a chapter label laid over the face (`broll-rules.md` section 2, "On the
+face: overlays"). One file per overlay: `compositions/<id>-overlay<N>-vNN.html`, where `<N>` counts
+the overlays in order through the short and `vNN` matches the edit file. The files are in
+`graphic-cards.md` part 2.
+
+- **Mount** it like a graphic card, with class `overlay`, an `id` and `data-composition-id` of
+  `overlay<N>`, and `data-track-index="2"`.
+- **Timing.** `data-start` is the start of the word it lands on minus 0.25 seconds, so its entrance
+  finishes as the word is said. `data-duration` runs to its end (`broll-rules.md` gives the rule),
+  and the overlay's own fade-out sits in the last 0.2 seconds of it.
+- **Layering.** The overlay's page is transparent, so the take shows through everywhere except the
+  overlay itself. `z-index: 2` puts it above the take and any cutaway, and under the captions and the
+  title. A zoom cut scales the take beneath it and leaves the overlay as it is, which is what keeps
+  a chapter label steady through its zoom.
+
+**Checked at 0.9.6** over a take with captions: a highlight and a chapter label (the label inside a
+zoom cut), each appearing and leaving on its timing, the take visible all around them, both inside
+the 4:5 band, clear of a face at the default zoom centre and above the captions.
 
 ## 7. Render
 

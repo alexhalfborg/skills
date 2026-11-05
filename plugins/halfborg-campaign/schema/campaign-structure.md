@@ -152,11 +152,13 @@ governs only the versioned files inside it that record an edit:
 ```
 media/short-03/short-03-edit/
   short-03-edit-v01.html          the edit: which parts of the take are kept, where each cutaway sits,
-                                  the opening title and the zoom cuts
+                                  the opening title, the zoom cuts and where each overlay sits
   short-03-edit-v02.html          a re-edit is a new file, never a rewrite of v01
   compositions/
     short-03-captions-v01.html    the captions for edit v01
     short-03-graphic3-v01.html    the graphic card at beat 3 of edit v01
+    short-03-overlay5-v01.html    the overlay (a highlight or chapter label on the face) numbered 5
+                                  in edit v01
   transcript-aroll-v01.json       word timings for take v01
   options/                        option thumbnails shown on the campaign page while picking cutaways
 ```

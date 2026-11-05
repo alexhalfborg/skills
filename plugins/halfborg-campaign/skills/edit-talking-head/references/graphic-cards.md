@@ -7,6 +7,12 @@ looked at inside a 4:5 crop. The size adjustments given for longer content (more
 longer headlines) were not, so check those cards in the render's frames (SKILL.md step 9). If a run
 disagrees with this file, believe the run and say these notes need updating.
 
+Part 1 (sections 1 to 8) is the full-frame cards that replace the face for a beat. Part 2 (sections 9
+to 11) is the overlays that sit on top of the face. The count-up figure, the overlays and the way
+their motion lands on a word adapt ideas from huashu-motion's talking-head motion language
+(<https://github.com/alchaincyf/huashu-motion>, MIT). The code here is our own, written for
+HyperFrames.
+
 ## 1. The shell
 
 Every card is one file, `compositions/<id>-graphic<N>-vNN.html`, built from this shell. Fill in the
@@ -49,31 +55,71 @@ kind's styles, content and animation from the sections below.
 - **Brand.** `#0B1B33` becomes the brand's darkest colour from `design.md`, `#1F6FEB` its accent, and
   `Montserrat` its typeface (in the link and the CSS), under the same stand-in rule as the captions
   (`hyperframes.md` section 5). Without `design.md`, keep `#0B1B33`, use white for the accent, and say
-  so in the plan.
+  so in the plan. Check the accent against the dark by the contrast rule (`hyperframes.md`
+  section 5.1): below 3 to 1, the figure's number and any kicker take white.
 - **Position.** Everything sits in `.stage`, the band from y 420 to 1260: inside the 4:5 crop and
   above the captions, which run over the card as usual. Do not move it.
 - **Motion.** Entrances only, all done within about 1.2 seconds, so the card is readable for most of
-  its time on screen. No exit animation; the card leaves on a cut.
+  its time on screen. No exit animation; the card leaves on a cut. Something is on screen within the
+  first 0.15 seconds: a card never sits empty while it waits for a word.
+- **Only transforms and opacity move.** Animate `x`, `y`, `scale`, `scaleX`, `scaleY`, `rotation`
+  and `opacity`, never `left`, `top`, `width` or `height`, which reflow the page and can shift the
+  rest of the card. Nothing reads the clock or `Math.random()`: every frame is a function of its
+  time alone, so two renders of one file match frame for frame. Every template in this file follows
+  both rules; a new or adjusted one must too.
 
 ## 2. Figure
 
-A number the speaker says, with up to three words of label.
+A number the speaker says, with up to three words of label. The number pops in at the cut and
+counts up from zero, settling on the figure as it is said.
 
 ```css
-.big { font-weight: 800; font-size: 300px; line-height: 1; color: #1F6FEB; }
+.big { position: relative; font-weight: 800; font-size: 300px; line-height: 1; color: #1F6FEB; font-variant-numeric: tabular-nums; }
+.big .ghost { visibility: hidden; }
+.big .cnt { position: absolute; top: 0; right: 0; white-space: nowrap; }
 .label { margin-top: 24px; font-weight: 800; font-size: 72px; line-height: 1.1; color: #ffffff; }
 ```
 
 ```html
-<div class="big" id="g-big">300</div><div class="label" id="g-label">customers</div>
+<div class="big" id="g-big"><span class="ghost">300</span><span class="cnt" id="g-cnt"></span></div>
+<div class="label" id="g-label">customers</div>
 ```
 
 ```js
+// the figure exactly as said, split into its parts: "£1,200" is "£", 1200, 0 decimals, ""
+const FIG = { before: "", value: 300, decimals: 0, after: "" };
+// seconds from the start of the card to the end of the spoken figure, never under 0.6
+const LAND = 0.6;
+const cnt = document.getElementById("g-cnt");
+const show = (v) => {
+  cnt.textContent = FIG.before + v.toLocaleString("en-GB", { minimumFractionDigits: FIG.decimals, maximumFractionDigits: FIG.decimals }) + FIG.after;
+};
+const n = { v: 0 };
+show(0);
 tl.fromTo("#g-big", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(1.6)" }, 0);
+tl.fromTo(n, { v: 0 }, { v: FIG.value, duration: LAND, ease: "power3.out", onUpdate: () => show(n.v) }, 0);
 tl.fromTo("#g-label", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" }, 0.2);
 ```
 
+- **The ghost** is the final figure written out in full (`£1,200`), hidden. It holds the number's
+  width, so the count grows leftwards from a fixed right edge instead of shifting the centre on every
+  frame.
+- **`LAND`** comes from the transcript: the end of the figure's word, minus the card's start on the
+  timeline. When the figure was said before the card begins, or less than 0.6 seconds into it, use
+  0.6, so the count is still readable.
+- **The settled number is the claim.** The numbers it passes through on the way are animation, and
+  the last frame shows the figure exactly as said, with its own symbols, separators and decimal
+  places. `toLocaleString("en-GB")` writes thousands with a comma and decimals with a point; if the
+  brand writes figures another way, spell the formatting out in `show` rather than changing the
+  locale.
+- **A figure with no plain number in it** ("a third", "half", "double") does not count. Drop the
+  ghost, the counter and its tween, and put the words straight into `.big`.
+
 A figure of five characters or more ("£1,200") drops `.big` to 220px.
+
+**Checked at 0.9.6:** `£1,200` over a 2.4-second card with `LAND` at 1.0. The number read £621 at
+0.15 seconds, £1,044 at 0.40, £1,190 at 0.70 and £1,200 from 1.0 on, with the right edge fixed
+throughout, and two renders matched frame for frame.
 
 ## 3. Phrase
 
@@ -248,3 +294,140 @@ tl.fromTo("#win", { y: 80, opacity: 0, scale: 0.96 }, { y: 0, opacity: 1, scale:
 
 The domain is the bare host (`nature.com`, not the full link). A highlighted quote works here as on
 the newspaper card: add the `.q` and `.mark` rules and markup from section 7 after `.meta`.
+
+# Part 2: overlays on the face
+
+An overlay sits on top of the speaker instead of replacing them: a **highlight** (a few of their
+words on a block of the accent) or a **chapter label** (a listicle headline, as a small card). When
+to use each, and how often, is in `broll-rules.md` section 2, "On the face: overlays". How one is
+mounted and timed is in `hyperframes.md` section 6.5.
+
+## 9. The overlay shell
+
+Every overlay is one file, `compositions/<id>-overlay<N>-vNN.html`. It differs from the card shell
+in three ways: nothing paints the page, so the take shows through; the content sits in `.band`, low
+on the chest, rather than in `.stage`; and it fades out at the end, because it leaves while the face
+stays.
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: transparent; }
+      .ov { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "Montserrat", sans-serif; }
+      .band { position: absolute; left: 140px; right: 140px; top: 1000px; height: 330px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; }
+      /* the kind's styles */
+    </style>
+  </head>
+  <body>
+    <div class="ov" data-composition-id="overlay5" data-start="0" data-duration="1.60" data-width="1080" data-height="1920">
+      <div class="band">
+        <!-- the kind's content -->
+      </div>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const DUR = 1.6;
+      const tl = gsap.timeline({ paused: true });
+      // the kind's entrance
+      // the exit: the kind's outer element fades and drops over the last 0.2 seconds
+      window.__timelines["overlay5"] = tl;
+    </script>
+  </body>
+</html>
+```
+
+- `data-composition-id`, the `window.__timelines` key and the mount's id are all `overlay<N>`.
+  `data-duration` and `DUR` are both the mount's length.
+- **Brand.** The same swaps as the card shell: the accent, the darkest colour and the typeface from
+  `design.md`, with the stand-in rule. Text on the accent follows the contrast rule
+  (`hyperframes.md` section 5.1).
+- **Position.** `.band` runs from y 1000 to 1330, left-aligned, 140px in from each side. That is
+  inside the 4:5 crop, below the chin of a face framed the usual way (even at a 1.2 times zoom cut
+  centred 30% down), above the captions, and clear of the right-hand button rail. It is the same
+  band the opening title uses, which is why no overlay runs under the title. If the step 4 face
+  frame shows the face lower than usual, so that the band would cross the mouth, leave the overlay
+  out and say why in the plan. Do not move the band.
+- **Motion.** The entrance is done within about 0.35 seconds; the mount starts 0.25 seconds before
+  its word, so it lands as the word is said. The same transforms-and-opacity rule as the cards.
+
+## 10. Highlight
+
+One to four of the speaker's words, up to about 28 characters, in heavy type on a block of the
+accent, tilted slightly. The block wipes in from the left and the words rise in one after another.
+
+```css
+.hl { position: relative; max-width: 800px; padding: 12px 30px 18px; font-weight: 800; font-size: 80px; line-height: 1.1; color: #ffffff; }
+.hl .blk { position: absolute; inset: 0; background: #1F6FEB; border-radius: 10px; transform-origin: 0 50%; }
+.hl .w { position: relative; display: inline-block; }
+```
+
+```html
+<div class="hl" id="hl">
+  <div class="blk" id="blk"></div>
+  <span class="w">Not</span> <span class="w">tidying</span> <span class="w">up</span>
+</div>
+```
+
+```js
+tl.fromTo("#hl", { rotation: 0 }, { rotation: -2, duration: 0.35, ease: "back.out(2)" }, 0);
+tl.fromTo("#blk", { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: "expo.out" }, 0);
+tl.fromTo("#hl .w", { y: 50, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "back.out(2)", stagger: 0.06 }, 0.08);
+tl.to("#hl", { opacity: 0, y: 20, duration: 0.2, ease: "power2.in" }, DUR - 0.2);
+```
+
+- One `<span class="w">` per word, separated by plain spaces, in the corrected spelling. Not
+  uppercased: the words appear as the captions show them.
+- `color` follows the contrast rule for text on the accent.
+- Over about 14 characters it runs to a second line inside the same block, which is fine. Over
+  about 28 it would reach a third: use fewer words.
+
+## 11. Chapter label
+
+A listicle headline as a small dark card: the number part as a kicker in the accent, a short rule
+that draws across, then the rest of the headline. It runs with the zoom cut on the same headline
+(`broll-rules.md` section 2, "Zoom cuts").
+
+```css
+.ch { max-width: 800px; padding: 26px 36px 32px; border-radius: 16px; background: rgba(11, 27, 51, 0.9); color: #ffffff; }
+.ch .k { font-weight: 800; font-size: 36px; letter-spacing: 0.08em; text-transform: uppercase; color: #1F6FEB; }
+.ch .rule { width: 120px; height: 6px; margin: 14px 0 18px; background: #1F6FEB; transform-origin: 0 50%; }
+.ch .t { font-weight: 800; font-size: 64px; line-height: 1.1; }
+```
+
+```html
+<div class="ch" id="ch">
+  <div class="k" id="ch-k">Number four</div>
+  <div class="rule" id="ch-r"></div>
+  <div class="t" id="ch-t">Not tidying up</div>
+</div>
+```
+
+```js
+tl.fromTo("#ch", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "back.out(1.5)" }, 0);
+tl.fromTo("#ch-k", { x: -30, opacity: 0 }, { x: 0, opacity: 1, duration: 0.25, ease: "expo.out" }, 0.1);
+tl.fromTo("#ch-r", { scaleX: 0 }, { scaleX: 1, duration: 0.45, ease: "expo.inOut" }, 0.15);
+tl.fromTo("#ch-t", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "expo.out" }, 0.25);
+tl.to("#ch", { opacity: 0, y: 20, duration: 0.2, ease: "power2.in" }, DUR - 0.2);
+```
+
+- **The words are the headline as spoken**, split where the speaker splits it: "Number four: not
+  tidying up" gives the kicker "Number four" and the title "Not tidying up", with its first letter
+  capitalised. The kicker is uppercased by the CSS, so type it in normal case. If the speaker gives
+  the headline with no number ("And the big one: pricing"), the kicker is the words before the
+  colon; with nothing before it, drop the kicker and keep the rule.
+- `rgba(11, 27, 51, 0.9)` is the brand's darkest colour at 90%; the kicker and rule take the
+  accent, and white if the accent is under 3 to 1 on the dark.
+- A title over about 22 characters runs to a second line. Over 44, use the zoom cut alone.
+
+**Checked at 0.9.6** over a take with captions, both templates exactly as shown: a highlight for
+1.8 seconds and a chapter label for 2.15 seconds inside a 1.2 times zoom cut. Both landed within
+0.35 seconds, faded out on time, and sat inside the 4:5 band with the take showing all around them,
+clear of a face at the default zoom centre and above the captions. Two-line highlights and chapter
+titles were not rendered, so check them in the frames (SKILL.md step 9).
