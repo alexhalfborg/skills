@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.14.0
+
+**Pictures from the script's own sources, credited on screen.** When a talking-head script links to
+the pages it was researched from, `edit-talking-head` now opens them (`WebFetch`, never an image
+search) and looks for a picture of the thing the speaker is talking about:
+
+- **Only what the page licenses for reuse.** Public domain, CC0, CC BY or the UK Open Government
+  Licence, as stated for that image on the page and never inferred. CC BY-SA, NC and ND, "all
+  rights reserved", nothing stated, and anything credited to a picture agency are refused. A
+  figure's own notice outranks its page's licence (`broll-rules.md` §3.2, reasons in §6).
+- **Shown as a still with the slow zoom**, full frame or framed as in 0.12.0, ranked above stock
+  for its beat, with stock options still offered beside it.
+- **Credit burned in** for the whole beat, top left inside the 4:5 crop, copied from the page
+  (`Fig. 2: Lee et al. 2024, PLOS ONE, CC BY 4.0, cropped`), and a full credits block with links to
+  paste into the post description, which the report says is required, not a courtesy.
+- **Logged as `"source":"reference"`** with a new required `licence` field
+  (`campaign-structure.md`). `run-qa` fails a source image with no licence, a licence outside the
+  four, or a missing or different on-screen credit.
+- **Paid shorts** mark each source image `⚠️ CLAIM CHECK:`, and the face rule still applies. The
+  `paid-creative` agent gains `WebFetch`, which source cards also needed.
+
+The credit line was checked by rendering at HyperFrames 0.9.6; reading licences off real pages has
+not yet been run end to end.
+
 ## 0.13.0
 
 **Emphasis on the face, figures that land on the word, and a rhythm check.** `edit-talking-head`

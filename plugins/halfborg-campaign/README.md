@@ -119,6 +119,12 @@ and shows you every cut, clip and graphic before it downloads or renders anythin
 It never uses meme GIFs or clips from films and TV: most of those belong to someone else, and a
 brand account posting them risks the video being muted or taken down.
 
+If your script links to the articles or studies you researched, it looks on those pages for
+pictures it is allowed to use: ones the page marks as free to reuse, such as many NASA pictures and
+figures from open-access research papers. Those go in where you talk about that source, with a small
+credit on screen and a credit for you to paste into the post. A news photo is never used, even with
+a credit, because a credit does not give you the right to use someone else's picture.
+
 The first time, it asks to download a speech-recognition model (a one-off, a few hundred megabytes)
 that runs entirely on your computer. Nothing you say is sent anywhere to be transcribed, and none of
 it costs anything. Only a cutaway you ask it to generate with AI costs money, and that stops and shows

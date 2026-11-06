@@ -218,7 +218,8 @@ like anything else, so they appear on the campaign page and QA can trace them, b
 and no `prompt`:
 
 - `source` names where the file came from: `user` for footage a person supplied, the stock
-  library it came from, `pexels` or `pixabay`, or `derived` for a format derivative (section 3)
+  library it came from, `pexels` or `pixabay`, `reference` for an openly licensed image taken from a
+  page the script cites (`edit-talking-head`), or `derived` for a format derivative (section 3)
   made from another file in the campaign, which is named in `refs[0]`. Absent means generated, which
   is every entry written before this field existed. A `derived` entry has no `credit`, and
   `cost_usd` is `0`.
@@ -228,6 +229,11 @@ and no `prompt`:
   stock clip with no recorded creator is one nobody can credit later.
 - `source_url` is the library's page for the clip, not the file link, so a person can open it and
   check the licence. `cost_usd` is `0`.
+- For `reference`, `credit` is the line burned into the video, exactly as it appears
+  (`"Fig. 2: Lee et al. 2024, PLOS ONE, CC BY 4.0, cropped"`), `source_url` is the page the image
+  and its licence were read from, and `licence` is required: the licence as the page states it, and
+  where (`"CC BY 4.0, stated in the article's copyright notice"`). Only public domain, CC0, CC BY and
+  the UK OGL are ever logged; anything else was never fetched.
 
 **Status model.** A file is born `candidate` (options awaiting a pick, ideation) or `iteration`
 (a working generation). Promotion is a `status` event: `locked` for anchors/reference inputs the

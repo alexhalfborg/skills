@@ -100,6 +100,12 @@ shop floor"), a place, an example, a before-and-after. A graphic card on a figur
 an abstract stretch ("the thing about strategy is…"), where stock would only be wallpaper. When
 neither fits, the sentence stays on the face.
 
+**The script's own sources come first.** When the words under a beat are about something a source
+in the script covers (the study's finding, the place in the article, the thing the report
+measured), an openly licensed image from that source beats stock: it is the real thing rather than
+a lookalike. Section 3.2 says which images qualify. It goes on screen as a still, with the slow
+zoom and its credit burned in for the length of the beat.
+
 **Cover the jump cuts.** Every kept-part boundary from section 1 is a visible jump in the face. The
 sentence shape hides most of them, because a cut from a cutaway back to the face never shows a jump.
 When one lands inside a stretch of face, prefer a placement that covers it: a cutaway that starts at
@@ -232,8 +238,10 @@ on listicle headlines.
 ### Stills and the slow zoom
 
 When video runs out for a beat, a stock photo can stand in for the clip (section 3.1 says when and
-how one is chosen). A photo held still on screen looks like a mistake, so every still moves: one
-slow, steady zoom across the whole beat, the Ken Burns move.
+how one is chosen), and an image from one of the script's sources can go where the words are about
+that source (section 3.2). Both are stills, and everything below applies to both. A photo held
+still on screen looks like a mistake, so every still moves: one slow, steady zoom across the whole
+beat, the Ken Burns move.
 
 - **The move:** either a push in, from 1.0 to 1.08 times, or a pull out, from 1.08 to 1.0, at an
   even speed from the first frame of the beat to the last. It may drift up to 2% of the frame
@@ -250,6 +258,9 @@ slow, steady zoom across the whole beat, the Ken Burns move.
 - **The difference from a zoom cut.** A zoom cut is a hard cut on the face, never animated. The slow
   zoom is the opposite and belongs to stills only. The face never gets a slow zoom, and a stock clip
   never gets one either: it already moves.
+- **A source image carries its credit on screen** for the whole of its beat, in a small line at the
+  top of the 4:5 band (section 3.2 gives the wording, `hyperframes.md` section 6.4 the placement). A
+  stock still does not: neither library asks for it, and its credit goes in the post description.
 
 ### Stock, graphic or generated
 
@@ -265,6 +276,11 @@ films, TV, sport, music videos or other people's posts, even when nothing else f
 frames of copyrighted footage that the GIF sites cannot license, and some show real people who never
 agreed to appear in a brand's post (section 6 has the detail). A generated clip made to look like a
 famous meme carries the same problem.
+
+**A credit is not a licence.** The same goes for pictures on the pages the script cites: a news
+photo, a publisher's image or a screenshot stays someone else's however clearly it is credited.
+Only an image whose page states an open licence that allows it is used (section 3.2), and the
+credit is what that licence asks for in return.
 
 **When nothing fits a beat,** work down this list:
 
@@ -386,6 +402,89 @@ following from the photo's shape. Centre it in the frame. A 1280×853 landscape 
 **Keep** each still with its library, page, creator, the size you will download, the treatment, and
 the direction of the zoom, chosen from the thumbnail (section 2).
 
+### 3.2 Images from the script's sources
+
+**Which sources.** Every link in the script: inline links, a sources, references or research list,
+and the link behind any source card. Add any link the user gives for the short. Look only on those
+pages and on the image pages they link to directly (a figure's own page, a Wikimedia Commons file
+page). Never run an image search to find more: a picture found that way was not part of the
+research, and its licence has not been read.
+
+**Which beats.** A beat whose words are about something one of those sources covers. Open the
+source (`WebFetch`, or the user's paste if it will not open) and look for an image of that very
+thing: the photo in the article, the study's micrograph or apparatus, the diagram that explains the
+process. A passing source image ranks above any stock option for that beat. A beat with none falls
+through to stock as usual.
+
+**The licence decides, and it must be stated.** Read the licence the page gives for the image
+itself, in the caption, the credit line, a figure's own notice, the file page's licence box, or the
+page's or site's stated terms. Never infer one. `WebFetch` answers through a summary, so ask it to
+quote the licence and credit text word for word, with the image's address; if it paraphrases, or
+the answer is unclear, fetch the page with `curl` and find the words in the page itself. A licence
+you have not seen quoted from the page counts as nothing stated. Then:
+
+| What the page states for the image | Use it? |
+|---|---|
+| Public domain, CC0, or the Public Domain Mark | Yes |
+| CC BY, any version | Yes |
+| UK Open Government Licence (OGL) v3.0 | Yes |
+| CC BY-SA, any version | No: a cropped, zooming copy is an adaptation, and share-alike would ask for that adaptation to carry the same licence, which a brand's post cannot promise |
+| CC BY-NC, or any NC licence | No: a brand's post is commercial use |
+| CC BY-ND, or any ND licence | No: cropping and the zoom are changes, which ND forbids |
+| "All rights reserved", ©, "used with permission", "editorial use only", or nothing stated | No |
+| Credited to a picture agency (Getty, AP, Reuters, AFP, EPA, Alamy, Shutterstock and the like) | No, whatever the rest of the page says |
+
+Watch the layers. An open-access paper under CC BY can still carry a figure "reproduced with
+permission" from somewhere else, and a public-domain government page can host a photo credited to a
+third party: the image's own notice wins over the page's. "Public domain" is only taken as stated
+by the page (US federal agencies such as NASA, NOAA and the CDC usually say so); a government
+outside the US is not public domain by default (UK material comes under the OGL, many others keep
+copyright). "No known copyright restrictions" is not a licence: treat it as nothing stated.
+
+**What else rules an image out.** The same rejects as a stock still (section 3.1), except that text
+belonging to a figure (its labels, its axes) is allowed when it is legible on a phone. Never a logo,
+watermark or masthead, never a screenshot of a page, and never a recognisable person on a paid short,
+where a licence covers the picture but not the person's consent. A chart or table full of small
+print will not read at phone size: put its numbers on a bar-chart card with a source line instead
+(section 2, "Graphic cards"). A public-domain licence covers copyright only; a trademark in the
+picture is still a reject.
+
+**Size** works as for a stock still (section 3.1's table): download the largest version the page
+offers, and the file that arrives sets `full` or `framed`. Under 1280 on its long side, it is too
+small to use. On Wikimedia Commons, ask for a 2400-wide copy with
+`https://commons.wikimedia.org/wiki/Special:FilePath/<file name>?width=2400`, and send a
+`User-Agent` naming the engine (`halfborg-campaign-engine (talking-head b-roll)`), which Wikimedia
+asks of any script.
+
+**The credit, copied exactly.** Take the creator and the source from the page, never from memory:
+
+- **Kind:** `Photo` for a photograph, `Image` for a diagram or illustration, `Fig. <n>` for a
+  paper's numbered figure.
+- **Creator:** as the page names them. More than two authors becomes the first surname and
+  "et al.", with the year: `Lee et al. 2024`.
+- **Source:** the publication, the agency or Wikimedia Commons.
+- **Licence:** as stated, with its version: `CC BY 4.0`, `public domain`, `OGL v3.0`.
+- **Changes:** add `, cropped` to a `full` still, whose frame is a crop. CC BY asks for changes to be
+  marked; a framed still shows the whole image and needs nothing added.
+
+So: `Photo: J. Smith / NASA, public domain`; `Fig. 2: Lee et al. 2024, PLOS ONE, CC BY 4.0,
+cropped`; `Image: Met Office, OGL v3.0`. A creator or licence you cannot pin down from the page
+means the image is not used. Keep the line under about 55 characters so it fits on one line, two at
+most; shorten an author list or a publication's name, never the creator or the licence.
+
+**The rest of the credit goes in the post description.** On screen there is room for the line
+above; CC BY and the OGL also want a link to the source and to the licence. The report at the end
+(SKILL.md step 10) always gives a credits block with both, ready to paste, and says that it is part
+of using the image, not a courtesy. For the OGL, the block carries its own statement: "Contains
+public sector information licensed under the Open Government Licence v3.0."
+
+**On a paid short,** a source image puts a third party's work in an ad. Mark it `⚠️ CLAIM CHECK:` in
+the plan, as a source card is, so `run-qa` looks at it.
+
+**Keep** each source image with its page, the image's own address, the licence as stated (quoted,
+with where on the page it appears), the credit line exactly as it will appear, the size you will
+download, the treatment, and the direction of the zoom.
+
 ## 4. Captions: correct, then re-time
 
 **Correct before captioning.** Speech engines mangle names. Before any word reaches a caption,
@@ -427,7 +526,9 @@ as `../media/<id>/<id>-edit/options/beat2-a.jpg`: that relative path resolves bo
 and from `site/`, since both sit beside `media/`.
 
 For a still, the thumbnail is the photo's own small size: `src.medium` on Pexels, `webformatURL` on
-Pixabay. Its file name is the same `beat<N>-<letter>.jpg`.
+Pixabay. For a source image, the smallest version the page offers (on Commons,
+`Special:FilePath/<file name>?width=640`), converted to JPEG with ffmpeg if it is not one. Its file
+name is the same `beat<N>-<letter>.jpg`.
 
 These thumbnails are working files for the decision, not deliverables, so they are not logged.
 
@@ -461,6 +562,26 @@ post description; nothing goes on screen.
   month. Pexels stopped issuing new API keys in late 2026; existing keys still work.
 
 One short uses a few dozen requests on either.
+
+**Images from the script's sources** (why section 3.2 takes so few):
+
+- **An open licence is the permission; the credit is its price.** CC BY lets anyone use, change and
+  share the work, commercially too, as long as the creator and the licence are named and changes are
+  marked. CC0 and public domain ask for nothing, and the engine credits them anyway. The OGL works
+  like CC BY for UK public-sector material. Full terms: <https://creativecommons.org/licenses/by/4.0/>,
+  <https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/>.
+- **Why the others are out.** NC licences exclude commercial use, and a brand's post is commercial
+  even when it is organic. ND licences forbid changes, and the crop and the zoom are changes.
+  Share-alike would ask for the adapted image to go out under the same licence, a promise about the
+  brand's post that the engine should not make for the user. A user who wants a share-alike image
+  anyway can supply it as their own footage (SKILL.md step 5) and own that decision.
+- **Most pictures on a page are not the page's to give.** News sites license their photos from
+  agencies for their own pages only; a credit under the picture records who owns it, it does not
+  pass anything on. Fair use is as poor a defence here as for memes (below).
+- **Public domain covers copyright, nothing else.** A trademark in the picture, or a recognisable
+  person's right not to appear to endorse something, survive it. NASA's own media guidelines, for
+  example, put its imagery in the public domain but forbid implying NASA's endorsement and using its
+  logos.
 
 **Meme GIFs and borrowed clips** (why section 2 rules them out):
 

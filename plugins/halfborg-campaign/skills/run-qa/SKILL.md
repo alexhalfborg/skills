@@ -116,7 +116,9 @@ Work the matrix in [references/qa-checklist.md](references/qa-checklist.md). In 
   artifact; media on disk with no `generate` line; ghost ids (a log `deliverable` that is not a
   manifest id, `key-visual`, or a registered sub-id); filename-grammar violations; nothing yet
   promoted to `final`; a stock cutaway (`"source":"pexels"` or `"pixabay"`) logged without `credit` or
-  `source_url` (FAIL: nobody can credit or licence-check it later). Agree with the site builder's
+  `source_url` (FAIL: nobody can credit or licence-check it later); a source image
+  (`"source":"reference"`) without `credit`, `source_url` or `licence`, or with a `licence` other than
+  public domain, CC0, CC BY or the OGL (FAIL). Agree with the site builder's
   Overview roll-up; if you disagree, re-read the log.
 - **Family 2 — Copy & claims.** Over `content/*.md`, build-landing-page HTML and ad copy: every product
   claim within that product's `claims_allowed`; `mandatories` honoured and `nogos` absent; register
@@ -143,8 +145,9 @@ Work the matrix in [references/qa-checklist.md](references/qa-checklist.md). In 
   you did not run. For a talking-head short (`edit-talking-head`), also sample a frame inside each
   `broll` cutaway's beat: a **recognisable person in stock footage on a paid deliverable** is a FAIL
   (neither stock licence allows implied endorsement and model releases are not guaranteed), and on an
-  organic one it is a WARN only when the words under it make a claim. Spell-check the burned-in
-  captions against the pack's brand and product names. For a **social post**, check each picture its
+  organic one it is a WARN only when the words under it make a claim. A `reference` cutaway must show
+  its `credit` on screen, word for word, for its beat (FAIL if missing or different). Spell-check the
+  burned-in captions against the pack's brand and product names. For a **social post**, check each picture its
   frontmatter lists, as posted: it exists, it is the platform's format (JPEG for Instagram), within
   the size and width limits, inside the feed aspect range, and every carousel slide shares one shape
   (`ffprobe`, per `social-platforms.md`). Then `Read` each one as you would any shippable static.

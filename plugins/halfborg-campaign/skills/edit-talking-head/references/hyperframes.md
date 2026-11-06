@@ -180,7 +180,8 @@ colour change.
 ## 6. The edit file
 
 `<id>-edit/<id>-edit-vNN.html`. One root composition, one `<video>` per kept part of the take, one
-wrapper per stock or generated cutaway, one per stock still, each graphic card, each overlay and the
+wrapper per stock or generated cutaway, one per still (stock, or from the script's sources, with its
+credit), each graphic card, each overlay and the
 captions mounted as sub-compositions, the opening title on top, and the zoom cuts and the stills'
 slow zooms in the root timeline:
 
@@ -203,6 +204,7 @@ slow zooms in the root timeline:
       .still-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 50%; }
       .framed .still-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(40px) brightness(0.55); transform: scale(1.15); }
       .framed .still-img { inset: auto; left: 50%; top: 50%; object-fit: contain; }
+      .still-credit { position: absolute; top: 305px; left: 60px; max-width: 880px; padding: 8px 14px 10px; border-radius: 8px; background: rgba(0, 0, 0, 0.6); color: #ffffff; font-family: "Montserrat", sans-serif; font-weight: 800; font-size: 28px; line-height: 1.25; }
       .overlay { position: absolute; inset: 0; z-index: 2; }
       .captions { position: absolute; inset: 0; z-index: 3; }
       .title { position: absolute; left: 140px; right: 140px; bottom: 600px; z-index: 4; display: flex; justify-content: center; }
@@ -226,6 +228,11 @@ slow zooms in the root timeline:
         <img class="still-bg" src="../short-03-broll6-v01.jpg" alt="" />
         <img class="still-img" src="../short-03-broll6-v01.jpg" alt="" style="width: 1000px; height: 666px; margin: -333px 0 0 -500px;" />
       </div>
+      <!-- an image from one of the script's sources: a still, plus its credit for the whole beat -->
+      <div id="s8" class="clip broll still" data-start="24.30" data-duration="2.60" data-track-index="1">
+        <img class="still-img" src="../short-03-broll8-v01.jpg" alt="" />
+        <div class="still-credit">Fig. 2: Lee et al. 2024, PLOS ONE, CC BY 4.0, cropped</div>
+      </div>
       <!-- one mount per graphic card -->
       <div id="graphic3" class="graphic" data-composition-id="graphic3" data-composition-src="compositions/short-03-graphic3-v01.html" data-start="9.10" data-duration="2.00" data-track-index="1"></div>
       <!-- one mount per overlay, laid over the face (section 6.5) -->
@@ -244,6 +251,7 @@ slow zooms in the root timeline:
       // stills: one slow, even zoom across each beat (a push in, then a pull out)
       tl.fromTo("#s4 .still-img", { scale: 1, xPercent: 0 }, { scale: 1.08, xPercent: -2, duration: 2.30, ease: "none" }, 14.20);
       tl.fromTo("#s6 .still-img", { scale: 1.08 }, { scale: 1, duration: 2.10, ease: "none" }, 19.05);
+      tl.fromTo("#s8 .still-img", { scale: 1, yPercent: 0 }, { scale: 1.08, yPercent: -2, duration: 2.60, ease: "none" }, 24.30);
       window.__timelines["main"] = tl;
     </script>
   </body>
@@ -331,13 +339,24 @@ and the sizes in its section 3.1.
   `yPercent` of up to 2, in the direction of the subject. To two decimals, like every time in the
   file.
 - **No `muted` or `data-has-audio`:** those are for `<video>`; an `<img>` has no sound to declare.
+- **A source image's credit** is a `<div class="still-credit">` inside the same wrapper, after the
+  images, holding the line from `broll-rules.md` section 3.2 exactly. Being inside the wrapper, it
+  comes and goes with the image; being a sibling of `still-img`, not a child, it stays still while
+  the image zooms. Its place, top left at y 305, is inside the 4:5 band, clear of the right-hand
+  rail and the top-of-screen controls, and away from the captions and overlays lower down. Set its
+  `font-family` to the title's typeface; leave the size, the colours and the dark backing alone,
+  since the backing is what keeps it legible over a white or yellow image. A stock still has no
+  credit element.
 - The root timeline is paused and seeked frame by frame, so the zoom lands on the same frame in
   every render, as the graphic cards' animations do.
 
 **Checked at 0.9.6** with exactly this layout, one full and one framed still over a take: each
 still's wrapper appears and disappears on its beat with the take showing either side, both zooms
 run at an even speed from the first frame of the beat to the last, the blurred copy fills the frame
-behind a sharp framed photo, and two renders of the same file match frame for frame.
+behind a sharp framed photo, and two renders of the same file match frame for frame. With a
+`still-credit` in each: the credit appears and leaves with its image, holds still through the zoom,
+sits whole inside the 4:5 box, and a 52-character line stays on one line and reads over white and
+yellow.
 
 Lint flags the still images the way it flags the clips (`invalid_parent_traversal_in_asset_path`,
 `missing_local_asset`), and adds two warnings of its own: `nested_structure_needs_subcomposition`

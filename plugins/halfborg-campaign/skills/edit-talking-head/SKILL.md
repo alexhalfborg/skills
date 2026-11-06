@@ -5,7 +5,9 @@ description: >-
   pauses, ums and false starts), open on the hook as a title in a brand-colour box held inside the
   4:5 crop for 3 to 5 seconds, open each sentence on the face then cut to stock b-roll (falling
   back to a stock still with a slow Ken Burns zoom, full frame or framed over a blurred copy, when
-  too few clips pass for a beat) or animated HyperFrames graphic cards (figure, phrase, reaction emoji, bar chart, step diagram, and a
+  too few clips pass for a beat; where the words are about a source the script links, an openly
+  licensed image from that source, public domain, CC0, CC BY or OGL only, read from the page and
+  never inferred, with its credit burned in on screen) or animated HyperFrames graphic cards (figure, phrase, reaction emoji, bar chart, step diagram, and a
   mock newspaper or web page for a cited article or study) until it ends, never meme GIFs or
   borrowed film/TV clips, punch in with zoom cuts on a
   single-angle take (listicle headlines, keywords), lay word highlights and listicle chapter labels
@@ -24,7 +26,8 @@ description: >-
   Transcribes with a local engine (Parakeet), finds silences with ffmpeg silencedetect, searches
   stock through whichever of the plugin's stock MCPs is live (pexels: pexels_search_videos /
   pexels_get_video, pexels_search_photos / pexels_get_photo; pixabay: pixabay_search_videos /
-  pixabay_get_video, pixabay_search_images / pixabay_get_image), and stops
+  pixabay_get_video, pixabay_search_images / pixabay_get_image), opens the script's linked sources
+  with WebFetch for their images (never an image search), and stops
   once at a single approval of the cut list, the title, the cutaway picks and the zoom cuts, written to
   content/<id>-broll-plan.md with thumbnails shown on the campaign page. Writes the edit project to
   media/<id>/<id>-edit/, cutaways as media/<id>/<id>-broll<N>-v<NN>.mp4 (a still as .jpg) logged
@@ -45,7 +48,8 @@ short that is ready to post:
 - the pauses, ums and false starts are cut out
 - the hook opens the short as a title in a box of the brand's colour, placed so a 4:5 crop keeps it
 - each sentence opens on the speaker, then cuts to stock clips or graphic cards until it ends; where
-  no clip fits, a stock photo with a slow zoom stands in
+  no clip fits, a stock photo with a slow zoom stands in, and where the words are about a source the
+  script cites, an openly licensed image from that source goes first, credited on screen
 - on a single camera angle, zoom cuts punch in on listicle headlines and keywords
 - on the face, a few words the speaker leans on light up as a highlight, and a listicle headline
   gets a chapter label, without cutting away from them
@@ -186,6 +190,17 @@ the plan. A graphic card uses the corrected words too.
 
 ## 5. Find the stock
 
+**The script's sources first.** Gather every link in the script, plus any the user gave for this
+short (`broll-rules.md` section 3.2). For each `stock` beat whose words are about something one of
+them covers, open that page with `WebFetch` and look for an image of the thing itself. Read the
+licence the page states for that image and keep it only if the table in section 3.2 allows it,
+noting where on the page the licence appears. Copy the credit from the page. Fetch its smallest
+version into `<id>-edit/options/` and look at it, as for any option. A passing source image goes
+first among that beat's options; the beat is still searched in the stock libraries below, so the
+user has a choice. A page that will not open, or that states no licence for the image, gives
+nothing; say so in the plan's Notes and never guess. With no links in the script, skip this
+paragraph.
+
 For every `stock` beat, search and filter by `broll-rules.md` section 3. **Which library:** with
 only one live, use it. With both live, search Pexels first, and search Pixabay for a beat only when
 fewer than three Pexels results pass. Fetch each candidate's thumbnail into `<id>-edit/options/` and
@@ -244,8 +259,10 @@ The doc, in this order:
    (`![beat 2, option a](../media/<id>/<id>-edit/options/beat2-a.jpg)`), its length, its creator,
    and its page on the library it came from (Pixabay or Pexels), the recommended option first. A
    still says so in plain words, with its move and how it sits: "photo, slow push in, full frame"
-   or "photo, slow pull out, framed over a blurred copy (1280×853)". For a
-   graphic card, its kind and everything on it ("figure: 300 / customers"; "bar chart: before 12%,
+   or "photo, slow pull out, framed over a blurred copy (1280×853)". A source image also gives
+   the page it is on, the licence exactly as the page states it and where it says so, and the
+   credit line exactly as it will appear on screen; on a paid short it carries `⚠️ CLAIM CHECK:`.
+   For a graphic card, its kind and everything on it ("figure: 300 / customers"; "bar chart: before 12%,
    after 31%"), with where each number came from (the words at 0:21, or the source). A source card
    gives the link and the headline as published, and flags any gap between what the speaker says and
    what the source says. A `generate` beat says
@@ -271,7 +288,8 @@ much was cut, how many cutaways and where to look:
 > to see them, then tell me what to swap.
 
 When stills are in it, count them on their own and say why once: "(four stock clips, two stock
-photos with a slow zoom where no clip fitted, two graphics)".
+photos with a slow zoom where no clip fitted, two graphics)". Source images get their own count and
+one plain clause: "one picture from the NASA page you cited, free to use with its credit on screen".
 
 **The receipt:** the page path in full, the title line, and the beats as a short numbered list
 (time, words, the recommended pick or the card's words in a few words) so they can answer without
@@ -322,6 +340,19 @@ is a clip's, with the still's page as `source_url` and the still recorded in `no
 {"ts":"…","event":"generate","skill":"edit-talking-head","deliverable":"<id>","role":"broll","file":"media/<id>/<id>-broll4-v01.jpg","source":"pixabay","source_url":"<the result's pageURL>","credit":"<user> on Pixabay","cost_usd":0,"status":"iteration","notes":"beat 4, still, framed, push in, over \"<the words>\""}
 ```
 
+**Source images** are downloaded from the page with `curl`, at the largest version it offers (on
+Commons, the 2400-wide `Special:FilePath` link with the engine's `User-Agent`, `broll-rules.md`
+section 3.2). Convert a PNG or WebP to JPEG with ffmpeg, flattening any transparency onto white,
+and save it as `<id>-broll<N>-v01.jpg`. Check its size against section 3.1's table as for a stock
+still. Before logging, open the page once more and confirm the licence still reads as it did at the
+approval stop; if it has changed, stop and say so. The log line has `"source":"reference"`, the
+page as `source_url`, the on-screen credit line as `credit`, and the licence as stated in
+`licence`:
+
+```json
+{"ts":"…","event":"generate","skill":"edit-talking-head","deliverable":"<id>","role":"broll","file":"media/<id>/<id>-broll6-v01.jpg","source":"reference","source_url":"https://journals.plos.org/plosone/article?id=<doi>","credit":"Fig. 2: Lee et al. 2024, PLOS ONE, CC BY 4.0, cropped","licence":"CC BY 4.0, stated in the article's copyright notice","cost_usd":0,"status":"iteration","notes":"beat 6, source image, full, push in, over \"<the words>\""}
+```
+
 ## 8. Build the edit
 
 `vNN` is one more than the highest edit file in the folder, and every file below carries it.
@@ -337,7 +368,7 @@ is a clip's, with the still's page as `source_url` and the still recorded in `no
    `graphic-cards.md` part 2.
 4. Write `<id>-edit-vNN.html` (`hyperframes.md` section 6): the kept parts end to end, each stock or
    generated cutaway at its beat starting half a second into its clip, each still at its beat with
-   its slow zoom (section 6.4), each graphic card mounted at its beat, each overlay mounted 0.25
+   its slow zoom (section 6.4) and, for a source image, its credit line, each graphic card mounted at its beat, each overlay mounted 0.25
    seconds before its word (section 6.5), the captions, the opening title on top (section 6.1), and
    the zoom cuts in the timeline (section 6.3).
 
@@ -353,7 +384,8 @@ Say roughly how long it will take before starting (`hyperframes.md` section 7), 
 **Without HyperFrames or Node**, do not render. Hand back the cut list (kept parts as take
 timestamps), the title line with its timing, the cutaway picks with their positions, each still
 with its move in plain words ("push in slowly, drifting left"; "framed: put it over a blurred copy
-of itself"), each graphic card's words with its position, the zoom cuts as in and out times, each highlight and
+of itself"), each source image's credit line to put on screen for the length of its beat, each
+graphic card's words with its position, the zoom cuts as in and out times, each highlight and
 chapter label's words with its in and out times, and
 the downloaded files, so the short can be assembled in CapCut or any editor. Write nothing that
 pretends to be the short.
@@ -378,6 +410,8 @@ pretends to be the short.
   visible around it (a solid colour filling the frame means its page is not transparent).
   The two frames of a still differ in scale (the zoom ran), a full-frame still leaves no black edge
   at either end, and a framed one is sharp, whole and inside the 4:5 box over its blurred copy.
+  Take both frames for every source image, not just one still: its credit is in both, whole, on
+  one or two lines, inside the 4:5 box, readable, and word for word the line in the plan.
   The captions are legible, spelled right, the same size throughout and on one line; a caption that
   wrapped onto two lines means its group was too long for this typeface, so regroup it shorter and
   render again.
@@ -396,7 +430,7 @@ Log the short:
 ```
 
 When stills were used, count them inside the stock figure: `8 cutaways (6 stock, 2 of them stills;
-2 graphic)`. Leave out the overlays clause when there are none.
+2 graphic)`. Source images get their own figure: `8 cutaways (5 stock; 1 source image; 2 graphic)`. Leave out the overlays clause when there are none.
 
 Then rebuild the campaign page once, for everything this run logged (`campaign-structure.md` 4.1).
 
@@ -405,6 +439,13 @@ dashboards"), the one path to open (the MP4, in full), what you checked, and wha
 could not check. Offer, once, a credits line they can paste into the post description, with the
 photographers in it alongside the clip makers:
 "B-roll: Jane Doe on Pexels, Sam Lee on Pixabay."
+
+When the short uses a source image, the credits are not optional, and say so in one plain sentence:
+"The NASA picture is free to use only with this credit, so paste it into the post description."
+Give a block, ready to paste, with one line per source image carrying the on-screen credit, the
+page's address and the licence's address (CC BY 4.0:
+`https://creativecommons.org/licenses/by/4.0/`), plus the OGL statement when one is used
+(`broll-rules.md` section 3.2), then the stock credits line.
 
 End on one next action. Usually: watch it and tell me what to change. When they say it is ready to
 post, log a `status` event with `"status":"final"` for that MP4.
@@ -428,6 +469,10 @@ earlier cut stays watchable.
   used. If a render or a check did not happen, say so.
 - **Nothing borrowed.** No meme GIFs and no film, TV, sport or social clips. A source card is a
   plain mock of the page, never the publication's logo, design or a screenshot.
+- **A credit is not a licence.** An image from a cited source is used only when its page states
+  public domain, CC0, CC BY or the OGL for that image (`broll-rules.md` section 3.2), with the credit
+  on screen and in the post description. Never a news or agency photo, never an image search, never
+  a licence inferred.
 - **The take is never altered.** Tightening is a list of times. The take is never re-encoded,
   trimmed in place or overwritten.
 - **Faces on paid shorts.** No recognisable person in stock cutaways on paid media, clip or still.
